@@ -1,43 +1,38 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/HU62rJiV)
+# create-svelte
 
-# projekt
+Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
 
-Karteikarten-Projekt
+## Creating a project
 
-## Projektidee
+If you're seeing this, you've probably already done this step. Congrats!
 
-Das Karteikarten-Projekt zielt darauf ab, eine webbasierte Lernplattform zu schaffen, die Nutzern ermöglicht, effizient und interaktiv zu lernen. Inspiriert durch das Anki-System, bietet diese Plattform eine dynamische Methode, um Wissen durch Karteikarten zu wiederholen und zu festigen. Entwickelt von Studierenden der DHBW im Studiengang Wirtschaftsinformatik, vereint dieses Projekt moderne Webtechnologien mit bewährten Lernmethoden.
+```bash
+# create a new project in the current directory
+npm create svelte@latest
 
-**Geplante Features**
+# create a new project in my-app
+npm create svelte@latest my-app
+```
 
-<!-- hier bitte einmal die geplanten Features checken [x] sowie eigene Kernfeatures der Applikation hinzufügen. Das dient dafür, dass sowohl Dozent als auch Studierende eine bessere Idee des Scopes des Projektes bekommen -->
+## Developing
 
-- [x] Authentication
-- [x] Datenbank
-- [ ] (eigene Anwendungspezifische Features der Applikation auflisten)
-- [x] Dynamische Wiederholungsintervalle: Anpassung der Lernintervalle basierend auf dem Leistungsstand des Nutzers
-- [x] Fortschrittsanalyse: Visualisierung des Lernfortschritts
-- [x] Responsive Design: Optimale Nutzung auf verschiedenen Geräten dank Tailwind CSS
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
-## (Optional) Datenmodell
+```bash
+npm run dev
 
-<!-- Sollte schon eine konkretere Vorstellung des Projektes vorliegen gerne hier auch ein erster Draft des Datenmodells -->
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
+```
 
-Das Datenmodell umfasst Nutzerprofile, Karteikartensets, einzelne Karteikarten und Sitzungsprotokolle. Jede Karteikarte ist mit Metadaten für das Wiederholungsintervall und den Schwierigkeitsgrad versehen. Nutzerprofile halten Informationen über Fortschrittsstatistiken und bevorzugte Lernmethoden.
+## Building
 
-## (Optional) Mockups
+To create a production version of your app:
 
-<!-- Sollte schon eine konkretere Vorstellung des Projektes vorliegen können auch Mockups der UI eingefügt werden um ein besseres Verständnis zu vermitteln -->
+```bash
+npm run build
+```
 
-Mockups der Benutzeroberfläche werden noch erstellt, um eine klare Vorstellung der Benutzererfahrung und des Designs der Anwendung zu vermitteln.
-https://www.figma.com/team_invite/redeem/CVmzThRs7Vn0eiH1zWgUXI
+You can preview the production build with `npm run preview`.
 
-## Technologien
-
-Tailwind CSS: Für das Styling nutzen wir Tailwind CSS, ein Utility-first CSS-Framework, das uns erlaubt, das Design direkt im Markup zu definieren und somit eine schnelle und responsive Benutzeroberfläche zu gestalten.
-
-## (Optional) Sonstiges
-
-<!-- Fragen, Kommentare, sonstige Informationen an den Dozenten bzgl. des Projekts -->
-
-Feedback und Vorschläge zur Verbesserung des Projekts sind immer willkommen. Wir sind besonders interessiert an Ideen zur Erweiterung der Kernfeatures und zur Steigerung der Benutzerfreundlichkeit
+> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
