@@ -34,8 +34,6 @@ https://www.figma.com/team_invite/redeem/CVmzThRs7Vn0eiH1zWgUXI
 
 ## Technologien
 
-Next.js: Als React-Framework ermöglicht Next.js eine effiziente Entwicklung von webbasierten Anwendungen mit serverseitigem Rendering und generiert dabei eine hohe Performance sowie eine optimale Suchmaschinenoptimierung.
-
 Tailwind CSS: Für das Styling nutzen wir Tailwind CSS, ein Utility-first CSS-Framework, das uns erlaubt, das Design direkt im Markup zu definieren und somit eine schnelle und responsive Benutzeroberfläche zu gestalten.
 
 ## (Optional) Sonstiges
