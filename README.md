@@ -1,38 +1,31 @@
-# create-svelte
+# Karteikarten-Projekt
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+## Projektidee
 
-## Creating a project
+Das Karteikarten-Projekt zielt darauf ab, eine webbasierte Lernplattform zu schaffen, die Nutzern ermöglicht, effizient und interaktiv zu lernen. Inspiriert durch das Anki-System, bietet diese Plattform eine dynamische Methode, um Wissen durch Karteikarten zu wiederholen und zu festigen. Entwickelt von Studierenden der DHBW im Studiengang Wirtschaftsinformatik, vereint dieses Projekt moderne Webtechnologien mit bewährten Lernmethoden.
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Technologien
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+- **Svelte**: Ein modernes Framework für den Bau kompakter und hochperformanter Web-Anwendungen.
+- **Tailwind CSS**: Ein Utility-first CSS-Framework für maßgeschneidertes Design ohne die Notwendigkeit, CSS von Grund auf zu schreiben.
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+## Geplante Features
 
-## Developing
+- **Authentication**: Sicherer Zugang zu persönlichen Lernsets.
+- **Datenbank**: Speicherung von Nutzerdaten und Karteikarten.
+- **Dynamische Wiederholungsintervalle**: Anpassung der Lernintervalle basierend auf dem Leistungsstand des Nutzers.
+- **Fortschrittsanalyse**: Visualisierung des Lernfortschritts.
+- **Interaktive Lernsessions**: Engagierte und adaptive Lernsessions für Nutzer.
+- **Responsive Design**: Optimale Nutzung auf verschiedenen Geräten dank Tailwind CSS.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## (Optional) Datenmodell
 
-```bash
-npm run dev
+Das Datenmodell umfasst Nutzerprofile, Karteikartensets, einzelne Karteikarten und Sitzungsprotokolle. Jede Karteikarte ist mit Metadaten für das Wiederholungsintervall und den Schwierigkeitsgrad versehen. Nutzerprofile halten Informationen über Fortschrittsstatistiken und bevorzugte Lernmethoden.
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+## (Optional) Mockups
 
-## Building
+Mockups der Benutzeroberfläche werden noch erstellt, um eine klare Vorstellung der Benutzererfahrung und des Designs der Anwendung zu vermitteln.
 
-To create a production version of your app:
+## (Optional) Sonstiges
 
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+Feedback und Vorschläge zur Verbesserung des Projekts sind immer willkommen. Wir sind besonders interessiert an Ideen zur Erweiterung der Kernfeatures und zur Steigerung der Benutzerfreundlichkeit.
