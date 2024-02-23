@@ -7,9 +7,8 @@
 		<ul>
 			<li><code class="code">/src/routes/+layout.svelte</code> - barebones layout</li>
 			<li><code class="code">/src/app.postcss</code> - app wide css</li>
-			<li>
-				<code class="code">/src/routes/+page.svelte</code> - this page, you can replace the contents
-			</li>
+			<li><code class="code">/src/routes/+page.svelte</code> - this page, you can replace the contents</li>
+			<li><a href="/furtherPage">Click here to go to a furtherPage</a></li>
 		</ul>
 	</div>
 </div>
