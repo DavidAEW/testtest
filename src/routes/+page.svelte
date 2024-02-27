@@ -1,19 +1,21 @@
-
-
-<div class="container h-full mx-auto flex justify-center items-center">
-	<div class="space-y-5">
-		<h1 class="h1">Welcome!</h1>
-		<p>Start by exploring:</p>
-		<ul>
-			<li><code class="code">/src/routes/+layout.svelte</code> - layout with Navbar</li>
-			<li><code class="code">/tailwind.config.js</code> - app wide css</li>
-			<li><code class="code">/src/routes/+page.svelte</code> - this page</li>
-			<li><code class="code">/src/routes/furtherPage/+page.svelte</code> - another page</li>
-			<li>
-				<a href="/furtherPage" class="text-blue-600 hover:text-blue-800 underline">
-					Click here to go to routes/furtherPage/+page.svelte
-				</a>
-			</li>							
-		</ul>
+<div class="container h-full mx-auto flex justify-center items-center space-y-16">
+		<main>
+			<h1 style="font-size: 4rem; margin-bottom: 2rem;">
+				Log in
+			</h1>
+			<form action="login" method="post">
+				<div>
+					<label for="email">Email</label>
+					<input type="email" id="email" name="email" required>
+				</div>
+				<div>
+					<label for="password">Password</label>
+					<input type="password" id="password" name="password" required>
+				</div>
+				<button type="submit" class="btn variant-soft-primary mt-6">
+					Log in
+				</button>				
+			</form>
+			<a href="/homePage" class="text-blue-500 hover:text-blue-700 underline">Click here for the bypass</a>
+		</main>
 	</div>
-</div>
