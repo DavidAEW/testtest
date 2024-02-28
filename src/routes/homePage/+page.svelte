@@ -1,17 +1,38 @@
+<!--- Homepage --->
 <div class="container h-full mx-auto flex justify-center items-center">
 	<div class="space-y-5">
-		<h1 class="h1">Welcome!</h1>
-		<p>Start by exploring:</p>
+		<h1 class="h1">Homepage</h1>
+		<p>These are some of the other pages:</p>
 		<ul>
 			<li><code class="code">/src/routes/+layout.svelte</code> - layout with Navbar</li>
 			<li><code class="code">/tailwind.config.js</code> - app wide css</li>
-			<li><code class="code">/src/routes/+page.svelte</code> - this page</li>
-			<li><code class="code">/src/routes/furtherPages/+page.svelte</code> - another page</li>
+			<li><code class="code">/src/routes/homePage/+page.svelte</code> - this page</li>
 			<li>
-				<a href="/furtherPages" class="text-blue-600 hover:text-blue-800 underline">
-					Click here to go to routes/furtherPages/+page.svelte
-				</a>
-			</li>							
+				<code class="code">/src/routes/homePage/addKarteikarten/+page.svelte</code> - add Karteikarten
+			</li>
+			<li>
+				<code class="code">/src/routes/homePage/manageKarteikarten/+page.svelte</code> - manage Karteikarten
+			</li>
+			<li>
+				<a href="/homePage/addKarteikarten" class="text-blue-600 hover:text-blue-800 underline"
+					>Click here to go to routes/addKarteikarten/+page.svelte</a
+				>
+			</li>
+			<li>
+				<a href="/homePage/manageKarteikarten" class="text-blue-600 hover:text-blue-800 underline"
+					>Click here to go to routes/manageKarteikarten/+page.svelte</a
+				>
+			</li>
+			<li>
+				<a href="/homePage/manageDecks" class="text-blue-600 hover:text-blue-800 underline"
+					>Click here to go to routes/manageDecks/+page.svelte</a
+				>
+			</li>
+			<li>
+				<a href="/homePage/studying" class="text-blue-600 hover:text-blue-800 underline"
+					>Click here to go to routes/studying/+page.svelte</a
+				>
+			</li>
 		</ul>
 	</div>
 </div>

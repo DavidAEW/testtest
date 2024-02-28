@@ -72,10 +72,10 @@
 			<svelte:fragment slot="trail">
 				{#if !isOnHomePage}
 					<a href="/navbarPages/profile">
-						<Avatar src={person} class="w-10 h-10 rounded-full" />
+						<Avatar src={person} class="w-9 h-9 mr-6 rounded-full" />
 					</a>
 				{:else}
-					<Avatar src={person} class="w-10 h-10 rounded-full" />
+					<Avatar src={person} class="w-9 h-9 mr-6 rounded-full" />
 				{/if}
 			</svelte:fragment>
 		</AppBar>
@@ -87,9 +87,7 @@
 	<svelte:fragment slot="pageFooter">
 		<div class="flex justify-center items-center">
 			<ul>
-				<li>
-					Legal
-				</li>
+				<li>Legal</li>
 			</ul>
 		</div>
 	</svelte:fragment>
