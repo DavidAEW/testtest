@@ -19,7 +19,7 @@ Das Karteikarten-Projekt zielt darauf ab, eine webbasierte Lernplattform zu scha
 - **Responsive Design**: Optimale Nutzung auf verschiedenen Geräten dank Tailwind CSS.
 
 ## (Optional) Datenmodell
-![Screenshot_13](https://github.com/WWI22SEA/Anki-Project/assets/122269218/1dc56a73-eb99-47af-a823-95cfd67cf47b)
+![Screenshot_14](https://github.com/WWI22SEA/Anki-Project/assets/122269218/10117ad3-c22c-4146-b099-5d4e889bbdfa)
 
 Das Datenmodell umfasst Nutzerprofile, Karteikartensets, einzelne Karteikarten und Sitzungsprotokolle. Jede Karteikarte ist mit Metadaten für das Wiederholungsintervall und den Schwierigkeitsgrad versehen. Nutzerprofile halten Informationen über Fortschrittsstatistiken und bevorzugte Lernmethoden.
 
