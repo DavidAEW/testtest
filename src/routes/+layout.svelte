@@ -35,6 +35,12 @@
 	$: classesSidebar = $page.url.pathname === '/' ? 'w-0' : 'w-0 lg:w-64';
 	$: isOnHomePage = $page.url.pathname === '/';
 
+    let mode = true;
+
+    function switchMode() {
+        mode = !mode;
+    }
+
 	function drawerOpen() {
 		drawerStore.open({});
 	}
@@ -48,9 +54,9 @@
 </Drawer>
 
 <AppShell
-    regionPage="relative"
-    slotSidebarLeft="bg-secondary-60 {classesSidebar}"
-    slotPageHeader="sticky top-0 z-10 bg-accent-300 text-white"
+    regionPage={mode ? "relative bg-background-350 text-background-50" : "relative"}
+    slotSidebarLeft={mode ? "bg-secondary-250 text-background-60 {classesSidebar}" : "bg-secondary-80 {classesSidebar}"}
+    slotPageHeader={mode ? "sticky top-0 z-10 bg-accent-300 text-white" : "sticky top-0 z-10 bg-accent-300 text-white"}
 >
     <svelte:fragment slot="header">
         <AppBar gridColumns="grid-cols-3" class="bg-primary-300 text-white" slotDefault="place-self-center" slotTrail="place-content-end">
@@ -70,6 +76,9 @@
             </svelte:fragment>
             <strong class="text-xl uppercase">Karteikartenmanager</strong>
             <svelte:fragment slot="trail">
+                <button class="bg-background-400 text-text-30 border border-solid border-gray-500 px-4 py-2 rounded-full hover:bg-background-500 shadow-lg transition duration-300 ease-in-out" type="button" on:click={switchMode}>
+                    Swap modes
+                  </button>                  
                 {#if !isOnHomePage}
                     <a href="/navbarPages/profile">
                         <Avatar src={person} class="w-9 h-9 mr-6 rounded-full border-2 border-accent-300" />
