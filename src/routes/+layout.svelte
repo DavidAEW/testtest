@@ -49,7 +49,7 @@
 
 <AppShell
     regionPage="relative"
-    slotSidebarLeft="bg-primary-500/10 {classesSidebar}"
+    slotSidebarLeft="bg-secondary-60 {classesSidebar}"
     slotPageHeader="sticky top-0 z-10 bg-accent-300 text-white"
 >
     <svelte:fragment slot="header">
