@@ -4,15 +4,31 @@
 		<h1 class="h1">Homepage</h1>
 		<p>These are some of the other pages:</p>
 		<ul>
-			<li><code class="code">/src/routes/+layout.svelte</code> - layout with Navbar</li>
-			<li><code class="code">/tailwind.config.js</code> - app wide css</li>
-			<li><code class="code">/src/routes/homePage/+page.svelte</code> - this page</li>
 			<li>
-				<code class="code">/src/routes/homePage/addKarteikarten/+page.svelte</code> - add Karteikarten
+				<code class="text-text-100 bg-secondary-60 p-1 rounded font-mono text-xs font-normal">
+					/src/routes/+layout.svelte
+				</code> - layout with Navbar
 			</li>
 			<li>
-				<code class="code">/src/routes/homePage/manageKarteikarten/+page.svelte</code> - manage Karteikarten
+				<code class="text-text-100 bg-secondary-60 p-1 rounded font-mono text-xs font-normal">
+					/tailwind.config.js
+				</code> - app wide css
 			</li>
+			<li>
+				<code class="text-text-100 bg-secondary-60 p-1 rounded font-mono text-xs font-normal">
+					/src/routes/homePage/+page.svelte
+				</code> - this page
+			</li>
+			<li>
+				<code class="text-text-100 bg-secondary-60 p-1 rounded font-mono text-xs font-normal">
+					/src/routes/homePage/addKarteikarten/+page.svelte
+				</code> - add Karteikarten
+			</li>
+			<li>
+				<code class="text-text-100 bg-secondary-60 p-1 rounded font-mono text-xs font-normal">
+					/src/routes/homePage/manageKarteikarten/+page.svelte
+				</code> - manage Karteikarten
+			</li>		
 			<li>
 				<a href="/homePage/addKarteikarten" class="text-blue-600 hover:text-blue-800 underline"
 					>Click here to go to routes/addKarteikarten/+page.svelte</a
@@ -31,6 +47,11 @@
 			<li>
 				<a href="/homePage/studying" class="text-blue-600 hover:text-blue-800 underline"
 					>Click here to go to routes/studying/+page.svelte</a
+				>
+			</li>
+			<li>
+				<a href="/farben" class="text-blue-600 hover:text-blue-800 underline"
+					>Click here to go checkout our colorscheme</a
 				>
 			</li>
 		</ul>
