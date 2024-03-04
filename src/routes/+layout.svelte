@@ -1,5 +1,6 @@
 <script>
 	import '../app.postcss';
+	import ThemeSwitch from '$lib/ThemeSwitch/ThemeSwitch.svelte';
 	import { page } from '$app/stores';
 	import { Avatar } from '@skeletonlabs/skeleton';
 	import { initializeStores, Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
@@ -35,17 +36,10 @@
 	$: classesSidebar = $page.url.pathname === '/' ? 'w-0' : 'w-0 lg:w-64';
 	$: isOnHomePage = $page.url.pathname === '/';
 
-    let mode = true;
-
-    function switchMode() {
-        mode = !mode;
-    }
-
 	function drawerOpen() {
 		drawerStore.open({});
 	}
 </script>
-
 
 <Drawer class="bg-secondary-50 text-text-300">
     <h2 class="p-4 text-primary-300">Navigation</h2>
@@ -54,50 +48,56 @@
 </Drawer>
 
 <AppShell
-    regionPage={mode ? "relative bg-background-350 text-background-50" : "relative"}
-    slotSidebarLeft={mode ? "bg-secondary-250 text-background-60 {classesSidebar}" : "bg-secondary-80 {classesSidebar}"}
-    slotPageHeader={mode ? "sticky top-0 z-10 bg-accent-300 text-white" : "sticky top-0 z-10 bg-accent-300 text-white"}
+    regionPage="relative dark:bg-background-350 "
+    slotSidebarLeft="bg-secondary-60 {classesSidebar} dark:bg-secondary-250 "
+    slotPageHeader="sticky top-0 z-10 bg-accent-300 text-white"
 >
-    <svelte:fragment slot="header">
-        <AppBar gridColumns="grid-cols-3" class="bg-primary-300 text-white" slotDefault="place-self-center" slotTrail="place-content-end">
-            <svelte:fragment slot="lead">
-                <div class="flex items-center">
-                    <button class="lg:hidden btn btn-sm mr-4 bg-accent-300 hover:bg-accent-350 focus:ring-accent-300 focus:ring-offset-2" on:click={drawerOpen}>
-                        <span>
-                            <svg viewBox="0 0 100 80" class="fill-current w-4 h-4">
-                                <rect width="100" height="20"></rect>
-                                <rect y="30" width="100" height="20"></rect>
-                                <rect y="60" width="100" height="20"></rect>
-                            </svg>
-                        </span>
-                    </button>
-                    <img class="w-40 ml-5" src={logoTransparent} alt="logo" />
-                </div>
-            </svelte:fragment>
-            <strong class="text-xl uppercase">Karteikartenmanager</strong>
-            <svelte:fragment slot="trail">
-                <button class="bg-background-400 text-text-30 border border-solid border-gray-500 px-4 py-2 rounded-full hover:bg-background-500 shadow-lg transition duration-300 ease-in-out" type="button" on:click={switchMode}>
-                    Swap modes
-                  </button>                  
-                {#if !isOnHomePage}
-                    <a href="/navbarPages/profile">
-                        <Avatar src={person} class="w-9 h-9 mr-6 rounded-full border-2 border-accent-300" />
-                    </a>
-                {:else}
-                    <Avatar src={person} class="w-9 h-9 mr-6 rounded-full border-2 border-accent-300" />
-                {/if}
-            </svelte:fragment>
-        </AppBar>
-    </svelte:fragment>
-    <svelte:fragment slot="sidebarLeft">
-        <Navigation />
-    </svelte:fragment>
-    <slot />
-    <svelte:fragment slot="pageFooter">
-        <div class="flex justify-center items-center bg-background-300 text-background-50">
-            <ul class="text-sm">
-                <li>Legal</li>
-            </ul>
-        </div>
-    </svelte:fragment>
+	<svelte:fragment slot="header">
+		<AppBar
+			gridColumns="grid-cols-3"
+			class="bg-primary-300 text-white grid items-center"
+			slotDefault="place-self-center"
+			slotTrail="place-content-end"
+		>
+			<svelte:fragment slot="lead">
+				<div class="flex items-center">
+					<button
+						class="lg:hidden btn btn-sm mr-4 bg-accent-300 hover:bg-accent-350 focus:ring-accent-300 focus:ring-offset-2"
+						on:click={drawerOpen}
+					>
+						<span>
+							<svg viewBox="0 0 100 80" class="fill-current w-4 h-4">
+								<rect width="100" height="20"></rect>
+								<rect y="30" width="100" height="20"></rect>
+								<rect y="60" width="100" height="20"></rect>
+							</svg>
+						</span>
+					</button>
+					<img class="hidden lg:block w-40 ml-5" src={logoTransparent} alt="logo" />
+				</div>
+			</svelte:fragment>
+			<strong class="text-xl uppercase">Karteikartenmanager</strong>
+			<svelte:fragment slot="trail">
+				<ThemeSwitch />
+				{#if !isOnHomePage}
+					<a href="/navbarPages/profile">
+						<Avatar src={person} class="w-40px h-40px mr-6 rounded-full border-2 border-accent-300" />
+					</a>
+				{:else}
+					<Avatar src={person} class="w-40px h-40px mr-6 rounded-full border-2 border-accent-300" />
+				{/if}
+			</svelte:fragment>
+		</AppBar>
+	</svelte:fragment>
+	<svelte:fragment slot="sidebarLeft">
+		<Navigation />
+	</svelte:fragment>
+	<slot />
+	<svelte:fragment slot="pageFooter">
+		<div class="flex justify-center items-center bg-background-300 text-background-50">
+			<ul class="text-sm">
+				<li>Legal</li>
+			</ul>
+		</div>
+	</svelte:fragment>
 </AppShell>
