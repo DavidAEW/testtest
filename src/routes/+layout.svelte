@@ -84,8 +84,10 @@
 						<Avatar src={person} class="w-40px h-40px mx-6 rounded-full border-2 border-accent-300" />
 					</a>
 				{:else}
+					<div>
 					<Avatar src={person} class="w-40px h-40px mx-6 rounded-full border-2 border-accent-300" />
-				{/if}
+				</div>
+					{/if}
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
