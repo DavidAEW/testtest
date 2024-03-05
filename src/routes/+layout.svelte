@@ -81,10 +81,10 @@
 				<ThemeSwitch />
 				{#if !isOnHomePage}
 					<a href="/navbarPages/profile">
-						<Avatar src={person} class="w-40px h-40px mr-6 rounded-full border-2 border-accent-300" />
+						<Avatar src={person} class="w-40px h-40px mx-6 rounded-full border-2 border-accent-300" />
 					</a>
 				{:else}
-					<Avatar src={person} class="w-40px h-40px mr-6 rounded-full border-2 border-accent-300" />
+					<Avatar src={person} class="w-40px h-40px mx-6 rounded-full border-2 border-accent-300" />
 				{/if}
 			</svelte:fragment>
 		</AppBar>
