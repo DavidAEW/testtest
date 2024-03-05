@@ -44,7 +44,7 @@
           Register
         </h2>
         <p class="mt-2 text-center text-sm text-primary-300">
-          Or <a href="javascript:history.back()" class="font-medium text-accent-400 hover:text-accent-350">
+          Or <a href="/" class="font-medium text-accent-400 hover:text-accent-350">
             log in
           </a> if you already have an account.
         </p>
@@ -54,7 +54,7 @@
         <div class="rounded-md shadow-sm -space-y-px">
           <div>
             <label for="email-address" class="sr-only">Email Address</label>
-            <input id="email-address" name="email" bind.this autocomplete="email" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm" placeholder="Email Address">
+            <input id="email-address" name="email" type="email" autocomplete="email" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm" placeholder="Email Address">
           </div>
           <div>
             <label for="username" class="sr-only">Username</label>
