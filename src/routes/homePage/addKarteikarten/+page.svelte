@@ -26,11 +26,41 @@
 
 
 	function save() {
-		window.location.href = "/homePage/addKarteikarten";
+		userInputFront = "";
+		userInputBack = "";
 	}
 
 	function back() {
 		window.location.href = "/homePage";
+	}
+
+	async function sendData() {
+		if (!userInputFront || !userInputBack || !selectedOption) {
+			alert("Bitte füllen Sie alle Felder aus!");
+			return;
+		}
+
+		const API_URL = "http://localhost:3001/InsertCardBackCardFrontInCard"; // Ersetzen Sie dies mit Ihrer tatsächlichen API-URL
+
+		const response = await fetch(API_URL, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				front: userInputFront,
+				back: userInputBack,
+				//deck: selectedOption,
+			}),
+		});
+
+		if (response.ok) {
+			alert("Karteikarte erfolgreich hinzugefügt!");
+			// Leeren Sie die Felder nach erfolgreicher送信ung
+			userInputFront = "";
+			userInputBack = "";
+			//selectedOption = "";
+		} else {
+			alert("Fehler beim Senden der Daten. Bitte versuchen Sie es erneut.");
+		}
 	}
 
 </script>
@@ -83,7 +113,7 @@
 	</div>
 
 	<div class="flex justify-center mt-5">
-		<button class="bg-accent-300 hover:bg-primary-60 hover:text-text-400 text-text-50 font-bold py-2 px-4 rounded"  on:click={showCardContent}>
+		<button class="bg-accent-300 hover:bg-primary-60 hover:text-text-400 text-text-50 font-bold py-2 px-4 rounded"  on:click={sendData}>
 			+
 		</button>
 		<button class="mr-10 md:mr-16 ml-10 md:ml-16 bg-accent-300 hover:bg-primary-60 hover:text-text-400 text-text-50 font-bold py-2 px-4 rounded" on:click={save}>
