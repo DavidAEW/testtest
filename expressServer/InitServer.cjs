@@ -24,9 +24,12 @@ const db = knex({
 app.use(express.json());
 
 app.get('/test', (req, res) => {
-  res.send('Hello from express server')
+  res.send('Hello Svenja from express server')
 })
 
+app.get('/hallosvenja', (req, res) => {
+  res.send('Hello David from express server')
+})
 app.get('/SelectTagNameFromTag', async (req, res) => {
   const tags = await db.select('tagname').from('tag');
   res.json(tags);
