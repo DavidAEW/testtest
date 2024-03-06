@@ -29,24 +29,24 @@
 					/src/routes/homePage/manageKarteikarten/+page.svelte
 				</code> - manage Karteikarten
 			</li>		
-			<li>
+			<li>Click here to go to
 				<a href="/homePage/addKarteikarten" class="text-blue-600 hover:text-blue-800 underline"
-					>Click here to go to routes/addKarteikarten/+page.svelte</a
+					>routes/addKarteikarten/+page.svelte</a
 				>
 			</li>
-			<li>
+			<li>Click here to go to
 				<a href="/homePage/manageKarteikarten" class="text-blue-600 hover:text-blue-800 underline"
-					>Click here to go to routes/manageKarteikarten/+page.svelte</a
+					>routes/manageKarteikarten/+page.svelte</a
 				>
 			</li>
-			<li>
+			<li>Click here to go to
 				<a href="/homePage/manageDecks" class="text-blue-600 hover:text-blue-800 underline"
-					>Click here to go to routes/manageDecks/+page.svelte</a
+				>routes/manageDecks/+page.svelte</a
 				>
 			</li>
-			<li>
+			<li>Click here to go to
 				<a href="/homePage/studying" class="text-blue-600 hover:text-blue-800 underline"
-					>Click here to go to routes/studying/+page.svelte</a
+					>routes/studying/+page.svelte</a
 				>
 			</li>
 			<li>
