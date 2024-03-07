@@ -3,6 +3,7 @@
 const express = require('express');
 const knex = require('knex');
 const cors = require('cors'); // Importiere das cors-Modul
+const argon2 = require('argon2'); // Für das Hashen von Passwörtern
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -62,24 +63,34 @@ app.get('/getUser', async (req, res) => {
     {
         "username": "Test",
         "email": "test@g.com"
-    },
-    {
-        "username": "test2",
-        "email": "test2@test.com"
-    },
-    {
-        "username": "Test",
-        "email": "test@g.com"
-    },
-    {
-        "username": "Test7",
-        "email": "test@gm.com"
     }
 	]
 	*/
 });
+
+app.post('/login', async (req, res) => {
+	const { email, password } = req.body;
+	try {
+		const user = await db.select('*').from('user').where('email', email).first(); //-> erst mal nach email suchen
+		if (!user) {
+			return res.status(400).json({ message: 'Email nicht gefunden.' });
+		}
+
+		const comparePassword = await argon2.verify(user.password, password); //-> dann das Passwort vergleichen
+
+		if (comparePassword) {
+			res.json({ message: 'Erfolgreich eingeloggt.' });
+		} else {
+			res.status(400).json({ message: 'Falsches Passwort.' });
+		}
+	} catch (error) {
+		console.error('Fehler beim Einloggen:', error);
+		res.status(500).json({ message: 'Serverfehler beim Einloggen.' });
+	}
+});
+
 app.post('/addUser', async (req, res) => {
-	const { email, username, password } = req.body; // Direkte Extraktion der Werte aus req.body
+	const { email, username, password } = req.body;
 
 	try {
 		// schau ob User schon existiert
@@ -95,12 +106,14 @@ app.post('/addUser', async (req, res) => {
 			return res.status(400).json({ message: 'Benutzername oder E-Mail existiert bereits.' });
 		}
 
+		const hashedPassword = await argon2.hash(password); //-> Passwort hashen
+
 		// sonst normal hinzufügen
 		const newUser = await db
 			.insert({
 				email: email,
 				username: username,
-				password: password // Stelle sicher, dass das Passwort sicher gespeichert wird (z.B. mit Hashing)
+				password: hashedPassword
 			})
 			.into('user');
 
