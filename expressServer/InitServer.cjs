@@ -50,24 +50,70 @@ app.post('/InsertCardBackCardFrontInCard', async (req, res) => {
 	//   res.status(500).json({ error: 'Fehler beim Einfügen der Daten.' });
 	// }
 });
+
+app.get('/getUser', async (req, res) => {
+	const userInfo = await db.select('username', 'email').from('user');
+	res.json(userInfo);
+	console.log(userInfo);
+
+	/*
+	--> BSP Response 
+	[
+    {
+        "username": "Test",
+        "email": "test@g.com"
+    },
+    {
+        "username": "test2",
+        "email": "test2@test.com"
+    },
+    {
+        "username": "Test",
+        "email": "test@g.com"
+    },
+    {
+        "username": "Test7",
+        "email": "test@gm.com"
+    }
+	]
+	*/
+});
 app.post('/addUser', async (req, res) => {
-	const { userData } = req.body;
-	console.log(req.body);
-	const requestData = req.body;
-	console.log(requestData.email);
+	const { email, username, password } = req.body; // Direkte Extraktion der Werte aus req.body
 
-	const user = await db
-		.insert({
-			email: requestData.email,
-			username: requestData.username,
-			password: requestData.password
-		})
-		.into('user');
+	try {
+		// schau ob User schon existiert
+		const existingUser = await db
+			.select('*')
+			.from('user')
+			.where('email', email)
+			.orWhere('username', username)
+			.first();
 
-	if (!user) {
-		res.status(500).json({ message: 'Fehler beim Einfügen der Daten.' });
+		// Wenn gleiche Email oder Username schon existiert, dann gebe Fehlermeldung zurück
+		if (existingUser) {
+			return res.status(400).json({ message: 'Benutzername oder E-Mail existiert bereits.' });
+		}
+
+		// sonst normal hinzufügen
+		const newUser = await db
+			.insert({
+				email: email,
+				username: username,
+				password: password // Stelle sicher, dass das Passwort sicher gespeichert wird (z.B. mit Hashing)
+			})
+			.into('user');
+
+		// Überprüfe, ob Post erfolgreich war
+		if (newUser) {
+			res.status(201).json({ message: 'Neuer Benutzer erfolgreich hinzugefügt.' });
+		} else {
+			res.status(500).json({ message: 'Unbekannter Fehler beim Hinzufügen des Benutzers.' });
+		}
+	} catch (error) {
+		console.error('Fehler beim Hinzufügen des Benutzers:', error);
+		res.status(500).json({ message: 'Serverfehler beim Hinzufügen des Benutzers.' });
 	}
-	res.status(201).json({ message: 'Daten wurden erfolgreich eingefügt.' });
 });
 
 //Muss am Schluss sein, da vor dem Starten erstmal alles definiert werden muss
