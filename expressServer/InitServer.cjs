@@ -41,8 +41,8 @@ app.get('/SelectAllFromStack', async (req, res) => {
 })
 
 app.get('/SelectAllFromCard', async (req, res) => {
-  const stack = await db.select().from('card');
-  res.json(stack);
+  const deck = await db.select().from('card');
+  res.json(deck);
 })
 
 app.post('/InsertCardBackCardFrontInCard', async(req,res) => {
