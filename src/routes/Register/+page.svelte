@@ -11,15 +11,18 @@
       password,
     };
 
-    console.log('Daten:', data);
-    /*
+    console.log('Daten:', userData);
+    const url = "http://localhost:3001";
+    const endpoint = "/addUser/";
+
+    const endpointURL= url + endpoint;   
     try {
-      const response = await fetch('Endpoint hinzufügen', {
+      const response = await fetch(endpointURL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(userData),
       });
 
       if (response.ok) {
@@ -33,7 +36,7 @@
     } catch (error) {
       console.error('Fehler beim Senden der Daten:', error);
     
-  }*/
+  }
 }
 </script>
 
