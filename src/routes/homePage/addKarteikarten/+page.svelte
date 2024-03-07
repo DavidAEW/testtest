@@ -62,7 +62,7 @@
 			body: JSON.stringify({
 				front: userInputFront,
 				back: userInputBack,
-				//deck: selectedOption,
+				stackid: selectedOption,
 			}),
 
 		});
@@ -132,7 +132,7 @@
 	</div>
 
 	<div class="flex justify-center mt-5">
-		<button class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded"  on:click={sendData}>
+		<button class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded">
 			+
 		</button>
 		<button class="mr-10 md:mr-16 ml-10 md:ml-16 bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded" on:click={save}>
@@ -143,15 +143,4 @@
 		</button>
 	</div>
 
-	<div>
-		<p class="mt-2 whitespace-pre-line text-primary-50">{cardContentFront}</p>
-		<p class="mt-2 whitespace-pre-line text-primary-50">{cardContentBack}</p>
-		<p class="mt-2 whitespace-pre-line text-primary-50">{selectedOption}</p>
-	</div>
-
-	<div class="container h-full mx-auto flex justify-center items-center mt-4">
-		<h2>
-		<a href = "/homePage" class="text-blue-600 hover:text-blue-800 underline">Click here to go back!</a>
-		</h2>
-	</div>
 </main>

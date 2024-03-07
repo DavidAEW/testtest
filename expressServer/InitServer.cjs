@@ -46,11 +46,11 @@ app.get('/SelectAllFromCard', async (req, res) => {
 })
 
 app.post('/InsertCardBackCardFrontInCard', async(req,res) => {
-  const { front, back } = req.body; // Annahme: Die Werte für front und back kommen im Request Body an
+  const { front, back, stackid } = req.body; // Annahme: Die Werte für front und back kommen im Request Body an
   console.log(req.body);
   console.log(front);
   // try {
-    const card = await db.insert({front: front, back: back}).into('card');
+    const card = await db.insert({front: front, back: back, stackid: stackid }).into('card');
  
 //   res.status(201).json({ message: 'Daten wurden erfolgreich eingefügt.' });
 // } catch (error) {
