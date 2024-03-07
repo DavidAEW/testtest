@@ -6,6 +6,9 @@
 	function toggleBack() {
 		showBack = !showBack;
 	}
+	function back() {
+		window.location.href = "/homePage";
+	}
 
 </script>
 <main>
@@ -38,24 +41,22 @@
 		<div class="container h-full mx-auto flex justify-center items-center mt-4">
 
 			<button class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16">
-				Test bestanden
+				gelernt
 			</button>
 			<button class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16">
-			Test bestanden
+			kann ich fast
 			</button>
-			<button class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16">
-				Test bestanden
+			<button class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded">
+				weiß ich
 			</button>
-			<button class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16">
-				Test bestanden
-			</button>
+			
 		</div>
 	{/if}
 
-
 	<div class="container h-full mx-auto flex justify-center items-center mt-4">
-		<h2>
-		<a href = "../homePage" class="text-blue-600 hover:text-blue-800 underline">Click here to go back!</a>
-		</h2>
+	<button class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded" on:click={back}>
+		Zurück
+	</button>
 	</div>
+	
 </main>
