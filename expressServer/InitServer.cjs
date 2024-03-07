@@ -11,47 +11,66 @@ app.use(cors());
 
 // Konfiguration für die MySQL-Datenbank
 const db = knex({
-  client: 'mysql2',
-  connection: {
-    host: 'dankikarten.mysql.database.azure.com',
-    port: 3306,
-    user: 'louis',
-    password: 'GogoH1+5',
-    database: 'ankikarten',
-  },
+	client: 'mysql2',
+	connection: {
+		host: 'dankikarten.mysql.database.azure.com',
+		port: 3306,
+		user: 'louis',
+		password: 'GogoH1+5',
+		database: 'ankikarten'
+	}
 });
 
 app.use(express.json());
 
 app.get('/test', (req, res) => {
-  res.send('Hello from express server')
-})
+	res.send('Hello from express server');
+});
 
 app.get('/SelectTagNameFromTag', async (req, res) => {
-  const tags = await db.select('tagname').from('tag');
-  res.json(tags);
-})
+	const tags = await db.select('tagname').from('tag');
+	res.json(tags);
+});
 
 app.get('/SelectAllFromStack', async (req, res) => {
-  const stack = await db.select().from('stack');
-  res.json(stack);
-})
+	const stack = await db.select().from('stack');
+	res.json(stack);
+});
 
-app.post('/InsertCardBackCardFrontInCard', async(req,res) => {
-  const { front, back } = req.body; // Annahme: Die Werte für front und back kommen im Request Body an
-  console.log(req.body);
-  console.log(front);
-  // try {
-    const card = await db.insert({front: front, back: back}).into('card');
- 
-//   res.status(201).json({ message: 'Daten wurden erfolgreich eingefügt.' });
-// } catch (error) {
-//   console.error('Fehler beim Einfügen der Daten:', error);
-//   res.status(500).json({ error: 'Fehler beim Einfügen der Daten.' });
-// }
-})
+app.post('/InsertCardBackCardFrontInCard', async (req, res) => {
+	const { front, back } = req.body; // Annahme: Die Werte für front und back kommen im Request Body an
+	console.log(req.body);
+	console.log(front);
+	// try {
+	const card = await db.insert({ front: front, back: back }).into('card');
+
+	//   res.status(201).json({ message: 'Daten wurden erfolgreich eingefügt.' });
+	// } catch (error) {
+	//   console.error('Fehler beim Einfügen der Daten:', error);
+	//   res.status(500).json({ error: 'Fehler beim Einfügen der Daten.' });
+	// }
+});
+app.post('/addUser', async (req, res) => {
+	const { userData } = req.body;
+	console.log(req.body);
+	const requestData = req.body;
+	console.log(requestData.email);
+
+	const user = await db
+		.insert({
+			email: requestData.email,
+			username: requestData.username,
+			password: requestData.password
+		})
+		.into('user');
+
+	if (!user) {
+		res.status(500).json({ message: 'Fehler beim Einfügen der Daten.' });
+	}
+	res.status(201).json({ message: 'Daten wurden erfolgreich eingefügt.' });
+});
 
 //Muss am Schluss sein, da vor dem Starten erstmal alles definiert werden muss
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+	console.log(`Server is running on port ${PORT}`);
 });
