@@ -43,7 +43,7 @@
 <div class="container h-full mx-auto flex justify-center items-center space-y-160">
     <main class="bg-background-70 dark:bg-background-90 shadow-md rounded px-8 pt-6 pb-8 mb-4">
         <h1 class="text-4xl font-bold text-center text-primary-300 mb-8">Log in</h1>
-        <form action="login" method="post" class="space-y-6">
+        <form class="mt-8 space-y-6" action="#">
             <div>
                 <label for="email" class="block text-sm font-bold mb-2 text-text-300">Email</label>
                 <input type="email" id="email" name="email" required class="appearance-none border rounded w-full py-2 px-3 text-text-300 leading-tight focus:outline-none focus:shadow-outline" />
