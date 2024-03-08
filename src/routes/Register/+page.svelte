@@ -1,5 +1,5 @@
 <script>
-  async function handleSubmit() {
+  async function handleLogin() {
 
     let email = document.getElementById('email-address').value;
     let username = document.getElementById('username').value;
@@ -70,7 +70,7 @@
         </div>
   
         <div>
-          <button on:click={handleSubmit} class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-background-50 bg-primary-300 hover:bg-primary-350 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+          <button on:click={handleLogin} class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-background-50 bg-primary-300 hover:bg-primary-350 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
             Become a Member
           </button>
         </div>

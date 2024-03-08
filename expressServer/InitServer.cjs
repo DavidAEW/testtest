@@ -42,14 +42,8 @@ app.post('/InsertCardBackCardFrontInCard', async (req, res) => {
 	const { front, back } = req.body; // Annahme: Die Werte für front und back kommen im Request Body an
 	console.log(req.body);
 	console.log(front);
-	// try {
-	const card = await db.insert({ front: front, back: back }).into('card');
 
-	//   res.status(201).json({ message: 'Daten wurden erfolgreich eingefügt.' });
-	// } catch (error) {
-	//   console.error('Fehler beim Einfügen der Daten:', error);
-	//   res.status(500).json({ error: 'Fehler beim Einfügen der Daten.' });
-	// }
+	const card = await db.insert({ front: front, back: back }).into('card');
 });
 
 app.get('/getUser', async (req, res) => {
@@ -79,7 +73,7 @@ app.post('/login', async (req, res) => {
 		const comparePassword = await argon2.verify(user.password, password); //-> dann das Passwort vergleichen
 
 		if (comparePassword) {
-			res.json({ message: 'Erfolgreich eingeloggt.' });
+			res.status(201).json({ message: 'Login erfolgreich.' });
 		} else {
 			res.status(400).json({ message: 'Falsches Passwort.' });
 		}
