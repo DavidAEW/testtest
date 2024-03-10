@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3001;
 app.use(
 	cors({
 		credentials: true, // -> damit Cookies gesetzt werden können
-		origin: ['http://localhost:3001', 'http://localhost:5173'] // -> erlaubte Origin
+		origin: true // -> erlaubte Origin -> für testzweck erst mal alles
 	})
 );
 
@@ -56,16 +56,29 @@ app.post('/InsertCardBackCardFrontInCard', async (req, res) => {
 	const card = await db.insert({ front: front, back: back }).into('card');
 });
 
-app.get('user', async (req, res) => {
-	const cookie = req.cookies['jwt'];
-	const claims = jwt.verify(cookie, process.env.JWT_SECRET_KEY);
+app.get('/user', async (req, res) => {
+	try {
+		const cookie = req.cookies['jwt'];
+		const claims = jwt.verify(cookie, 'M3nPLTaRjn3cQnP4vKx1wllUYxZUzSJzJeV8YIfEeMs');
 
-	if (!claims) {
-		return res.status(401).json({ message: 'Nicht authorisiert' });
+		// Stelle sicher, dass claims vorhanden sind
+		if (!claims) {
+			return res.status(401).json({ message: 'Nicht autorisiert' });
+		}
+
+		// um Benutzerdaten zu abrufen
+		const user = await db('user').where({ userid: claims.userid }).first();
+		if (!user) {
+			return res.status(404).json({ message: 'Benutzer nicht gefunden.' });
+		}
+
+		// Entferne das Passwort aus der Antwort wir wollen pw nicht anzeigen lassen
+		const { password, ...data } = user;
+		res.json(data);
+	} catch (error) {
+		console.error('Fehler beim Abrufen des Benutzers:', error);
+		res.status(500).json({ message: 'Serverfehler' });
 	}
-	const user = await user.findOne({ where: { userid: claims.userid } });
-	const { password, ...data } = await user.toJSON();
-	res.json(data);
 });
 
 app.post('/logout', (req, res) => {

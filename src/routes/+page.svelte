@@ -30,6 +30,9 @@
         if (response.ok) {
           // Login erfolgreich
           console.log('Login erfolgreich.');
+         
+          window.location.href = "/homePage";
+          
         } else {
           // Fehlerbehandlung
           console.error('Login fehlgeschlagen.');

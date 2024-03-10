@@ -29,7 +29,8 @@
       if (response.ok) {
         // Registrierung erfolgreich
         console.log('Registrierung erfolgreich.');
-        // Weiterleitung oder Anzeige einer Erfolgsmeldung
+        
+       
       } else {
         // Fehlerbehandlung
         console.error('Registrierung fehlgeschlagen.');
