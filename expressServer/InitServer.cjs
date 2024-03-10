@@ -4,11 +4,21 @@ const express = require('express');
 const knex = require('knex');
 const cors = require('cors'); // Importiere das cors-Modul
 const argon2 = require('argon2'); // Für das Hashen von Passwörtern
+const jwt = require('jsonwebtoken'); // Für das Erstellen von JSON Web Tokens
+const cookieParser = require('cookie-parser'); // Für das Verarbeiten von Cookies
+require('dotenv').config(); // Lädt die .env-
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 // Aktiviere CORS für alle Anfragen
-app.use(cors());
+app.use(
+	cors({
+		credentials: true, // -> damit Cookies gesetzt werden können
+		origin: ['http://localhost:3001', 'http://localhost:5173'] // -> erlaubte Origin
+	})
+);
+
+app.use(cookieParser()); //-> Cookies verarbeiten z.B. req.cookies["jwt"]
 
 // Konfiguration für die MySQL-Datenbank
 const db = knex({
@@ -46,6 +56,23 @@ app.post('/InsertCardBackCardFrontInCard', async (req, res) => {
 	const card = await db.insert({ front: front, back: back }).into('card');
 });
 
+app.get('user', async (req, res) => {
+	const cookie = req.cookies['jwt'];
+	const claims = jwt.verify(cookie, process.env.JWT_SECRET_KEY);
+
+	if (!claims) {
+		return res.status(401).json({ message: 'Nicht authorisiert' });
+	}
+	const user = await user.findOne({ where: { userid: claims.userid } });
+	const { password, ...data } = await user.toJSON();
+	res.json(data);
+});
+
+app.post('/logout', (req, res) => {
+	res.clearCookie('jwt', '', { maxAge: 0 });
+	res.send('Erfolgreich ausgeloggt');
+});
+
 app.get('/getUser', async (req, res) => {
 	const userInfo = await db.select('username', 'email').from('user');
 	res.json(userInfo);
@@ -67,12 +94,28 @@ app.post('/login', async (req, res) => {
 	try {
 		const user = await db.select('*').from('user').where('email', email).first(); //-> erst mal nach email suchen
 		if (!user) {
-			return res.status(400).json({ message: 'Email nicht gefunden.' });
+			return res.status(400).json({ message: 'Benutzer nicht gefunden.' });
 		}
 
 		const comparePassword = await argon2.verify(user.password, password); //-> dann das Passwort vergleichen
 
 		if (comparePassword) {
+			//-> wenn das Passwort auch stimmt, dann Token erstellen
+			const secretKey = process.env.JWT_SECRET_KEY;
+			console.log(secretKey);
+
+			const tocken = jwt.sign(
+				{ userid: user.userid, email: user.email },
+				'M3nPLTaRjn3cQnP4vKx1wllUYxZUzSJzJeV8YIfEeMs'
+			);
+
+			console.log(tocken);
+			res.cookie('jwt', tocken, {
+				httpOnly: true,
+				secure: true,
+				maxAge: 24 * 60 * 60 * 1000, // ein Tag
+				sameSite: 'none'
+			});
 			res.status(201).json({ message: 'Login erfolgreich.' });
 		} else {
 			res.status(400).json({ message: 'Falsches Passwort.' });
@@ -100,7 +143,13 @@ app.post('/addUser', async (req, res) => {
 			return res.status(400).json({ message: 'Benutzername oder E-Mail existiert bereits.' });
 		}
 
-		const hashedPassword = await argon2.hash(password); //-> Passwort hashen
+		const hashedPassword = await argon2.hash(password, {
+			//-> Passwort hashen
+			type: argon2.argon2id,
+			memoryCost: 2 ** 16, // 64 MB
+			timeCost: 3,
+			parallelism: 1
+		});
 
 		// sonst normal hinzufügen
 		const newUser = await db

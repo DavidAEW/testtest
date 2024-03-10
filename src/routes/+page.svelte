@@ -13,12 +13,12 @@
   
       console.log('Daten:', userData);
       const url = "http://localhost:3001";
-      const endpoint = "/login/";  
+      const endpoint = "/login";  
       const endpointURL= url + endpoint;
       console.log(endpointURL);   
 
       try {
-        const response = await fetch("http://localhost:3001/login/", {
+        const response = await fetch(endpointURL, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
