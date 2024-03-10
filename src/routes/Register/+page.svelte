@@ -1,6 +1,7 @@
 <script>
-  async function handleLogin() {
+  async function handleRegister() {
 
+    event.preventDefault(); // Verhindert das standard submit Verhalten
     let email = document.getElementById('email-address').value;
     let username = document.getElementById('username').value;
     let password = document.getElementById('password').value;
@@ -52,7 +53,7 @@
           </a> if you already have an account.
         </p>
       </div>
-      <form class="mt-8 space-y-6" action="#" >
+      <form class="mt-8 space-y-6" on:submit|preventDefault={handleRegister}>
         <input type="hidden" name="remember" value="true">
         <div class="rounded-md shadow-sm -space-y-px">
           <div>
@@ -70,9 +71,9 @@
         </div>
   
         <div>
-          <button on:click={handleLogin} class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-background-50 bg-primary-300 hover:bg-primary-350 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+          <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-background-50 bg-primary-300 hover:bg-primary-350 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
             Become a Member
-          </button>
+        </button>
         </div>
       </form>
     </div>
