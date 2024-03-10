@@ -101,13 +101,9 @@ app.post('/login', async (req, res) => {
 
 		if (comparePassword) {
 			//-> wenn das Passwort auch stimmt, dann Token erstellen
-			const secretKey = process.env.JWT_SECRET_KEY;
-			console.log(secretKey);
 
-			const tocken = jwt.sign(
-				{ userid: user.userid, email: user.email },
-				'M3nPLTaRjn3cQnP4vKx1wllUYxZUzSJzJeV8YIfEeMs'
-			);
+			const secretKey = 'M3nPLTaRjn3cQnP4vKx1wllUYxZUzSJzJeV8YIfEeMs'; //generated secret key
+			const tocken = jwt.sign({ userid: user.userid, email: user.email }, secretKey);
 
 			console.log(tocken);
 			res.cookie('jwt', tocken, {
