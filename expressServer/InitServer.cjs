@@ -4,8 +4,10 @@ const express = require('express');
 const knex = require('knex');
 const cors = require('cors'); // Importiere das cors-Modul
 
+require('dotenv').config()
+
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = 3001;
 // Aktiviere CORS für alle Anfragen
 app.use(cors());
 
@@ -13,11 +15,11 @@ app.use(cors());
 const db = knex({
   client: 'mysql2',
   connection: {
-    host: 'dankikarten.mysql.database.azure.com',
-    port: 3306,
-    user: 'louis',
-    password: 'GogoH1+5',
-    database: 'ankikarten',
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
   },
 });
 
@@ -39,16 +41,12 @@ app.get('/SelectAllFromStack', async (req, res) => {
 
 app.post('/InsertCardBackCardFrontInCard', async(req,res) => {
   const { front, back } = req.body; // Annahme: Die Werte für front und back kommen im Request Body an
-  console.log(req.body);
-  console.log(front);
-  // try {
     const card = await db.insert({front: front, back: back}).into('card');
- 
-//   res.status(201).json({ message: 'Daten wurden erfolgreich eingefügt.' });
-// } catch (error) {
-//   console.error('Fehler beim Einfügen der Daten:', error);
-//   res.status(500).json({ error: 'Fehler beim Einfügen der Daten.' });
-// }
+})
+
+app.post('/InsertUsers', async(req,res) => {
+  const {username, email, passwort} = req.body;
+  const user = await db.insert({username: username, email:email, passwort: passwort}).into('user');
 })
 
 //Muss am Schluss sein, da vor dem Starten erstmal alles definiert werden muss
