@@ -77,6 +77,15 @@
 			alert("Fehler beim Senden der Daten. Bitte versuchen Sie es erneut.");
 		}
 	}
+	function handleInput(event) {
+		const textarea = event.target;
+		if (textarea.value.length > 100) { // Adjust the limit as needed
+			textarea.style.height = 'auto';
+			textarea.style.height = textarea.scrollHeight + 'px';
+		} else {
+			textarea.style.height = 'auto';
+		}
+	}
 
 </script>
 
@@ -118,7 +127,7 @@
 	<div class="container h-full mx-auto flex justify-center items-center mt-4">
 		<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6 ">
 			<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Vorderseite</h2>
-			<textarea class="dark:bg-primary-60 dark:text-primary-400 border border-gray-300 p-2 w-full h-32 text-primary-900" placeholder="Geben Sie Ihren Text hier ein" bind:value={userInputFront}></textarea>
+			<textarea class="dark:bg-primary-60 dark:text-primary-400 border border-gray-300 p-2 w-full text-primary-900" placeholder="Geben Sie Ihren Text hier ein" bind:value={userInputFront} on:input={handleInput}></textarea>
 
 		</div>
 	</div>
@@ -126,12 +135,12 @@
 	<div class="container h-full mx-auto flex justify-center items-center mt-4">
 		<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
 			<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Rückseite</h2>
-			<textarea class="dark:bg-primary-60 border border-gray-300 p-2 w-full h-32 text-primary-900 dark:text-primary-400" placeholder="Geben Sie Ihren Text hier ein" bind:value={userInputBack}></textarea>
+			<textarea class="dark:bg-primary-60 dark:text-primary-400 border border-gray-300 p-2 w-full text-primary-900" placeholder="Geben Sie Ihren Text hier ein" bind:value={userInputBack} on:input={handleInput}></textarea>
 		</div>
 
 	</div>
 
-	<div class="flex justify-center mt-5">
+	<div class="flex justify-center mt-5 mb-5">
 		<button class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded">
 			+
 		</button>
