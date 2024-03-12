@@ -1,6 +1,6 @@
 <!--- Study --->
 <script>
-	let frontsite = "Frontseite";
+	let frontsite = "VorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfh";
 	let backsite = "Backseite";
 	let showBack = false;
 	function toggleBack() {
@@ -16,7 +16,7 @@
 	<div class="container h-full mx-auto flex justify-center items-center mt-4">
 		<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6 ">
 			<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Vorderseite</h2>
-			<div class="border border-gray-300 p-2 w-full h-40 rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60">
+			<div class="border overflow-wrap: break-words border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60">
 				{frontsite}
 			</div>
 		</div>
@@ -33,7 +33,7 @@
 		<div class="container h-full mx-auto flex justify-center items-center mt-4">
 			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6 ">
 				<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Rückseite</h2>
-				<div class="border border-gray-300 p-2 w-full h-40 rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60">
+				<div class="border border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60">
 					{backsite}
 				</div>
 			</div>
