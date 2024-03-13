@@ -1,7 +1,6 @@
 <!--- Study --->
 <script>
-	let frontsite = "VorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfhVorderseitedafdakfhlakdfhkjadhfjkahdfkjhadklfjhakdlfh";
-	let backsite = "Backseite";
+import { onMount } from 'svelte';
 	let showBack = false;
 	function toggleBack() {
 		showBack = !showBack;
@@ -9,7 +8,20 @@
 	function back() {
 		window.location.href = "/homePage";
 	}
+	let cardData = null;
 
+	async function fetchCard() {
+		const response = await fetch('/GetRandomCardWithCardStatus0');
+		const data = await response.json();
+		cardData = data;
+	}
+
+	let frontsite = cardData?.frontsite;
+	let backsite = cardData?.backsite;
+
+	onMount(async () => {
+		await fetchCard();
+	});
 </script>
 <main>
 
