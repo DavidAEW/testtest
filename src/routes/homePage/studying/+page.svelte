@@ -47,6 +47,7 @@ async function updateCardStatus(cardId) {
 
 	console.log('Card status updated successfully!');
 	// You can optionally fetch a new card here
+	window.location.reload();
 	getOptions();
 }
 
@@ -58,7 +59,7 @@ onMount(getOptions);
 
 </script>
 <main>
-	{#if !error && cardData}
+
 	<div class="container h-full mx-auto flex justify-center items-center mt-4">
 		<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6 ">
 			<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Vorderseite</h2>
@@ -67,7 +68,7 @@ onMount(getOptions);
 			</div>
 		</div>
 	</div>
-	{/if}
+
 	{#if error}
 		<div class="container h-full mx-auto flex justify-center items-center mt-4">
 			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
