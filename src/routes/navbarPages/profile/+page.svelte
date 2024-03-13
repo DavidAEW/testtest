@@ -27,6 +27,25 @@
 		console.error('Fehler:', error);
 	  }
 	}
+
+	// logout 
+	async function logout() {
+	  const url = "http://localhost:3001/logout";
+	  try {
+		const response = await fetch(url, {
+		  method: 'POST',
+		  credentials: "include"
+		});
+		if (response.ok) {
+			window.location.href = "/";
+		  console.log('Erfolgreich ausgeloggt');
+		} else {
+		  console.error('Logout fehlgeschlagen.');
+		}
+	  } catch (error) {
+		console.error('Fehler beim Ausloggen:', error);
+	  }
+	}
   </script>
   
   
@@ -38,7 +57,12 @@
   
 		<div id="emailDisplay">E-Mail: </div>
 		<div id="usernameDisplay">Benutzername: </div>
-  
+		<div class="text-center mt-8">
+			<button on:click={logout} class="px-6 py-2 hover:bg-primary-90 dark:bg-primary-200 rounded-full">
+				Logout
+			</button>
+		</div>
+		
 		
 	  </div>
 	</div>
