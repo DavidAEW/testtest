@@ -25,11 +25,11 @@ app.use(cookieParser()); //-> Cookies verarbeiten z.B. req.cookies["jwt"]
 const db = knex({
 	client: 'mysql2',
 	connection: {
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE,
+		host: process.env.DB_HOST,
+		port: process.env.DB_PORT,
+		user: process.env.DB_USER,
+		password: process.env.DB_PASSWORD,
+		database: process.env.DB_DATABASE
 	}
 });
 
@@ -60,7 +60,7 @@ app.post('/InsertCardBackCardFrontInCard', async (req, res) => {
 app.get('/user', async (req, res) => {
 	try {
 		const cookie = req.cookies['jwt'];
-		const claims = jwt.verify(cookie, 'M3nPLTaRjn3cQnP4vKx1wllUYxZUzSJzJeV8YIfEeMs');
+		const claims = jwt.verify(cookie, process.env.SECRET_KEY);
 
 		// Stelle sicher, dass claims vorhanden sind
 		if (!claims) {
@@ -116,8 +116,8 @@ app.post('/login', async (req, res) => {
 		if (comparePassword) {
 			//-> wenn das Passwort auch stimmt, dann Token erstellen
 
-			const secretKey = 'M3nPLTaRjn3cQnP4vKx1wllUYxZUzSJzJeV8YIfEeMs'; //generated secret key
-			const tocken = jwt.sign({ userid: user.userid, email: user.email }, secretKey);
+			const secretKey = process.env.SECRET_KEY; //generated secret key
+			const tocken = jwt.sign({ userid: user.userid, email: user.email }, process.env.SECRET_KEY);
 
 			console.log(tocken);
 			res.cookie('jwt', tocken, {

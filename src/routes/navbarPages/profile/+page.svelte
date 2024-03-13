@@ -34,11 +34,7 @@
 	<div class="container h-full mx-auto flex justify-center items-center my-4">
 	  <div class="space-y-5">
 		<h1>Profile Page</h1>
-		<p>
-		  <a href="../homePage" class="text-blue-600 hover:text-blue-800 underline mb-8">
-			Click here to go back!
-		  </a>
-		</p>
+		
   
 		<div id="emailDisplay">E-Mail: </div>
 		<div id="usernameDisplay">Benutzername: </div>
