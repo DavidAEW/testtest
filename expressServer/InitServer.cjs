@@ -74,6 +74,7 @@ app.put('/UpdateCardStatus', async (req, res) => {
 });
 
 
+
 app.post('/InsertCardBackCardFrontInCard', async(req,res) => {
   const { front, back } = req.body; // Annahme: Die Werte für front und back kommen im Request Body an
   console.log(req.body);

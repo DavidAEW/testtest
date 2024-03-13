@@ -40,6 +40,7 @@ async function updateCardStatus(cardId) {
 	});
 
 	if (!response.ok) {
+		window.location.reload();
 		console.error('Error updating card status:', await response.text());
 		return;
 	}
@@ -49,6 +50,7 @@ async function updateCardStatus(cardId) {
 	getOptions();
 }
 
+
 onMount(getOptions);
 
 
@@ -56,7 +58,7 @@ onMount(getOptions);
 
 </script>
 <main>
-
+	{#if !error && cardData}
 	<div class="container h-full mx-auto flex justify-center items-center mt-4">
 		<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6 ">
 			<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Vorderseite</h2>
@@ -65,6 +67,26 @@ onMount(getOptions);
 			</div>
 		</div>
 	</div>
+	{/if}
+	{#if error}
+		<div class="container h-full mx-auto flex justify-center items-center mt-4">
+			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
+				<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Fehler!</h2>
+				<div class="border overflow-wrap: break-words border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60">
+					{error} </div>
+			</div>
+		</div>
+	{/if}
+	{#if !cardData}
+		<div class="container h-full mx-auto flex justify-center items-center mt-4">
+			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
+				<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Keine Karte mit Status 0 gefunden!</h2>
+				<div class="border overflow-wrap: break-words border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60">
+					Es gibt im Moment keine Karte, die du lernen kannst. Lege im Backend (z. B. per Express-API) neue Karten an oder ändere den Status vorhandener Karten.
+				</div>
+			</div>
+		</div>
+	{/if}
 
 	<div class="container h-full mx-auto flex justify-center items-center mt-4">
 
