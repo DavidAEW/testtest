@@ -9,19 +9,51 @@ import { onMount } from 'svelte';
 		window.location.href = "/homePage";
 	}
 	let cardData = null;
+	let error = null;
 
-	async function fetchCard() {
-		const response = await fetch('/GetRandomCardWithCardStatus0');
-		const data = await response.json();
+async function getOptions() {
+	const API_URL = "http://localhost:3001/GetRandomCardWithStatus0"; // Ersetzen Sie dies mit Ihrer tatsächlichen API-URL
+
+	const response = await fetch(API_URL);
+	const data = await response.json();
+	console.log(data);
+
+	if (response.ok) {
 		cardData = data;
+	} else {
+		error = data.error;
+	}
+}
+async function updateCardStatus(cardId) {
+	const API_URL = `http://localhost:3001/UpdateCardStatus`; // Update URL with your endpoint
+
+	const response = await fetch(API_URL, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			front: cardData.front,
+			back: cardData.back,
+			newCardStatus: 1 // Set status to 1 (learned)
+		})
+	});
+
+	if (!response.ok) {
+		console.error('Error updating card status:', await response.text());
+		return;
 	}
 
-	let frontsite = cardData?.frontsite;
-	let backsite = cardData?.backsite;
+	console.log('Card status updated successfully!');
+	// You can optionally fetch a new card here
+	getOptions();
+}
 
-	onMount(async () => {
-		await fetchCard();
-	});
+onMount(getOptions);
+
+
+
+
 </script>
 <main>
 
@@ -29,7 +61,7 @@ import { onMount } from 'svelte';
 		<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6 ">
 			<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Vorderseite</h2>
 			<div class="border overflow-wrap: break-words border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60">
-				{frontsite}
+				{cardData?.front}
 			</div>
 		</div>
 	</div>
@@ -46,13 +78,13 @@ import { onMount } from 'svelte';
 			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6 ">
 				<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Rückseite</h2>
 				<div class="border border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60">
-					{backsite}
+					{cardData?.back}
 				</div>
 			</div>
 		</div>
 		<div class="container h-full mx-auto flex justify-center items-center mt-4">
 
-			<button class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16">
+			<button class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16" on:click={() => updateCardStatus(cardData.id)}>
 				gelernt
 			</button>
 			<button class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16">

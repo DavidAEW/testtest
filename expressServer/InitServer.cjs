@@ -54,6 +54,25 @@ app.get('/GetRandomCardWithStatus0', async (req, res) => {
     res.status(500).send('Error retrieving card');
   }
 });
+app.put('/UpdateCardStatus', async (req, res) => {
+  const { front, back, newCardStatus } = req.body;
+
+  try {
+    const updatedCard = await db('card')
+      .where({ front, back })
+      .update({ cardstatus: newCardStatus });
+
+    if (updatedCard) {
+      res.status(200).json({ message: 'Kartenstatus erfolgreich aktualisiert.' });
+    } else {
+      res.status(404).json({ message: 'Keine Karte gefunden.', error: true });
+    }
+  } catch (error) {
+    console.error('Fehler beim Aktualisieren des Kartenstatus:', error);
+    res.status(500).json({ error: 'Fehler beim Aktualisieren des Kartenstatus.' });
+  }
+});
+
 
 app.post('/InsertCardBackCardFrontInCard', async(req,res) => {
   const { front, back } = req.body; // Annahme: Die Werte für front und back kommen im Request Body an
