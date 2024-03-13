@@ -45,6 +45,25 @@ app.get('/SelectAllFromCard', async (req, res) => {
   res.json(deck);
 })
 
+app.get('/GetRandomCardWithStatus0', async (req, res) => {
+  try {
+    const card = await db('card')
+      .where('cardstatus', 0)
+      .orderByRaw('RAND()')
+      .first()
+      .select('front', 'back');
+
+    if (card) {
+      res.json(card);
+    } else {
+      res.status(404).send('No card found with status 0');
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error retrieving card');
+  }
+});
+
 app.post('/InsertCardBackCardFrontInCard', async(req,res) => {
   const { front, back, stackid } = req.body; // Annahme: Die Werte für front und back kommen im Request Body an
   console.log(req.body);
