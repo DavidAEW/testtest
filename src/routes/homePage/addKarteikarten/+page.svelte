@@ -112,6 +112,7 @@
 
 					on:change={handleChange}
 				>
+					<option value="">Deck auswählen</option>
 					{#each options as option}
 						<option value="{option.value}">{option.label}</option>
 					{/each}
