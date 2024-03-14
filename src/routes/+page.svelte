@@ -1,7 +1,7 @@
 <!-- Log in page -->
 
 <script>
-    async function handleSubmit() {
+    async function handleSubmit(event) {
       event.preventDefault(); // Verhindert das Neuladen der Seite
       let email = document.getElementById('email').value;
       let password = document.getElementById('password').value;

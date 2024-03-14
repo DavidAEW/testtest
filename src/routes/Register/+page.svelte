@@ -29,6 +29,7 @@
       if (response.ok) {
         // Registrierung erfolgreich
         console.log('Registrierung erfolgreich.');
+        window.location.href = "/";
         
        
       } else {
