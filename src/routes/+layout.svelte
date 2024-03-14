@@ -95,11 +95,4 @@
 		<Navigation />
 	</svelte:fragment>
 	<slot />
-	<svelte:fragment slot="pageFooter">
-		<div class="flex justify-center items-center bg-background-300 text-background-50">
-			<ul class="text-sm">
-				<li>Legal</li>
-			</ul>
-		</div>
-	</svelte:fragment>
 </AppShell>
