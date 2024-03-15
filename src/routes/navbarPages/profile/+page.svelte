@@ -5,6 +5,9 @@
 	  getUserInfo();
 	});
 	
+let name =""
+let email = ""
+
 	async function getUserInfo() {
 	  const url = "http://localhost:3001/user/";
 	  try {
@@ -18,8 +21,8 @@
 		
 		if (response.ok) {
 		  const userData = await response.json();
-		  document.getElementById('emailDisplay').textContent = `E-Mail: ${userData.email}`;
-		  document.getElementById('usernameDisplay').textContent = `Benutzername: ${userData.username}`;
+		  name = userData.username
+		  email = userData.email
 		} else {
 		  console.error('Fehler beim Abrufen der Benutzerdaten.');
 		}
@@ -55,8 +58,8 @@
 		<h1>Profile Page</h1>
 		
   
-		<div id="emailDisplay">E-Mail: </div>
-		<div id="usernameDisplay">Benutzername: </div>
+		<div>E-Mail: {email}</div>
+		<div>Benutzername: {name} </div>
 		<div class="text-center mt-8">
 			<button on:click={logout} class="px-6 py-2 hover:bg-primary-90 dark:bg-primary-200 rounded-full">
 				Logout
