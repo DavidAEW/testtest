@@ -36,62 +36,58 @@ const db = knex({
 app.use(express.json());
 
 app.get('/test', (req, res) => {
-
 	res.send('Hello from express server');
 });
 
-
 app.get('/hallosvenja', (req, res) => {
-  res.send('Hello David from express server')
-})
+	res.send('Hello David from express server');
+});
 app.get('/SelectTagNameFromTag', async (req, res) => {
 	const tags = await db.select('tagname').from('tag');
 	res.json(tags);
 });
 
 app.get('/SelectAllFromStack', async (req, res) => {
-
-  const stack = await db.select().from('stack');
-  res.json(stack);
-})
-
-app.get('/SelectAllFromCard', async (req, res) => {
-  const deck = await db.select().from('card');
-  res.json(deck);
-})
-
-app.get('/GetRandomCardWithStatus0', async (req, res) => {
-  try {
-    const card = await db('card')
-      .where('cardstatus', 0)
-      .orderByRaw('RAND()')
-      .first()
-      .select('front', 'back');
-
-    if (card) {
-      res.json(card);
-    } else {
-      res.status(404).send('No card found with status 0');
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Error retrieving card');
-  }
+	const stack = await db.select().from('stack');
+	res.json(stack);
 });
 
-app.post('/InsertCardBackCardFrontInCard', async(req,res) => {
-  const { front, back, stackid } = req.body; // Annahme: Die Werte für front und back kommen im Request Body an
-  console.log(req.body);
-  console.log(front);
-  // try {
-    const card = await db.insert({front: front, back: back, stackid: stackid }).into('card');
- 
-//   res.status(201).json({ message: 'Daten wurden erfolgreich eingefügt.' });
-// } catch (error) {
-//   console.error('Fehler beim Einfügen der Daten:', error);
-//   res.status(500).json({ error: 'Fehler beim Einfügen der Daten.' });
-// }
-})
+app.get('/SelectAllFromCard', async (req, res) => {
+	const deck = await db.select().from('card');
+	res.json(deck);
+});
+
+app.get('/GetRandomCardWithStatus0', async (req, res) => {
+	try {
+		const card = await db('card')
+			.where('cardstatus', 0)
+			.orderByRaw('RAND()')
+			.first()
+			.select('front', 'back');
+
+		if (card) {
+			res.json(card);
+		} else {
+			res.status(404).send('No card found with status 0');
+		}
+	} catch (error) {
+		console.error(error);
+		res.status(500).send('Error retrieving card');
+	}
+});
+
+app.post('/InsertCardBackCardFrontInCard', async (req, res) => {
+	const { front, back, stackid } = req.body; // Annahme: Die Werte für front und back kommen im Request Body an
+	console.log(req.body);
+	console.log(front);
+	// try {
+	const card = await db.insert({ front: front, back: back, stackid: stackid }).into('card');
+
+	//   res.status(201).json({ message: 'Daten wurden erfolgreich eingefügt.' });
+	// } catch (error) {
+	//   console.error('Fehler beim Einfügen der Daten:', error);
+	//   res.status(500).json({ error: 'Fehler beim Einfügen der Daten.' });
+	// }
 
 	const stack = await db.select().from('stack');
 	res.json(stack);
@@ -229,7 +225,6 @@ app.post('/addUser', async (req, res) => {
 		res.status(500).json({ message: 'Serverfehler beim Hinzufügen des Benutzers.' });
 	}
 });
-
 
 //Muss am Schluss sein, da vor dem Starten erstmal alles definiert werden muss
 app.listen(PORT, () => {
