@@ -53,8 +53,8 @@ app.get('/SelectAllFromStack', async (req, res) => {
 });
 
 app.get('/SelectAllFromCard', async (req, res) => {
-	const deck = await db.select().from('card');
-	res.json(deck);
+	const data = await db.select().from('card');
+	res.json(data);
 });
 
 app.get('/GetRandomCardWithStatus0', async (req, res) => {
@@ -225,6 +225,8 @@ app.post('/addUser', async (req, res) => {
 		res.status(500).json({ message: 'Serverfehler beim Hinzufügen des Benutzers.' });
 	}
 });
+
+
 
 //Muss am Schluss sein, da vor dem Starten erstmal alles definiert werden muss
 app.listen(PORT, () => {
