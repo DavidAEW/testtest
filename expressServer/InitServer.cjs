@@ -35,13 +35,96 @@ const db = knex({
 
 app.use(express.json());
 
-app.get('/test', (req, res) => {
-	res.send('Hello from express server');
+app.post('/login', async (req, res) => {
+	const { email, password } = req.body;
+	try {
+		const user = await db.select('*').from('user').where('email', email).first(); //-> erst mal nach email suchen
+		if (!user) {
+			return res.status(400).json({ message: 'Benutzer nicht gefunden.' });
+		}
+
+		const comparePassword = await argon2.verify(user.password, password); //-> dann das Passwort vergleichen
+
+		if (comparePassword) {
+			//-> wenn das Passwort auch stimmt, dann Token erstellen
+			const tocken = jwt.sign({ userid: user.userid, email: user.email }, process.env.SECRET_KEY);
+			res.cookie('jwt', tocken, {
+				httpOnly: true,
+				maxAge: 24 * 60 * 60 * 1000 // ein Tag
+			});
+			res.status(201).json({ message: 'Login erfolgreich.' });
+		} else {
+			res.status(400).json({ message: 'Falsches Passwort.' });
+		}
+	} catch (error) {
+		console.error('Fehler beim Einloggen:', error);
+		res.status(500).json({ message: 'Serverfehler beim Einloggen.' });
+	}
 });
 
-app.get('/hallosvenja', (req, res) => {
-	res.send('Hello David from express server');
+app.post('/addUser', async (req, res) => {
+	const { email, username, password } = req.body;
+
+	try {
+		// schau ob User schon existiert
+		const existingUser = await db
+			.select('*')
+			.from('user')
+			.where('email', email)
+			.orWhere('username', username)
+			.first();
+
+		// Wenn gleiche Email oder Username schon existiert, dann gebe Fehlermeldung zurück
+		if (existingUser) {
+			return res.status(400).json({ message: 'Benutzername oder E-Mail existiert bereits.' });
+		}
+
+		const hashedPassword = await argon2.hash(password, {
+			//-> Passwort hashen
+			type: argon2.argon2id,
+			memoryCost: 2 ** 16, // 64 MB
+			timeCost: 3,
+			parallelism: 1
+		});
+
+		// sonst normal hinzufügen
+		const newUser = await db
+			.insert({
+				email: email,
+				username: username,
+				password: hashedPassword
+			})
+			.into('user');
+
+		// Überprüfe, ob Post erfolgreich war
+		if (newUser) {
+			res.status(201).json({ message: 'Neuer Benutzer erfolgreich hinzugefügt.' });
+		} else {
+			res.status(500).json({ message: 'Unbekannter Fehler beim Hinzufügen des Benutzers.' });
+		}
+	} catch (error) {
+		console.error('Fehler beim Hinzufügen des Benutzers:', error);
+		res.status(500).json({ message: 'Serverfehler beim Hinzufügen des Benutzers.' });
+	}
 });
+
+const authenticateJWT = (req, res, next) => {
+	const token = req.cookies['jwt'];
+
+	if (!token) {
+		return res.status(401).json({ message: 'Auth token is missing' });
+	}
+
+	jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+		if (err) {
+			return res.status(403).json({ message: 'Unauthorized. Invalid token.' });
+		}
+
+		req.user = user;
+		next();
+	});
+};
+
 app.get('/SelectTagNameFromTag', async (req, res) => {
 	const tags = await db.select('tagname').from('tag');
 	res.json(tags);
@@ -145,85 +228,6 @@ app.get('/getUser', async (req, res) => {
     }
 	]
 	*/
-});
-
-app.post('/login', async (req, res) => {
-	const { email, password } = req.body;
-	try {
-		const user = await db.select('*').from('user').where('email', email).first(); //-> erst mal nach email suchen
-		if (!user) {
-			return res.status(400).json({ message: 'Benutzer nicht gefunden.' });
-		}
-
-		const comparePassword = await argon2.verify(user.password, password); //-> dann das Passwort vergleichen
-
-		if (comparePassword) {
-			//-> wenn das Passwort auch stimmt, dann Token erstellen
-
-			const secretKey = process.env.SECRET_KEY; //generated secret key
-			const tocken = jwt.sign({ userid: user.userid, email: user.email }, process.env.SECRET_KEY);
-
-			console.log(tocken);
-			res.cookie('jwt', tocken, {
-				httpOnly: true,
-				secure: true,
-				maxAge: 24 * 60 * 60 * 1000, // ein Tag
-				sameSite: 'none'
-			});
-			res.status(201).json({ message: 'Login erfolgreich.' });
-		} else {
-			res.status(400).json({ message: 'Falsches Passwort.' });
-		}
-	} catch (error) {
-		console.error('Fehler beim Einloggen:', error);
-		res.status(500).json({ message: 'Serverfehler beim Einloggen.' });
-	}
-});
-
-app.post('/addUser', async (req, res) => {
-	const { email, username, password } = req.body;
-
-	try {
-		// schau ob User schon existiert
-		const existingUser = await db
-			.select('*')
-			.from('user')
-			.where('email', email)
-			.orWhere('username', username)
-			.first();
-
-		// Wenn gleiche Email oder Username schon existiert, dann gebe Fehlermeldung zurück
-		if (existingUser) {
-			return res.status(400).json({ message: 'Benutzername oder E-Mail existiert bereits.' });
-		}
-
-		const hashedPassword = await argon2.hash(password, {
-			//-> Passwort hashen
-			type: argon2.argon2id,
-			memoryCost: 2 ** 16, // 64 MB
-			timeCost: 3,
-			parallelism: 1
-		});
-
-		// sonst normal hinzufügen
-		const newUser = await db
-			.insert({
-				email: email,
-				username: username,
-				password: hashedPassword
-			})
-			.into('user');
-
-		// Überprüfe, ob Post erfolgreich war
-		if (newUser) {
-			res.status(201).json({ message: 'Neuer Benutzer erfolgreich hinzugefügt.' });
-		} else {
-			res.status(500).json({ message: 'Unbekannter Fehler beim Hinzufügen des Benutzers.' });
-		}
-	} catch (error) {
-		console.error('Fehler beim Hinzufügen des Benutzers:', error);
-		res.status(500).json({ message: 'Serverfehler beim Hinzufügen des Benutzers.' });
-	}
 });
 
 //Muss am Schluss sein, da vor dem Starten erstmal alles definiert werden muss

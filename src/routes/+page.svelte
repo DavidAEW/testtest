@@ -1,8 +1,9 @@
 <!-- Log in page -->
 
 <script>
-    async function handleSubmit(event) {
-      event.preventDefault(); // Verhindert das Neuladen der Seite
+ 
+    async function handleSubmit() {
+    
       let email = document.getElementById('email').value;
       let password = document.getElementById('password').value;
   
@@ -15,7 +16,7 @@
       const url = "http://localhost:3001";
       const endpoint = "/login/";  
       const endpointURL= url + endpoint;
-      console.log(endpointURL);   
+        
 
       try {
         const response = await fetch(endpointURL, {
