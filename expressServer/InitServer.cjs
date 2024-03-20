@@ -37,10 +37,12 @@ app.get('/SelectAllFromStack', async (req, res) => {
   res.json(stack);
 })
 
-app.get('/GetRandomCardWithStatus0', async (req, res) => {
+app.post('/GetRandomCardWithStatus', async (req, res) => {
+	const {cardStatus, stackId} = req.body; 
   try {
     const card = await db('card')
-      .where('cardstatus', 0)
+      .where('cardstatus', cardStatus)
+	  .where('stackid', stackId)
       .orderByRaw('RAND()')
       .first()
       .select('front', 'back');
