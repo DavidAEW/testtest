@@ -224,11 +224,9 @@ app.post('/addUser', async (req, res) => {
 		console.error('Fehler beim Hinzufügen des Benutzers:', error);
 		res.status(500).json({ message: 'Serverfehler beim Hinzufügen des Benutzers.' });
 	}
-});
-=======
   const stack = await db.select().from('stack');
   res.json(stack);
-})
+});
 
 app.get('/GetRandomCardWithStatus0', async (req, res) => {
   try {
