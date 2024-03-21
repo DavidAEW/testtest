@@ -1,0 +1,6 @@
+DB_HOST=dankikarten.mysql.database.azure.com
+DB_PORT=3306
+DB_USER=louis
+DB_PASSWORD=GogoH1+5
+DB_DATABASE=ankikarten
+SECRET_KEY=M3nPLTaRjn3cQnP4vKx1wllUYxZUzSJzJeV8YIfEeMs
