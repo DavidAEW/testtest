@@ -47,9 +47,12 @@ app.post('/login', async (req, res) => {
 
 		if (comparePassword) {
 			//-> wenn das Passwort auch stimmt, dann Token erstellen
-			const tocken = jwt.sign({ userid: user.userid, email: user.email }, process.env.SECRET_KEY);
+			const tocken = jwt.sign({ userid: user.userid, email: user.email }, process.env.SECRET_KEY, {
+				algorithm: 'HS256'
+			});
 			res.cookie('jwt', tocken, {
 				httpOnly: true,
+				secure: true,
 				maxAge: 24 * 60 * 60 * 1000 // ein Tag
 			});
 			res.status(201).json({ message: 'Login erfolgreich.' });
@@ -174,14 +177,6 @@ app.post('/InsertCardBackCardFrontInCard', async (req, res) => {
 
 	const stack = await db.select().from('stack');
 	res.json(stack);
-});
-
-app.post('/InsertCardBackCardFrontInCard', async (req, res) => {
-	const { front, back } = req.body; // Annahme: Die Werte für front und back kommen im Request Body an
-	console.log(req.body);
-	console.log(front);
-
-	const card = await db.insert({ front: front, back: back }).into('card');
 });
 
 app.get('/user', async (req, res) => {
