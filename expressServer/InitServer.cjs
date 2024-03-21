@@ -35,17 +35,36 @@ const db = knex({
 
 app.use(express.json());
 
+// Überprüfung der Datenbankverbindung
+db.raw('SELECT 1')
+  .then(() => {
+    console.log('Verbindung zur Datenbank hergestellt.');
+  })
+  .catch((err) => {
+    console.error('Fehler bei der Verbindung zur Datenbank:', err);
+    process.exit(1); // Beende den Server, wenn die Verbindung fehlschlägt
+  });
+
 app.get('/test', (req, res) => {
 	res.send('Hello from express server');
 });
 
-app.get('/hallosvenja', (req, res) => {
-	res.send('Hello David from express server');
-});
 app.get('/SelectTagNameFromTag', async (req, res) => {
-	const tags = await db.select('tagname').from('tag');
+	const tags = await db
+	.select('tagname')
+	.from('tag')
 	res.json(tags);
-});
+})
+
+app.post('/HinzufuegenTag', async(req,res) => {
+	const {tagname} = req.body;
+	const tag = await db.insert({tagname}).into('tag');
+})
+
+app.post('/LoeschenTag', async(req,res) => {
+	const {tagname} = req.body;
+	const tag = await db('tag').where('tagname', tagname).del();
+})
 
 app.get('/SelectAllFromStack', async (req, res) => {
 	const stack = await db.select().from('stack');
@@ -225,10 +244,6 @@ app.post('/addUser', async (req, res) => {
 		res.status(500).json({ message: 'Serverfehler beim Hinzufügen des Benutzers.' });
 	}
 });
-=======
-  const stack = await db.select().from('stack');
-  res.json(stack);
-})
 
 app.get('/GetRandomCardWithStatus0', async (req, res) => {
   try {
@@ -324,6 +339,10 @@ app.post('/InsertCardBackCardFrontInCard', async(req,res) => {
 
 
 //Muss am Schluss sein, da vor dem Starten erstmal alles definiert werden muss
-app.listen(PORT, () => {
-	console.log(`Server is running on port ${PORT}`);
-});
+app.listen(PORT, (error) =>{ 
+	if(!error) 
+		console.log("Express Server wurde gestartet auf Port "+ PORT) 
+	else 
+		console.log("Express Server konnte nicht gestartet werden.", error); 
+	} 
+  ); 
