@@ -2,15 +2,24 @@
 <script>
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	const stackId = $page.params.stackid;
-	let cardStatus;
+	import { goto } from '$app/navigation';
+	let stackId = $page.params.stackid;
+	let cardStatus = $page.params.cardStatus;
+	let options = [];
+	const cardOptions = [
+		{ value: 0, label: 'neu' },
+		{ value: 1, label: 'etwas gelernt' },
+		{ value: 2, label: 'kann ich teilweise' },
+		{ value: 3, label: 'kann ich' }
+	];
 	let showBack = false;
 	console.log("stackId: "+stackId);
+	console.log("cardStatus: "+cardStatus);
 	function toggleBack() {
 		showBack = !showBack;
 	}
 	function back() {
-		window.location.href = '/homePage';
+		goto('/homePage');
 	}
 	let cardData = null;
 	let error = null;
@@ -29,25 +38,29 @@
 
 	async function getCards() {
 		const API_URL = 'http://localhost:3001/GetRandomCardWithStatus';
+try {
+	const response = await fetch(API_URL, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			cardStatus: Number(cardStatus),
+			stackId: Number(stackId)
+		})
+	});
+	const data = await response.json();
+	console.log(data);
 
-		const response = await fetch(API_URL, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				cardStatus: cardStatus,
-				stackId: Number(stackId)
-			})
-		});
-		const data = await response.json();
-		console.log(data);
-
-		if (response.ok) {
-			cardData = data;
-		} else {
-			error = data.error;
-		}
+	if (response.ok) {
+		cardData = data;
+	} else {
+		error = data.error;
+	}
+}catch(error) {
+	console.error('Fehler beim Laden der Karten:', error);
+	cardData = null;
+}
 	}
 	async function updateCardStatus(cardId) {
 		const API_URL = `http://localhost:3001/UpdateCardStatusTo1`;
@@ -65,15 +78,15 @@
 		});
 
 		if (!response.ok) {
-			window.location.reload();
+			//window.location.reload();
 			console.error('Error updating card status:', await response.text());
 			return;
 		}
 
 		console.log('Card status updated successfully!');
 		// You can optionally fetch a new card here
-		window.location.reload();
-		getCards();
+		//window.location.reload();
+		await getCards();
 	}
 
 	async function updateCardStatusTo2(cardId) {
@@ -92,15 +105,15 @@
 		});
 
 		if (!response.ok) {
-			window.location.reload();
+			//window.location.reload();
 			console.error('Error updating card status:', await response.text());
 			return;
 		}
 
 		console.log('Card status updated successfully!');
 		// You can optionally fetch a new card here
-		window.location.reload();
-		getCards();
+		//window.location.reload();
+		await getCards();
 	}
 
 	async function updateCardStatusTo3(cardId) {
@@ -119,25 +132,30 @@
 		});
 
 		if (!response.ok) {
-			window.location.reload();
+			//window.location.reload();
 			console.error('Error updating card status:', await response.text());
 			return;
 		}
 
 		console.log('Card status updated successfully!');
 		// You can optionally fetch a new card here
-		window.location.reload();
-		getCards();
+		//window.location.reload();
+		await getCards();
 	}
 
-	function handleChange(event) {
-		cardStatus = event.target.value;
+	async function handleChangeStatus(event) {
+		goto('/homePage/studying/'+stackId+'/'+event.target.value+'/');
 		console.log(cardStatus);
-		getCards();
+		await getCards();
+	}
+	async function handleChangeID(event) {
+		goto('/homePage/studying/'+event.target.value+'/'+cardStatus+'/');
+		console.log(cardStatus);
+		await getCards();
 	}
 
 	onMount(() => {
-		//getDecks();
+		getDecks();
 		getCards();
 	});
 </script>
@@ -145,16 +163,27 @@
 <main>
 
 	<div class="container h-full mx-auto flex justify-center items-center mt-4">
+		<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
+			<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Wähle deinen Stapel</h2>
+
+			<select class="border overflow-wrap: break-words border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60" bind:value={stackId} on:change={handleChangeID}>
+				{#each options as option}
+					<option value={option.value}>
+						{option.label}
+					</option>
+				{/each}
+			</select>
+		</div>
 	<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
 		<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Wähle deinen Status</h2>
 
-		<select class="border overflow-wrap: break-words border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60" on:change={handleChange}>
-			<option value="9">Wähle deinen Status</option>
-			<option value="0">neu</option>
-			<option value="1">etwas gelernt</option>
-			<option value="2">kann ich teilweise</option>
-			<option value="3">kann ich</option>
-		</select>
+		<select class="border overflow-wrap: break-words border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60" bind:value={cardStatus} on:change={handleChangeStatus}>
+				{#each cardOptions as option}
+					<option value={option.value}>
+						{option.label}
+					</option>
+				{/each}
+			</select>
 		</div>
 	</div>
 
