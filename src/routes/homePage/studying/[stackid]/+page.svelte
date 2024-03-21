@@ -14,7 +14,7 @@
 	}
 	let cardData = null;
 	let error = null;
-	let options = [];
+
 
 	async function getDecks() {
 		const API_URL = 'http://localhost:3001/SelectAllFromStack';
@@ -36,7 +36,7 @@
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				cardStatus: 0,
+				cardStatus: cardStatus,
 				stackId: Number(stackId)
 			})
 		});
@@ -129,32 +129,36 @@
 		window.location.reload();
 		getCards();
 	}
-	let selectedOption = '';
+
 	function handleChange(event) {
-		event.preventDefault();
-		selectedOption = event.target.value;
-		console.log(selectedOption);
+		cardStatus = event.target.value;
+		console.log(cardStatus);
+		getCards();
 	}
 
 	onMount(() => {
-		getDecks();
+		//getDecks();
 		getCards();
 	});
 </script>
 
 <main>
-	<div class="space-y-5">
-		<select
-			class="dark:bg-primary-60 bg-primary-0 border border-gray-200 text-primary-400 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-			on:change={handleChange}
-		>
-			<option value="">Deck auswählen</option>
-			{#each options as option}
-				<option value={option.value}>{option.label}</option>
-			{/each}
+
+	<div class="container h-full mx-auto flex justify-center items-center mt-4">
+	<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
+		<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Wähle deinen Status</h2>
+
+		<select class="border overflow-wrap: break-words border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60" on:change={handleChange}>
+			<option value="9">Wähle deinen Status</option>
+			<option value="0">neu</option>
+			<option value="1">etwas gelernt</option>
+			<option value="2">kann ich teilweise</option>
+			<option value="3">kann ich</option>
 		</select>
-		<a href="/homePage/studying/{selectedOption}" class="dark:bg-primary-200 bg-primary-0 border border-gray-200 text-primary-400 py-3 px-4 rounded-full focus:bg-white focus:border-gray-500">Start Studying</a>
+		</div>
 	</div>
+
+
 	<div class="container h-full mx-auto flex justify-center items-center mt-4">
 		<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
 			<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Vorderseite</h2>
