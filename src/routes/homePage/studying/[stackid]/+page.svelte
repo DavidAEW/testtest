@@ -73,7 +73,7 @@
 		console.log('Card status updated successfully!');
 		// You can optionally fetch a new card here
 		window.location.reload();
-		getOptions();
+		getCards();
 	}
 
 	async function updateCardStatusTo2(cardId) {
@@ -100,7 +100,7 @@
 		console.log('Card status updated successfully!');
 		// You can optionally fetch a new card here
 		window.location.reload();
-		getOptions();
+		getCards();
 	}
 
 	async function updateCardStatusTo3(cardId) {
@@ -127,7 +127,7 @@
 		console.log('Card status updated successfully!');
 		// You can optionally fetch a new card here
 		window.location.reload();
-		getOptions();
+		getCards();
 	}
 	let selectedOption = '';
 	function handleChange(event) {
@@ -137,7 +137,7 @@
 	}
 
 	onMount(() => {
-		getUserInfo();
+		getDecks();
 		getCards();
 	});
 </script>
