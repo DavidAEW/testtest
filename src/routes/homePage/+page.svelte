@@ -45,7 +45,7 @@
 				>
 			</li>
 			<li>Click here to go to
-				<a href="/homePage/studying" class="text-blue-600 hover:text-blue-800 underline"
+				<a href="/homePage/studying/2" class="text-blue-600 hover:text-blue-800 underline"
 					>routes/studying/+page.svelte</a
 				>
 			</li>
