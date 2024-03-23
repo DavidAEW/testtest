@@ -163,19 +163,20 @@ try {
 <main>
 
 	<div class="container h-full mx-auto flex justify-center items-center mt-4">
-		<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
-			<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Wähle deinen Stapel</h2>
+		<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6 flex-row flex">
 
-			<select class="border overflow-wrap: break-words border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60" bind:value={stackId} on:change={handleChangeID}>
+			<h2 class="font-bold mb-2 text-center text-primary-900 my-auto mr-2">Stapel</h2>
+
+			<select class="border overflow-wrap: break-words border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60 mr-4" bind:value={stackId} on:change={handleChangeID}>
 				{#each options as option}
 					<option value={option.value}>
 						{option.label}
 					</option>
 				{/each}
 			</select>
-		</div>
-	<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
-		<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Wähle deinen Status</h2>
+
+
+		<h2 class="font-bold mb-2 text-center text-primary-900 my-auto mr-2">Status</h2>
 
 		<select class="border overflow-wrap: break-words border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60" bind:value={cardStatus} on:change={handleChangeStatus}>
 				{#each cardOptions as option}
@@ -187,7 +188,23 @@ try {
 		</div>
 	</div>
 
+	{#if !cardData}
+		<div class="container h-full mx-auto flex justify-center items-center mt-4">
+			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
+				<h2 class="text-xl font-bold mb-2 text-center text-primary-900">
+					Glückwunsch, keine neue Karte gefunden!
+				</h2>
+				<div
+					class="border overflow-wrap: break-words border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60"
+				>
+					Du hast alle Karten mit diesem Status/in diesem Deck  gelernt! Füge neue Karten hinzu oder lerne alte Karten erneut,
+					um diese weiter zu festigen.
+				</div>
+			</div>
+		</div>
+	{/if}
 
+	{#if cardData}
 	<div class="container h-full mx-auto flex justify-center items-center mt-4">
 		<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
 			<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Vorderseite</h2>
@@ -199,33 +216,9 @@ try {
 		</div>
 	</div>
 
-	{#if error}
-		<div class="container h-full mx-auto flex justify-center items-center mt-4">
-			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
-				<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Fehler!</h2>
-				<div
-					class="border overflow-wrap: break-words border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60"
-				>
-					{error}
-				</div>
-			</div>
-		</div>
-	{/if}
-	{#if !cardData}
-		<div class="container h-full mx-auto flex justify-center items-center mt-4">
-			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
-				<h2 class="text-xl font-bold mb-2 text-center text-primary-900">
-					Glückwunsch, keine neue Karte gefunden!
-				</h2>
-				<div
-					class="border overflow-wrap: break-words border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60"
-				>
-					Du hast alle neuen Karten gelernt! Füge neue Karten hinzu oder lerne alte Karten erneut,
-					um diese weiter zu festigen.
-				</div>
-			</div>
-		</div>
-	{/if}
+
+
+
 
 	<div class="container h-full mx-auto flex justify-center items-center mt-4">
 		<button
@@ -235,6 +228,7 @@ try {
 			{showBack ? 'Antwort ausblenden' : 'Antwort zeigen'}
 		</button>
 	</div>
+	{/if}
 
 	{#if showBack}
 		<div class="container h-full mx-auto flex justify-center items-center mt-4">
