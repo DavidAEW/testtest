@@ -1,15 +1,15 @@
 import jwt from 'jsonwebtoken';
 import { redirect } from '@sveltejs/kit';
 import { SECRET_KEY } from '$env/static/private';
-// Wie man .env in Svelte hochlädt 
+// Wie man .env in Svelte hochlädt
 
 export async function handle({ event, resolve }) {
-	const openPath = '/' || '/Register'; // Der Pfad der Startseite = login 
+	const openPaths = ['/', '/Register'];
 	const token = event.cookies.get('jwt');
 
 	// Prüfen, ob die Anfrage nicht für die Startseite/Login-Seite ist
-	if (event.url.pathname !== openPath) {
-		// Wenn kein Token -> redirect to URL 
+	if (!openPaths.includes(event.url.pathname)) {
+		// Wenn kein Token -> redirect to URL
 		if (!token) {
 			throw redirect(302, 'http://localhost:5173/test');
 		}
