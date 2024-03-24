@@ -225,6 +225,47 @@ app.get('/getUser', async (req, res) => {
 	*/
 });
 
+// -> Karte exportieren zum sharen
+
+app.get('/exportCards/:stackId', async (req, res) => {
+	const { stackId } = req.params; // stackId aus der URL extrahieren
+	try {
+		const cards = await db
+			.select('cardid', 'front', 'back', 'cardstatus', 'stackid')
+			.from('card')
+			.where('stackid', stackId);
+
+		if (cards.length) {
+			res.json(cards);
+		} else {
+			res.status(404).send('Keine Karten gefunden für stackid: ' + stackId);
+		}
+	} catch (error) {
+		console.error('Fehler beim Exportieren der Karten:', error);
+		res.status(500).send('Serverfehler beim Exportieren der Karten.');
+	}
+
+	/*
+--> BSP Response : Test URL : http://localhost:3001/exportCards/2
+[
+    {
+        "cardid": 47,
+        "front": "bester DB-Master ",
+        "back": "Louis",
+        "cardstatus": 0,
+        "stackid": 2
+    },
+    {
+        "cardid": 48,
+        "front": "Hallo",
+        "back": "Louis",
+        "cardstatus": 2,
+        "stackid": 2
+    }
+]
+*/
+});
+
 //Muss am Schluss sein, da vor dem Starten erstmal alles definiert werden muss
 app.listen(PORT, () => {
 	console.log(`Server is running on port ${PORT}`);
