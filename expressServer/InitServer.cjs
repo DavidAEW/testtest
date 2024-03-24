@@ -149,6 +149,15 @@ app.post('/updateCard', async (req, res) => {
 
 });
 
+app.get('/SelectAllStacks', async (req, res) => {
+  const stacks = await db.select().from('stack');
+  res.json(stacks);
+})
+
+app.get('/SelectAllStatus', async (req, res) => {
+  const status = await db.select().from('card_status');
+  res.json(status);
+})
 
 
 //Muss am Schluss sein, da vor dem Starten erstmal alles definiert werden muss
