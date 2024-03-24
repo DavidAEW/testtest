@@ -37,6 +37,11 @@ app.get('/SelectAllFromStack', async (req, res) => {
   res.json(stack);
 })
 
+app.get('/SelectAllFromCard', async (req, res) => {
+  const stack = await db.select().from('card');
+  res.json(stack);
+})
+
 app.post('/GetRandomCardWithStatus', async (req, res) => {
 	const {cardStatus, stackId} = req.body; 
   try {
@@ -131,6 +136,18 @@ app.post('/InsertCardBackCardFrontInCard', async(req,res) => {
 //   res.status(500).json({ error: 'Fehler beim Einfügen der Daten.' });
 // }
 })
+
+app.post('/updateCard', async (req, res) => {
+
+    const { cardid, front, back, cardstatus, stackid } = req.body;
+
+    const updatecard = await db('card')
+      .where('cardid', cardid)
+      .update({ front:front, back:back, cardstatus:cardstatus, stackid:stackid });
+
+    res.status(200).send('Datensatz erfolgreich aktualisiert');
+
+});
 
 
 

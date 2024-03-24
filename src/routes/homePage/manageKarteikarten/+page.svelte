@@ -18,6 +18,49 @@
 			// Fehlermeldung anzeigen oder Benutzer benachrichtigen
 		}
 	});
+
+	async function updateCard(cardid, row) {
+		// Holen Sie die aktualisierten Werte aus den Eingabefeldern
+		const front = row.front;
+		const back = row.back;
+		const cardstatus = row.cardstatus;
+		const stackid = row.stackid;
+
+		console.log('row:', row);
+		console.log('front:', front);
+		console.log('back:', back);
+		console.log('cardstatus:', cardstatus);
+		console.log('stackid:', stackid);
+		console.log('cardid:', cardid);
+
+		// Senden Sie eine Fetch-Anfrage an das Backend
+		try {
+			const response = await fetch('http://localhost:3001/updateCard', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					cardid,
+					front,
+					back,
+					cardstatus,
+					stackid,
+				}),
+			});
+
+			if (response.ok) {
+				console.log('Datensatz erfolgreich aktualisiert!');
+				// Aktualisieren Sie die Daten in der Tabelle oder zeigen Sie eine Erfolgsmeldung an
+			} else {
+				console.error('Fehler beim Aktualisieren des Datensatzes:', response.statusText);
+				// Zeigen Sie eine Fehlermeldung an
+			}
+		} catch (error) {
+			console.error('Fehler bei der Fetch-Anfrage:', error);
+			// Zeigen Sie eine Fehlermeldung an
+		}
+	}
 </script>
 
 <main>
@@ -36,16 +79,20 @@
 					<th class="w-64">back</th>
 					<th class="w-32">cardstatus</th>
 					<th class="w-32">stackid</th>
+					<th class="w-32">Update</th>
 				</tr>
 				</thead>
 				<tbody>
 				{#each data as row}
 					<tr>
 						<td>{row.cardid}</td>
-						<td>{row.front}</td>
-						<td>{row.back}</td>
-						<td>{row.cardstatus}</td>
-						<td>{row.stackid}</td>
+						<td><input class="text-accent-400" bind:value={row.front}/></td>
+						<td><input class="text-accent-400" bind:value={row.back}/></td>
+						<td><input class="text-accent-400 w-1/2" bind:value={row.cardstatus}/></td>
+						<td><input class="text-accent-400 w-1/2" bind:value={row.stackid}/></td>
+						<td><button on:click={updateCard(row.cardid, row)}>Update</button>
+						</td>
+
 					</tr>
 				{/each}
 				</tbody>
