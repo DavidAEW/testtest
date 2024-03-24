@@ -266,6 +266,30 @@ app.get('/exportCards/:stackId', async (req, res) => {
 */
 });
 
+// -> Karte importieren zum sharen
+app.post('/importCards', async (req, res) => {
+	const cards = req.body; //Ergebnis von exportCards
+	if (!cards || cards.length === 0) {
+		return res.status(400).send('Keine Karten zum Importieren angegeben.');
+	}
+
+	try {
+		for (let i = 0; i < cards.length; i++) {
+			const card = cards[i];
+			await db('card').insert({
+				front: card.front,
+				back: card.back,
+				cardstatus: 0, // Setze cardstatus standardmäßig auf 0
+				stackid: card.stackid
+			});
+		}
+		res.status(201).send('Karten erfolgreich importiert.');
+	} catch (error) {
+		console.error('Fehler beim Importieren der Karten:', error);
+		res.status(500).send('Serverfehler beim Importieren der Karten.');
+	}
+});
+
 //Muss am Schluss sein, da vor dem Starten erstmal alles definiert werden muss
 app.listen(PORT, () => {
 	console.log(`Server is running on port ${PORT}`);
