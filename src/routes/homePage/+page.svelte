@@ -13,6 +13,7 @@
 			label: item.stackname
 		}));
 	}
+	let username = '';
 	async function getUserInfo() {
 		const url = 'http://localhost:3001/user/';
 		try {
@@ -26,8 +27,7 @@
 
 			if (response.ok) {
 				const userData = await response.json();
-				document.getElementById('usernameDisplay').textContent =
-					`Welcome back ${userData.username}`;
+				username = userData.username;
 			} else {
 				console.error('Fehler beim Abrufen der Benutzerdaten.');
 			}
@@ -66,7 +66,7 @@
 						<option value={option.value}>{option.label}</option>
 					{/each}
 				</select>
-				<a href="/homePage/studying/{selectedOption}" class="dark:bg-primary-200 bg-primary-0 border border-gray-200 text-primary-400 py-3 px-4 rounded-full focus:bg-white focus:border-gray-500">Start Studying</a>
+				<a href="/homePage/studying/{selectedOption}/1" class="dark:bg-primary-200 bg-primary-0 border border-gray-200 text-primary-400 py-3 px-4 rounded-full focus:bg-white focus:border-gray-500">Start Studying</a>
 			</div>
 
 			<div class="space-y-5 mt-10">
@@ -90,12 +90,6 @@
 						Click here to go to
 						<a href="/homePage/manageDecks" class="text-blue-600 hover:text-blue-800 underline"
 							>routes/manageDecks/+page.svelte</a
-						>
-					</li>
-					<li>
-						Click here to go to
-						<a href="/homePage/studying" class="text-blue-600 hover:text-blue-800 underline"
-							>routes/studying/+page.svelte</a
 						>
 					</li>
 					<li>
