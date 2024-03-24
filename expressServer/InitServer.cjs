@@ -58,6 +58,7 @@ app.post('/GetRandomCardWithStatus', async (req, res) => {
   }
 });
 
+
 app.put('/UpdateCardStatusTo1', async (req, res) => {
   const { front, back, newCardStatus } = req.body;
 
@@ -130,6 +131,8 @@ app.post('/InsertCardBackCardFrontInCard', async(req,res) => {
 //   res.status(500).json({ error: 'Fehler beim Einfügen der Daten.' });
 // }
 })
+
+
 
 //Muss am Schluss sein, da vor dem Starten erstmal alles definiert werden muss
 app.listen(PORT, () => {
