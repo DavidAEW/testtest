@@ -11,10 +11,22 @@
       console.log(tagname);
     });
 
+    // const endpoint2 = "http://localhost:3001/InsertCardBackCardFrontInCard";
+
+    // onMount(async function () {
+    //   body: JSON.stringify(data);
+    //   const response = await fetch(endpoint);
+    //   const data = await response.json();
+    //   tagname = data.map(item => item.tagname); // Hier auf den Schlüssel Titel zugreifen
+    //   console.log(tagname);
+    // });
+
     let back = "hallo from frontend";
     let front = "hallo zuruck";
 
     async function doPost () {
+        console.log("wird ausgeführt");
+        console.log(back);
 		const res = await fetch("http://localhost:3001/InsertCardBackCardFrontInCard", {
 			method: 'POST',
             headers: {
@@ -27,6 +39,7 @@
 		})
         const json = await res.json();
         result = JSON.stringify(json);
+        console.log(result);
 	}
 
     let isChecked = false;

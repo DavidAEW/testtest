@@ -30,6 +30,7 @@ export default {
 					400: '#0b0e0e'
 				},
 				background: {
+					0: '#ffffff',
 					50: '#f1f3f3',
 					60: '#e3e8e8',
 					70: '#c7d1d1',
