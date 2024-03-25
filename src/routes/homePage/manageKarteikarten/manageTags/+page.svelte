@@ -1,33 +1,45 @@
 <script>
     import { onMount } from "svelte";
     import { goto } from '$app/navigation';
-    const endpoint = "http://localhost:3001/SelectTagNameFromTag";
+    const endpoint = "http://localhost:3001/SelectAllFromTag";
     const endpoint2 = "http://localhost:3001/SelectAllFromStack";
     let selected;
     let isAddClicked = false;
     let isDeleteClicked = false;
     let neuerTag;
-    let isChecked = [];
-    let tagname = [];
     let stackList = [];
+    let tagList = [];
+    let isLoading = true; // Hilfsvariable für den Ladezustand
+    let tagIdsWhoAreChecked = [];
 
     class Stack {
-    constructor(stackid, stackname) {
-        this.stackid = stackid;
-        this.stackname = stackname;
+        constructor(stackid, stackname) {
+            this.stackid = stackid;
+            this.stackname = stackname;
+        }
     }
-}
+    class Tag {
+        constructor(tagid, tagname, isChecked = false){
+            this.tagid = tagid;
+            this.tagname = tagname;
+            this.isChecked = isChecked;
+        }
+    }
 
     onMount(async () => {
         await getEndpoint1()
         await getEndpoint2()
+        isLoading = false; // Markiere das Laden als abgeschlossen
     });
 
     async function getEndpoint1() {
       const response = await fetch(endpoint);
       const data = await response.json();
-      tagname = data.map(item => item.tagname);
-      console.log(tagname);
+      data.map(item => {
+            const newTag = new Tag(item.tagid, item.tagname);
+            tagList.push(newTag);
+        });
+        console.log(tagList);
     }
 
     async function getEndpoint2() {
@@ -104,27 +116,45 @@
     }
 
     async function selectStack(stackid){
-        console.log(Stacklist);
-        // console.log(stackname);
-        // console.log(stackid);
-        // try{
-        //     const response = await fetch('http://localhost:3001/AnzeigenStackTag', {
-        //     method: 'POST',
-        //     headers: {
-        //     'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify({
-        //         stackid: stackid,
-        //     }),
-        // });
-        // const data = await response.json(); // Wenn die Antwort JSON enthält
-        // }catch(error){
-        //     console.error('Fehler beim Löschen des Tags:', error);
-        // }
+        console.log("wird aufgerufen");
+        try{
+            const response = await fetch('http://localhost:3001/AnzeigenStackTag', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                stackid: stackid,
+            }),
+        });
+        const data = await response.json(); // Wenn die Antwort JSON enthält
+        tagIdsWhoAreChecked = data.map(item => item.tagid);
+        console.log(tagIdsWhoAreChecked + "hier auch nochmal");
+        loadTagIdsWhoAreChecked(tagIdsWhoAreChecked);
+        }catch(error){
+            console.error('Fehler beim Löschen des Tags:', error);
+        }
     }
+
+    async function loadTagIdsWhoAreChecked(tagIdsWhoAreChecked){
+
+        // Durchlaufe die Liste und setze das Attribut auf false
+        for (var i = 0; i < tagList.length; i++) {
+            tagList[i].isChecked = false;
+        }
+
+        tagIdsWhoAreChecked.forEach(function(element) {
+        let index = tagList.findIndex(objekt => objekt.tagid == element);
+        tagList[index].isChecked = true;
+        });
+    }
+
 </script>
 
 <main>
+    {#if isLoading}
+    <p>Lade Daten...</p>
+{:else}
     <div class="container h-full mx-auto flex justify-center items-center mt-4">
         <h2>
             <button class="p-1 max-w-sm mx-auto border rounded-lg shadow-m bg-primary-300 text-primary-50"on:click={goBack}>Zurück</button>
@@ -144,12 +174,12 @@
 
     <div class="container h-full mx-auto flex justify-center items-center mt-4">
         <div class="space-y-5 grid grid-flow-row grid-cols-1">
-            {#if tagname && tagname.length > 0}
-                {#each tagname as Tagname}
+            {#if tagList && tagList.length > 0}
+                {#each tagList as tag, i}
                     <label class="inline-flex items-center cursor-pointer">
                         {#if isDeleteClicked}
                         <div class="w-8 h-8 rounded mr-4">
-                            <button type="button" class="p-1 max-w-sm mx-auto border rounded-lg shadow-m bg-primary-300 text-primary-50" on:click={deleteTag(Tagname)}>
+                            <button type="button" class="p-1 max-w-sm mx-auto border rounded-lg shadow-m bg-primary-300 text-primary-50" on:click={deleteTag(tag.tagname)}>
                             <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
                             </svg>
@@ -158,10 +188,10 @@
                         </div>
                         {/if}
                         <!-- Checkbox -->
-                        <input type="checkbox" class="w-8 h-8 bg-primary-100 rounded mr-4" bind:checked="{isChecked}">
+                        <input type="checkbox" class="w-8 h-8 bg-primary-100 rounded mr-4" bind:checked={tagList[i].isChecked}>
                         <!-- Beschriftung -->
                         <div class="p-1 max-w-sm mx-auto border rounded-lg shadow-m bg-primary-300 text-primary-50">
-                            <p>{Tagname}</p>
+                            <p>{tag.tagname}</p>
                         </div>
                     </label>
                 {/each}
@@ -178,6 +208,7 @@
             {/if}
             </div>
         </div>
+        {/if}
 </main>
 
 
