@@ -226,7 +226,14 @@ app.get('/getUser', async (req, res) => {
 });
 
 
-app.get('/GetRandomCardWithStatus0', async (req, res) => {
+app.get('/SelectAllFromCard', async (req, res) => {
+  const stack = await db.select().from('card');
+  res.json(stack);
+})
+
+app.post('/GetRandomCardWithStatus', async (req, res) => {
+	const {cardStatus, stackId} = req.body; 
+
   try {
     const card = await db('card')
       .where('cardstatus', 0)
@@ -319,6 +326,27 @@ app.post('/InsertCardBackCardFrontInCard', async(req,res) => {
 // }
 })
 
+app.post('/updateCard', async (req, res) => {
+
+    const { cardid, front, back, cardstatus, stackid } = req.body;
+
+    const updatecard = await db('card')
+      .where('cardid', cardid)
+      .update({ front:front, back:back, cardstatus:cardstatus, stackid:stackid });
+
+    res.status(200).send('Datensatz erfolgreich aktualisiert');
+
+});
+
+app.get('/SelectAllStacks', async (req, res) => {
+  const stacks = await db.select().from('stack');
+  res.json(stacks);
+})
+
+app.get('/SelectAllStatus', async (req, res) => {
+  const status = await db.select().from('card_status');
+  res.json(status);
+})
 
 
 
