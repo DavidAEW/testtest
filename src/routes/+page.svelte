@@ -44,7 +44,7 @@
   }
 </script>
 <main>
-  <div class="container h-screen flex justify-center items-center px-4 sm:px-6 lg:px-8">
+  <div class="grid h-screen flex justify-center items-center">
     <div class="w-full max-w-md space-y-8 bg-background-70 dark:bg-background-90 shadow-md rounded-lg px-6 py-8">
       <h1 class="text-2xl sm:text-3xl font-bold text-center text-primary-300 mb-6">Log in</h1>
       <form class="space-y-6" on:submit={handleSubmit}>
