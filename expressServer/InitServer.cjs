@@ -55,7 +55,7 @@ app.get('/SelectAllFromTag', async (req, res) => {
 	.from('tag')
   	res.json(tags);
 })
-=======
+
 app.post('/login', async (req, res) => {
 	const { email, password } = req.body;
 	try {
