@@ -35,6 +35,27 @@ const db = knex({
 
 app.use(express.json());
 
+// Überprüfung der Datenbankverbindung
+db.raw('SELECT 1')
+  .then(() => {
+    console.log('Verbindung zur Datenbank hergestellt.');
+  })
+  .catch((err) => {
+    console.error('Fehler bei der Verbindung zur Datenbank:', err);
+    process.exit(1); // Beende den Server, wenn die Verbindung fehlschlägt
+  });
+
+app.get('/test', (req, res) => {
+	res.send('Hello from express server');
+});
+
+app.get('/SelectAllFromTag', async (req, res) => {
+	const tags = await db
+	.select()
+	.from('tag')
+  	res.json(tags);
+})
+=======
 app.post('/login', async (req, res) => {
 	const { email, password } = req.body;
 	try {
@@ -128,9 +149,50 @@ const authenticateJWT = (req, res, next) => {
 	});
 };
 
-app.get('/SelectTagNameFromTag', async (req, res) => {
-	const tags = await db.select('tagname').from('tag');
-	res.json(tags);
+app.post('/HinzufuegenTag', async(req,res) => {
+	const {tagname} = req.body;
+	const tag = await db.insert({tagname}).into('tag');
+	if (tag) {
+		// Wenn der Tag erfolgreich gelöscht wurde
+		res.status(200).json({ message: 'Tag erfolgreich gelöscht' });
+	} else {
+		// Wenn der Tag nicht gefunden wurde
+		res.status(404).json({ error: 'Tag nicht gefunden' });
+	}
+})
+
+app.post('/LoeschenTag', async (req, res) => {
+    const { tagname } = req.body;
+    try {
+        const tag = await db('tag').where('tagname', tagname).del();
+        if (tag) {
+            // Wenn der Tag erfolgreich gelöscht wurde
+            res.status(200).json({ message: 'Tag erfolgreich gelöscht' });
+        } else {
+            // Wenn der Tag nicht gefunden wurde
+            res.status(404).json({ error: 'Tag nicht gefunden' });
+        }
+    } catch (error) {
+        // Wenn ein Fehler auftritt
+        console.error('Fehler beim Löschen des Tags:', error);
+        res.status(500).json({ error: 'Interner Serverfehler' });
+    }
+});
+
+app.post('/AnzeigenStackTag', async (req, res) => {
+    const { stackid } = req.body;
+    try {
+		const all = await db
+		.select()
+		.from('stack_tag') 
+		.where('stackid', stackid)
+
+		res.json(all);
+    } catch (error) {
+        // Wenn ein Fehler auftritt
+        console.error('Fehler:', error);
+        res.status(500).json({ error: 'Interner Serverfehler' });
+    }
 });
 
 app.get('/SelectAllFromStack', async (req, res) => {
@@ -291,8 +353,6 @@ app.post('/importCards', async (req, res) => {
 	}
 });
 
-
-
 app.get('/SelectAllFromCard', async (req, res) => {
   const stack = await db.select().from('card');
   res.json(stack);
@@ -419,6 +479,10 @@ app.get('/SelectAllStatus', async (req, res) => {
 
 
 //Muss am Schluss sein, da vor dem Starten erstmal alles definiert werden muss
-app.listen(PORT, () => {
-	console.log(`Server is running on port ${PORT}`);
-});
+app.listen(PORT, (error) =>{ 
+	if(!error) 
+		console.log("Express Server wurde gestartet auf Port "+ PORT) 
+	else 
+		console.log("Express Server konnte nicht gestartet werden.", error); 
+	} 
+  ); 
