@@ -2,6 +2,7 @@
 <script>
 
 	import { onMount } from 'svelte';
+	
 
 	let userInputFront = "";
 	let userInputBack = "";
@@ -58,7 +59,9 @@
 
 		const response = await fetch(API_URL, {
 			method: "POST",
-			credentials:"include",
+			credentials:"include", //mitbringen des Cookies
+
+      
 
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
