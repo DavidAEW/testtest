@@ -61,6 +61,8 @@
 			method: "POST",
 			credentials:"include", //mitbringen des Cookies
 
+      
+
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
 				front: userInputFront,
