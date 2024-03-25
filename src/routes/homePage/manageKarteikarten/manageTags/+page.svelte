@@ -1,18 +1,22 @@
 <script>
-
-    let isChecked = false;
-    let selected;
-    let isAddClicked = false;
-    let isDeleteClicked = false;
-    let neuerTag;
-
     import { onMount } from "svelte";
     import { goto } from '$app/navigation';
     const endpoint = "http://localhost:3001/SelectTagNameFromTag";
     const endpoint2 = "http://localhost:3001/SelectAllFromStack";
-    let tagname = []; 
-    let stackname = [];
-    export let data;
+    let selected;
+    let isAddClicked = false;
+    let isDeleteClicked = false;
+    let neuerTag;
+    let isChecked = [];
+    let tagname = [];
+    let stackList = [];
+
+    class Stack {
+    constructor(stackid, stackname) {
+        this.stackid = stackid;
+        this.stackname = stackname;
+    }
+}
 
     onMount(async () => {
         await getEndpoint1()
@@ -22,16 +26,20 @@
     async function getEndpoint1() {
       const response = await fetch(endpoint);
       const data = await response.json();
-      tagname = data.map(item => item.tagname); 
+      tagname = data.map(item => item.tagname);
       console.log(tagname);
-      console.log("wird aufgerufen");
     }
 
     async function getEndpoint2() {
       const response = await fetch(endpoint2);
       const data = await response.json();
-      stackname = data.map(item => item.stackname); 
-      console.log(stackname);
+      
+        // Verwenden von map, um jedes Objekt in ein Stack-Objekt umzuwandeln und zur Liste hinzuzufügen
+        data.map(item => {
+            const newStack = new Stack(item.stackid, item.stackname);
+            stackList.push(newStack);
+        });
+        console.log(stackList);
     }
 
     function goBack(){
@@ -57,7 +65,8 @@
     }
 
     async function hinzufuegenTag(){
-        const response = await fetch('http://localhost:3001/HinzufuegenTag', {
+        try{
+            const response = await fetch('http://localhost:3001/HinzufuegenTag', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
@@ -66,32 +75,71 @@
                 tagname: neuerTag,
             }),
         });
-        tagname = [...tagname, {tagname: neuerTag}]
+        const data = await response.json(); // Wenn die Antwort JSON enthält
+        getEndpoint1();
+        neuerTag = '';
+        }catch(error){
+            console.error('Fehler beim Löschen des Tags:', error);
+        }
     }
 
-    async function deleteTag(tagname){
-        const response = await fetch('http://localhost:3001/LoeschenTag', {
+    async function deleteTag(deletedtagname){
+        try{
+            const response = await fetch('http://localhost:3001/LoeschenTag', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                tagname: tagname,
+                tagname: deletedtagname,
             }),
         });
-        getEndpoint1;
+        const data = await response.json(); // Wenn die Antwort JSON enthält
+        console.log("Rückmeldung vom Server:", data); // Hier kannst du mit der Antwort des Servers arbeiten
+        getEndpoint1();
+        console.log(tagname);
+        } catch(error){
+            console.error('Fehler beim Löschen des Tags:', error);
+        }
+    }
+
+    async function selectStack(stackid){
+        console.log(Stacklist);
+        // console.log(stackname);
+        // console.log(stackid);
+        // try{
+        //     const response = await fetch('http://localhost:3001/AnzeigenStackTag', {
+        //     method: 'POST',
+        //     headers: {
+        //     'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify({
+        //         stackid: stackid,
+        //     }),
+        // });
+        // const data = await response.json(); // Wenn die Antwort JSON enthält
+        // }catch(error){
+        //     console.error('Fehler beim Löschen des Tags:', error);
+        // }
     }
 </script>
 
 <main>
+    <div class="container h-full mx-auto flex justify-center items-center mt-4">
+        <h2>
+            <button class="p-1 max-w-sm mx-auto border rounded-lg shadow-m bg-primary-300 text-primary-50"on:click={goBack}>Zurück</button>
+            <button class="p-1 max-w-sm mx-auto border rounded-lg shadow-m bg-primary-300 text-primary-50" on:click={clickAdd}>Tag hinzufügen</button>
+            <button class="p-1 max-w-sm mx-auto border rounded-lg shadow-m bg-primary-300 text-primary-50"on:click={clickDelete}>Tag löschen</button>
+        </h2>
+    </div>
     <div class="container h-full mx-auto flex justify-center items-center mt-4" >
-    <select bind:value={selected} class="border rounded-lg shadow-m bg-primary-300 text-primary-50">
-        {#each stackname as stackname}
-        <option value={stackname}>
-        {stackname}
+    <select bind:value={selected} on:change={() => selectStack(selected)} class="border rounded-lg shadow-m bg-primary-300 text-primary-50">
+        {#each stackList as stack}
+        <option value={stack.stackid}>
+        {stack.stackname}
         </option>
         {/each}
-    </select>
+    </select>    
     </div>
 
     <div class="container h-full mx-auto flex justify-center items-center mt-4">
@@ -130,13 +178,6 @@
             {/if}
             </div>
         </div>
-    <div class="container h-full mx-auto flex justify-center items-center mt-4">
-        <h2>
-            <button class="p-1 max-w-sm mx-auto border rounded-lg shadow-m bg-primary-300 text-primary-50"on:click={goBack}>Zurück</button>
-            <button class="p-1 max-w-sm mx-auto border rounded-lg shadow-m bg-primary-300 text-primary-50" on:click={clickAdd}>Tag hinzufügen</button>
-            <button class="p-1 max-w-sm mx-auto border rounded-lg shadow-m bg-primary-300 text-primary-50"on:click={clickDelete}>Tag löschen</button>
-        </h2>
-    </div>
 </main>
 
 

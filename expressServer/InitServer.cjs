@@ -51,20 +51,65 @@ app.get('/test', (req, res) => {
 
 app.get('/SelectTagNameFromTag', async (req, res) => {
 	const tags = await db
-	.select('tagname')
+	.select()
 	.from('tag')
 	res.json(tags);
+})
+
+app.get('/SelectAllFromStackTag', async (req,res) => {
+	const StackTag = await db
+	.select()
+	.from('stack_tag') 
+	res.json(StackTag);
 })
 
 app.post('/HinzufuegenTag', async(req,res) => {
 	const {tagname} = req.body;
 	const tag = await db.insert({tagname}).into('tag');
+	if (tag) {
+		// Wenn der Tag erfolgreich gelöscht wurde
+		res.status(200).json({ message: 'Tag erfolgreich gelöscht' });
+	} else {
+		// Wenn der Tag nicht gefunden wurde
+		res.status(404).json({ error: 'Tag nicht gefunden' });
+	}
 })
 
-app.post('/LoeschenTag', async(req,res) => {
-	const {tagname} = req.body;
-	const tag = await db('tag').where('tagname', tagname).del();
-})
+app.post('/LoeschenTag', async (req, res) => {
+    const { tagname } = req.body;
+    try {
+        const tag = await db('tag').where('tagname', tagname).del();
+        if (tag) {
+            // Wenn der Tag erfolgreich gelöscht wurde
+            res.status(200).json({ message: 'Tag erfolgreich gelöscht' });
+        } else {
+            // Wenn der Tag nicht gefunden wurde
+            res.status(404).json({ error: 'Tag nicht gefunden' });
+        }
+    } catch (error) {
+        // Wenn ein Fehler auftritt
+        console.error('Fehler beim Löschen des Tags:', error);
+        res.status(500).json({ error: 'Interner Serverfehler' });
+    }
+});
+
+app.post('/AnzeigenStackTag', async (req, res) => {
+    // const { tagname } = req.body;
+    // try {
+    //     const tag = await db('stack_tag').where('stackid', stackid).del();
+    //     if (tag) {
+    //         // Wenn der Tag erfolgreich gelöscht wurde
+    //         res.status(200).json({ message: 'Tag erfolgreich gelöscht' });
+    //     } else {
+    //         // Wenn der Tag nicht gefunden wurde
+    //         res.status(404).json({ error: 'Tag nicht gefunden' });
+    //     }
+    // } catch (error) {
+    //     // Wenn ein Fehler auftritt
+    //     console.error('Fehler beim Löschen des Tags:', error);
+    //     res.status(500).json({ error: 'Interner Serverfehler' });
+    // }
+});
 
 app.get('/SelectAllFromStack', async (req, res) => {
 	const stack = await db.select().from('stack');
