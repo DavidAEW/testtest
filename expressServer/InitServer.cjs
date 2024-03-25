@@ -226,6 +226,73 @@ app.get('/getUser', async (req, res) => {
 });
 
 
+// -> Karte exportieren zum sharen
+
+app.get('/exportCards/:stackId', async (req, res) => {
+	const { stackId } = req.params; // stackId aus der URL extrahieren
+	try {
+		const cards = await db
+			.select('cardid', 'front', 'back', 'cardstatus', 'stackid')
+			.from('card')
+			.where('stackid', stackId);
+
+		if (cards.length) {
+			res.json(cards);
+		} else {
+			res.status(404).send('Keine Karten gefunden für stackid: ' + stackId);
+		}
+	} catch (error) {
+		console.error('Fehler beim Exportieren der Karten:', error);
+		res.status(500).send('Serverfehler beim Exportieren der Karten.');
+	}
+
+	/*
+--> BSP Response : Test URL : http://localhost:3001/exportCards/2
+[
+    {
+        "cardid": 47,
+        "front": "bester DB-Master ",
+        "back": "Louis",
+        "cardstatus": 0,
+        "stackid": 2
+    },
+    {
+        "cardid": 48,
+        "front": "Hallo",
+        "back": "Louis",
+        "cardstatus": 2,
+        "stackid": 2
+    }
+]
+*/
+});
+
+// -> Karte importieren zum sharen
+app.post('/importCards', async (req, res) => {
+	const cards = req.body; //Ergebnis von exportCards
+	if (!cards || cards.length === 0) {
+		return res.status(400).send('Keine Karten zum Importieren angegeben.');
+	}
+
+	try {
+		for (let i = 0; i < cards.length; i++) {
+			const card = cards[i];
+			await db('card').insert({
+				front: card.front,
+				back: card.back,
+				cardstatus: 0, // Setze cardstatus standardmäßig auf 0
+				stackid: card.stackid
+			});
+		}
+		res.status(201).send('Karten erfolgreich importiert.');
+	} catch (error) {
+		console.error('Fehler beim Importieren der Karten:', error);
+		res.status(500).send('Serverfehler beim Importieren der Karten.');
+	}
+});
+
+
+
 app.get('/SelectAllFromCard', async (req, res) => {
   const stack = await db.select().from('card');
   res.json(stack);
