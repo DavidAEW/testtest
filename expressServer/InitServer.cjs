@@ -195,6 +195,32 @@ app.post('/AnzeigenStackTag', async (req, res) => {
     }
 });
 
+app.post('/HinzufuegenInStackTag', async (req, res) => {
+    const { tagid, stackid } = req.body;
+    try {
+		const all = await db
+		.insert({tagid: tagid ,stackid: stackid}).into('stack_tag');
+		res.json(all);
+    } catch (error) {
+        // Wenn ein Fehler auftritt
+        console.error('Fehler:', error);
+        res.status(500).json({ error: 'Interner Serverfehler' });
+    }
+});
+
+app.post('/LoeschenStackTag', async (req, res) => {
+    const { tagid, stackid } = req.body;
+    try {
+		const all = await db
+		('stack_tag').where('tagid', tagid).where('stackid', stackid).del();
+		res.json(all);
+    } catch (error) {
+        // Wenn ein Fehler auftritt
+        console.error('Fehler:', error);
+        res.status(500).json({ error: 'Interner Serverfehler' });
+    }
+});
+
 app.get('/SelectAllFromStack', async (req, res) => {
 	const stack = await db.select().from('stack');
 	res.json(stack);
@@ -486,3 +512,5 @@ app.listen(PORT, (error) =>{
 		console.log("Express Server konnte nicht gestartet werden.", error); 
 	} 
   ); 
+
+  //Glückwunsch, du hast es bis zum Ende geschafft!
