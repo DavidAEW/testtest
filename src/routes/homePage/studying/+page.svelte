@@ -32,6 +32,7 @@ async function updateCardStatus(cardId) {
 		headers: {
 			'Content-Type': 'application/json'
 		},
+		credentials: "include",
 		body: JSON.stringify({
 			front: cardData.front,
 			back: cardData.back,
@@ -59,6 +60,7 @@ async function updateCardStatusTo2(cardId) {
 		headers: {
 			'Content-Type': 'application/json'
 		},
+		credentials: "include",
 		body: JSON.stringify({
 			front: cardData.front,
 			back: cardData.back,
@@ -86,6 +88,7 @@ async function updateCardStatusTo3(cardId) {
 		headers: {
 			'Content-Type': 'application/json'
 		},
+		credentials: "include",
 		body: JSON.stringify({
 			front: cardData.front,
 			back: cardData.back,
