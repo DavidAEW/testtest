@@ -501,6 +501,22 @@ app.get('/SelectAllStatus', async (req, res) => {
   res.json(status);
 })
 
+app.post('/SelectAllFromCardWithStack', async (req, res) => {
+	const { selectedOption } = req.body;
+	try {
+		const data = await db
+			.select()
+			.from('card')
+			.where('stackid', selectedOption)
+
+		res.json(data);
+	} catch (error) {
+		// Wenn ein Fehler auftritt
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
+});
+
 
 
 

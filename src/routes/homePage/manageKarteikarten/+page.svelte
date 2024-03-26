@@ -1,20 +1,47 @@
 <script>
 	import { onMount } from 'svelte';
-	let data;
+	let data = [];
 	let stack;
 	let status;
+	let options = [];
+	let selectedOption = '1';
 
-	async function getAll() {
-		const API_URL = "http://localhost:3001/SelectAllFromCard"; // Ersetzen Sie dies mit Ihrer tatsächlichen API-URL
+	async function getOptions() {
+		const API_URL = "http://localhost:3001/SelectAllFromStack"; // Ersetzen Sie dies mit Ihrer tatsächlichen API-URL
 
 		const response = await fetch(API_URL);
+		const data = await response.json();
+
+		options = data.map((item) => ({
+			value: item.stackid,
+			label: item.stackname,
+		}));
+
+
+	}
+	onMount(getOptions);
+
+
+	async function getAll(selectedOption) {
+		const API_URL = "http://localhost:3001/SelectAllFromCardWithStack"; // Ersetzen Sie dies mit Ihrer tatsächlichen API-URL
+
+		const options = {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ selectedOption }),
+		};
+
+		const response = await fetch(API_URL, options);
 		const data = await response.json();
 		return data;
 	}
 
+
 	onMount(async () => {
 		try {
-			data = await getAll();
+			data = await getAll(selectedOption);
 			stack = await getStack();
 			status = await getStatus();
 		} catch (error) {
@@ -36,6 +63,7 @@
 		console.log('cardstatus:', cardstatus);
 		console.log('stackid:', stackid);
 		console.log('cardid:', cardid);
+
 
 		// Senden Sie eine Fetch-Anfrage an das Backend
 		try {
@@ -81,6 +109,14 @@
 		return fetchedData;
 	}
 
+	function handleChange(event) {
+		selectedOption = event.target.value;
+		console.log('selectedOption:', selectedOption);
+		getAll(selectedOption).then((result) => {
+			data = result;
+		});
+	}
+
 
 </script>
 
@@ -89,6 +125,24 @@
 	<div class="container h-full mx-auto flex flex-row justify-center items-center mt-4">
 		<div class="space-y-5">
 			<h1 class="text-4xl text-center">Karteikarten verwalten</h1>
+
+			<div class="container h-full mx-auto flex justify-center items-center mt-4">
+				<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
+					<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Deck wählen</h2>
+
+					<select
+						class="dark:bg-primary-60 block appearance-none w-full bg-primary-0 border border-gray-200 text-primary-400 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+						on:change={handleChange}
+					>
+						<option value="">Deck auswählen</option>
+						{#each options as option}
+							<option value="{option.value}">{option.label}</option>
+						{/each}
+					</select>
+				</div>
+
+
+		</div>
 
 			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 mx-auto w-5/6">
 		{#if data}
