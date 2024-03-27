@@ -79,6 +79,7 @@
 		const response = await fetch(API_URL);
 		const fetchedData = await response.json();
 		return fetchedData;
+
 	}
 
 
