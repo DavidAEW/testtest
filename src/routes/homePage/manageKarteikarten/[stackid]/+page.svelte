@@ -135,21 +135,9 @@
 						class="dark:bg-primary-60 block appearance-none w-full bg-primary-0 border border-gray-200 text-primary-400 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
 						on:change={handleChange}
 					>
-						{#if options.length === 0}
-							{#await getOptions()}
-								<option value="">Laden...</option>
-							{:then}
-								{#each options as option}
-									<option value={option.value}>{option.label}</option>
-								{/each}
-							{:catch error}
-								<option value="">Fehler beim Laden</option>
-							{/await}
-						{:else}
-							{#each options as option}
-								<option value={option.value}>{option.label}</option>
-							{/each}
-						{/if}
+						{#each options as option}
+							<option value={option.value}>{option.label}</option>
+						{/each}
 					</select>
 				</div>
 			</div>
