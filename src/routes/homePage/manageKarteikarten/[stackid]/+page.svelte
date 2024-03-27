@@ -7,7 +7,7 @@
 	let stack;
 	let status;
 	let options = [];
-	let stackid = 0;
+	let stackid = $page.params.stackid;
 
 	async function getOptions() {
 		const API_URL = 'http://localhost:3001/SelectAllFromStack';
@@ -59,13 +59,13 @@
 		const front = row.front;
 		const back = row.back;
 		const cardstatus = row.cardstatus;
-		const stackid = row.stackid;
+		const newstackid = row.stackid;
 
 		console.log('row:', row);
 		console.log('front:', front);
 		console.log('back:', back);
 		console.log('cardstatus:', cardstatus);
-		console.log('stackid:', stackid);
+		console.log('stackid:', newstackid);
 		console.log('cardid:', cardid);
 
 		// Senden Sie eine Fetch-Anfrage an das Backend
@@ -81,12 +81,15 @@
 					front,
 					back,
 					cardstatus,
-					stackid
+					stackid: newstackid
 				})
 			});
 
 			if (response.ok) {
 				console.log('Datensatz erfolgreich aktualisiert!');
+				getAll(stackid).then((result) => {
+					data = result;
+				});
 				// Aktualisieren Sie die Daten in der Tabelle oder zeigen Sie eine Erfolgsmeldung an
 			} else {
 				console.error('Fehler beim Aktualisieren des Datensatzes:', response.statusText);
@@ -135,21 +138,9 @@
 						class="dark:bg-primary-60 block appearance-none w-full bg-primary-0 border border-gray-200 text-primary-400 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
 						on:change={handleChange}
 					>
-						{#if options.length === 0}
-							{#await getOptions()}
-								<option value="">Laden...</option>
-							{:then}
-								{#each options as option}
-									<option value={option.value}>{option.label}</option>
-								{/each}
-							{:catch error}
-								<option value="">Fehler beim Laden</option>
-							{/await}
-						{:else}
-							{#each options as option}
-								<option value={option.value}>{option.label}</option>
-							{/each}
-						{/if}
+						{#each options as option}
+							<option value={option.value}>{option.label}</option>
+						{/each}
 					</select>
 				</div>
 			</div>
