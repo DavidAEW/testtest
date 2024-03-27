@@ -15,16 +15,28 @@
 
 	async function getOptions() {
 		const API_URL = 'http://localhost:3001/SelectAllFromStack'; // Ersetzen Sie dies mit Ihrer tatsächlichen API-URL
+		try {
+			const response = await fetch(API_URL,
 
-		const response = await fetch(API_URL);
-		const data = await response.json();
+				{
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					credentials: 'include'
+				});
+			const data = await response.json();
 
-		options = data.map((item) => ({
-			value: item.stackid,
-			label: item.stackname
-		}));
-		console.log(options);
+			options = data.map((item) => ({
+				value: item.stackid,
+				label: item.stackname
+			}));
+		} catch (error) {
+			console.error('Fehler beim Laden der Daten:', error);
+		}
 	}
+
+
 	async function loadOptionsAndSetValue() {
 		await getOptions();
 		stackid = $page.params.stackid;

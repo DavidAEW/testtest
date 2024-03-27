@@ -25,14 +25,26 @@
 	let error = null;
 
 	async function getDecks() {
-		const API_URL = 'http://localhost:3001/SelectAllFromStack';
-		const response = await fetch(API_URL);
-		const data = await response.json();
+		const API_URL = 'http://localhost:3001/SelectAllFromStack'; // Ersetzen Sie dies mit Ihrer tatsächlichen API-URL
+		try {
+			const response = await fetch(API_URL,
 
-		options = data.map((item) => ({
-			value: item.stackid,
-			label: item.stackname
-		}));
+				{
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					credentials: 'include'
+				});
+			const data = await response.json();
+
+			options = data.map((item) => ({
+				value: item.stackid,
+				label: item.stackname
+			}));
+		} catch (error) {
+			console.error('Fehler beim Laden der Daten:', error);
+		}
 	}
 
 	async function getCards() {
