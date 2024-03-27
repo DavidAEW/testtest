@@ -385,28 +385,28 @@ app.get('/SelectAllFromCard', async (req, res) => {
 })
 
 app.post('/GetRandomCardWithStatus', async (req, res) => {
-	const {cardStatus, stackId} = req.body; 
+	const {cardStatus, stackId} = req.body;
+	try {
+		const card = await db('card')
+			.where('cardstatus', cardStatus)
+			.where('stackid', stackId)
+			.orderByRaw('RAND()')
+			.first()
+			.select('front', 'back');
 
-  try {
-    const card = await db('card')
-      .where('cardstatus', 0)
-      .orderByRaw('RAND()')
-      .first()
-      .select('front', 'back');
-
-    if (card) {
-      res.json(card);
-    } else {
-      res.status(404).send('No card found with status 0');
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Error retrieving card');
-  }
+		if (card) {
+			res.json(card);
+		} else {
+			res.status(404).send('No card found with status 0');
+		}
+	} catch (error) {
+		console.error(error);
+		res.status(500).send('Error retrieving card');
+	}
 });
 
 
-app.put('/UpdateCardStatusTo1', async (req, res) => {
+app.put('/UpdateCardStatus', async (req, res) => {
   const { front, back, newCardStatus } = req.body;
 
   try {
@@ -424,45 +424,6 @@ app.put('/UpdateCardStatusTo1', async (req, res) => {
     res.status(500).json({ error: 'Fehler beim Aktualisieren des Kartenstatus.' });
   }
 });
-
-app.put('/UpdateCardStatusTo2', async (req, res) => {
-  const { front, back, newCardStatus } = req.body;
-
-  try {
-    const updatedCard = await db('card')
-      .where({ front, back })
-      .update({ cardstatus: newCardStatus });
-
-    if (updatedCard) {
-      res.status(200).json({ message: 'Kartenstatus erfolgreich aktualisiert.' });
-    } else {
-      res.status(404).json({ message: 'Keine Karte gefunden.', error: true });
-    }
-  } catch (error) {
-    console.error('Fehler beim Aktualisieren des Kartenstatus:', error);
-    res.status(500).json({ error: 'Fehler beim Aktualisieren des Kartenstatus.' });
-  }
-});
-
-app.put('/UpdateCardStatusTo3', async (req, res) => {
-  const { front, back, newCardStatus } = req.body;
-
-  try {
-    const updatedCard = await db('card')
-      .where({ front, back })
-      .update({ cardstatus: newCardStatus });
-
-    if (updatedCard) {
-      res.status(200).json({ message: 'Kartenstatus erfolgreich aktualisiert.' });
-    } else {
-      res.status(404).json({ message: 'Keine Karte gefunden.', error: true });
-    }
-  } catch (error) {
-    console.error('Fehler beim Aktualisieren des Kartenstatus:', error);
-    res.status(500).json({ error: 'Fehler beim Aktualisieren des Kartenstatus.' });
-  }
-});
-
 
 
 app.post('/InsertCardBackCardFrontInCard', async(req,res) => {
