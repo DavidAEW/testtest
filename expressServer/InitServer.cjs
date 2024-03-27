@@ -37,24 +37,22 @@ app.use(express.json());
 
 // Überprüfung der Datenbankverbindung
 db.raw('SELECT 1')
-  .then(() => {
-    console.log('Verbindung zur Datenbank hergestellt.');
-  })
-  .catch((err) => {
-    console.error('Fehler bei der Verbindung zur Datenbank:', err);
-    process.exit(1); // Beende den Server, wenn die Verbindung fehlschlägt
-  });
+	.then(() => {
+		console.log('Verbindung zur Datenbank hergestellt.');
+	})
+	.catch((err) => {
+		console.error('Fehler bei der Verbindung zur Datenbank:', err);
+		process.exit(1); // Beende den Server, wenn die Verbindung fehlschlägt
+	});
 
 app.get('/test', (req, res) => {
 	res.send('Hello from express server');
 });
 
 app.get('/SelectAllFromTag', async (req, res) => {
-	const tags = await db
-	.select()
-	.from('tag')
-  	res.json(tags);
-})
+	const tags = await db.select().from('tag');
+	res.json(tags);
+});
 
 app.post('/login', async (req, res) => {
 	const { email, password } = req.body;
@@ -149,9 +147,34 @@ const authenticateJWT = (req, res, next) => {
 	});
 };
 
-app.post('/HinzufuegenTag', async(req,res) => {
-	const {tagname} = req.body;
-	const tag = await db.insert({tagname}).into('tag');
+//app.use(authenticateJWT); // Verwende Middleware um JWT zu überprüfen
+
+// --> Hinzufügen eine neue Stack
+app.post('/stacks/create', authenticateJWT, async (req, res) => {
+	const { stackName } = req.body;
+	const userId = req.user.userid;
+	console.log(userId);
+	try {
+		// Zuerst den neuen Stapel in der 'stack' Tabelle erstellen
+		const [newStackId] = await db('stack').insert({
+			stackname: stackName
+		});
+		// Dann den Stapel dem Benutzer zuordnen in der 'user_stack' Tabelle
+		await db('user_stack').insert({
+			userid: userId,
+			stackid: newStackId
+		});
+
+		res.json({ success: true, message: 'Stapel erfolgreich erstellt', stackId: newStackId });
+	} catch (error) {
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
+});
+
+app.post('/HinzufuegenTag', async (req, res) => {
+	const { tagname } = req.body;
+	const tag = await db.insert({ tagname }).into('tag');
 	if (tag) {
 		// Wenn der Tag erfolgreich gelöscht wurde
 		res.status(200).json({ message: 'Tag erfolgreich gelöscht' });
@@ -159,66 +182,61 @@ app.post('/HinzufuegenTag', async(req,res) => {
 		// Wenn der Tag nicht gefunden wurde
 		res.status(404).json({ error: 'Tag nicht gefunden' });
 	}
-})
+});
 
 app.post('/LoeschenTag', async (req, res) => {
-    const { tagname } = req.body;
-    try {
-        const tag = await db('tag').where('tagname', tagname).del();
-        if (tag) {
-            // Wenn der Tag erfolgreich gelöscht wurde
-            res.status(200).json({ message: 'Tag erfolgreich gelöscht' });
-        } else {
-            // Wenn der Tag nicht gefunden wurde
-            res.status(404).json({ error: 'Tag nicht gefunden' });
-        }
-    } catch (error) {
-        // Wenn ein Fehler auftritt
-        console.error('Fehler beim Löschen des Tags:', error);
-        res.status(500).json({ error: 'Interner Serverfehler' });
-    }
+	const { tagname } = req.body;
+	try {
+		const tag = await db('tag').where('tagname', tagname).del();
+		if (tag) {
+			// Wenn der Tag erfolgreich gelöscht wurde
+			res.status(200).json({ message: 'Tag erfolgreich gelöscht' });
+		} else {
+			// Wenn der Tag nicht gefunden wurde
+			res.status(404).json({ error: 'Tag nicht gefunden' });
+		}
+	} catch (error) {
+		// Wenn ein Fehler auftritt
+		console.error('Fehler beim Löschen des Tags:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
 });
 
 app.post('/AnzeigenStackTag', async (req, res) => {
-    const { stackid } = req.body;
-    try {
-		const all = await db
-		.select()
-		.from('stack_tag') 
-		.where('stackid', stackid)
+	const { stackid } = req.body;
+	try {
+		const all = await db.select().from('stack_tag').where('stackid', stackid);
 
 		res.json(all);
-    } catch (error) {
-        // Wenn ein Fehler auftritt
-        console.error('Fehler:', error);
-        res.status(500).json({ error: 'Interner Serverfehler' });
-    }
+	} catch (error) {
+		// Wenn ein Fehler auftritt
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
 });
 
 app.post('/HinzufuegenInStackTag', async (req, res) => {
-    const { tagid, stackid } = req.body;
-    try {
-		const all = await db
-		.insert({tagid: tagid ,stackid: stackid}).into('stack_tag');
+	const { tagid, stackid } = req.body;
+	try {
+		const all = await db.insert({ tagid: tagid, stackid: stackid }).into('stack_tag');
 		res.json(all);
-    } catch (error) {
-        // Wenn ein Fehler auftritt
-        console.error('Fehler:', error);
-        res.status(500).json({ error: 'Interner Serverfehler' });
-    }
+	} catch (error) {
+		// Wenn ein Fehler auftritt
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
 });
 
 app.post('/LoeschenStackTag', async (req, res) => {
-    const { tagid, stackid } = req.body;
-    try {
-		const all = await db
-		('stack_tag').where('tagid', tagid).where('stackid', stackid).del();
+	const { tagid, stackid } = req.body;
+	try {
+		const all = await db('stack_tag').where('tagid', tagid).where('stackid', stackid).del();
 		res.json(all);
-    } catch (error) {
-        // Wenn ein Fehler auftritt
-        console.error('Fehler:', error);
-        res.status(500).json({ error: 'Interner Serverfehler' });
-    }
+	} catch (error) {
+		// Wenn ein Fehler auftritt
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
 });
 
 app.get('/SelectAllFromStack', async (req, res) => {
@@ -232,7 +250,7 @@ app.get('/SelectAllFromCard', async (req, res) => {
 });
 
 app.post('/GetRandomCardWithStatus', async (req, res) => {
-	const {cardStatus, stackId} = req.body;
+	const { cardStatus, stackId } = req.body;
 	try {
 		const card = await db('card')
 			.where('cardstatus', cardStatus)
@@ -244,7 +262,7 @@ app.post('/GetRandomCardWithStatus', async (req, res) => {
 		if (card) {
 			res.json(card);
 		} else {
-			res.status(404).send('No card found with status '+ cardStatus);
+			res.status(404).send('No card found with status ' + cardStatus);
 		}
 	} catch (error) {
 		console.error(error);
@@ -315,7 +333,6 @@ app.get('/getUser', async (req, res) => {
 	*/
 });
 
-
 // -> Karte exportieren zum sharen
 
 app.get('/exportCards/:stackId', async (req, res) => {
@@ -382,12 +399,12 @@ app.post('/importCards', async (req, res) => {
 });
 
 app.get('/SelectAllFromCard', async (req, res) => {
-  const stack = await db.select().from('card');
-  res.json(stack);
-})
+	const stack = await db.select().from('card');
+	res.json(stack);
+});
 
 app.post('/GetRandomCardWithStatus', async (req, res) => {
-	const {cardStatus, stackId} = req.body;
+	const { cardStatus, stackId } = req.body;
 	try {
 		const card = await db('card')
 			.where('cardstatus', cardStatus)
@@ -407,70 +424,63 @@ app.post('/GetRandomCardWithStatus', async (req, res) => {
 	}
 });
 
-
 app.put('/UpdateCardStatus', async (req, res) => {
-  const { front, back, newCardStatus } = req.body;
+	const { front, back, newCardStatus } = req.body;
 
-  try {
-    const updatedCard = await db('card')
-      .where({ front, back })
-      .update({ cardstatus: newCardStatus });
+	try {
+		const updatedCard = await db('card')
+			.where({ front, back })
+			.update({ cardstatus: newCardStatus });
 
-    if (updatedCard) {
-      res.status(200).json({ message: 'Kartenstatus erfolgreich aktualisiert.' });
-    } else {
-      res.status(404).json({ message: 'Keine Karte gefunden.', error: true });
-    }
-  } catch (error) {
-    console.error('Fehler beim Aktualisieren des Kartenstatus:', error);
-    res.status(500).json({ error: 'Fehler beim Aktualisieren des Kartenstatus.' });
-  }
+		if (updatedCard) {
+			res.status(200).json({ message: 'Kartenstatus erfolgreich aktualisiert.' });
+		} else {
+			res.status(404).json({ message: 'Keine Karte gefunden.', error: true });
+		}
+	} catch (error) {
+		console.error('Fehler beim Aktualisieren des Kartenstatus:', error);
+		res.status(500).json({ error: 'Fehler beim Aktualisieren des Kartenstatus.' });
+	}
 });
 
+app.post('/InsertCardBackCardFrontInCard', async (req, res) => {
+	const { front, back } = req.body; // Annahme: Die Werte für front und back kommen im Request Body an
+	console.log(req.body);
+	console.log(front);
+	// try {
+	const card = await db.insert({ front: front, back: back }).into('card');
 
-app.post('/InsertCardBackCardFrontInCard', async(req,res) => {
-  const { front, back } = req.body; // Annahme: Die Werte für front und back kommen im Request Body an
-  console.log(req.body);
-  console.log(front);
-  // try {
-    const card = await db.insert({front: front, back: back}).into('card');
- 
-//   res.status(201).json({ message: 'Daten wurden erfolgreich eingefügt.' });
-// } catch (error) {
-//   console.error('Fehler beim Einfügen der Daten:', error);
-//   res.status(500).json({ error: 'Fehler beim Einfügen der Daten.' });
-// }
-})
+	//   res.status(201).json({ message: 'Daten wurden erfolgreich eingefügt.' });
+	// } catch (error) {
+	//   console.error('Fehler beim Einfügen der Daten:', error);
+	//   res.status(500).json({ error: 'Fehler beim Einfügen der Daten.' });
+	// }
+});
 
 app.post('/updateCard', async (req, res) => {
+	const { cardid, front, back, cardstatus, stackid } = req.body;
 
-    const { cardid, front, back, cardstatus, stackid } = req.body;
+	const updatecard = await db('card')
+		.where('cardid', cardid)
+		.update({ front: front, back: back, cardstatus: cardstatus, stackid: stackid });
 
-    const updatecard = await db('card')
-      .where('cardid', cardid)
-      .update({ front:front, back:back, cardstatus:cardstatus, stackid:stackid });
-
-    res.status(200).send('Datensatz erfolgreich aktualisiert');
-
+	res.status(200).send('Datensatz erfolgreich aktualisiert');
 });
 
 app.get('/SelectAllStacks', async (req, res) => {
-  const stacks = await db.select().from('stack');
-  res.json(stacks);
-})
+	const stacks = await db.select().from('stack');
+	res.json(stacks);
+});
 
 app.get('/SelectAllStatus', async (req, res) => {
-  const status = await db.select().from('card_status');
-  res.json(status);
-})
+	const status = await db.select().from('card_status');
+	res.json(status);
+});
 
 app.post('/SelectAllFromCardWithStack', async (req, res) => {
 	const { selectedOption } = req.body;
 	try {
-		const data = await db
-			.select()
-			.from('card')
-			.where('stackid', selectedOption)
+		const data = await db.select().from('card').where('stackid', selectedOption);
 
 		res.json(data);
 	} catch (error) {
@@ -480,16 +490,10 @@ app.post('/SelectAllFromCardWithStack', async (req, res) => {
 	}
 });
 
-
-
-
 //Muss am Schluss sein, da vor dem Starten erstmal alles definiert werden muss
-app.listen(PORT, (error) =>{ 
-	if(!error) 
-		console.log("Express Server wurde gestartet auf Port "+ PORT) 
-	else 
-		console.log("Express Server konnte nicht gestartet werden.", error); 
-	} 
-  ); 
+app.listen(PORT, (error) => {
+	if (!error) console.log('Express Server wurde gestartet auf Port ' + PORT);
+	else console.log('Express Server konnte nicht gestartet werden.', error);
+});
 
-  //Glückwunsch, du hast es bis zum Ende geschafft!
+//Glückwunsch, du hast es bis zum Ende geschafft!
