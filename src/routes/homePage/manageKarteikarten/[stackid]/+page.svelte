@@ -1,0 +1,291 @@
+<script>
+	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
+
+	let data = [];
+	let stack;
+	let status;
+	let options = [];
+	let stackid = $page.params.stackid;
+
+	async function getOptions() {
+		const API_URL = 'http://localhost:3001/SelectAllFromStack'; // Ersetzen Sie dies mit Ihrer tatsächlichen API-URL
+		try {
+			const response = await fetch(API_URL,
+
+				{
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					credentials: 'include'
+				});
+			const data = await response.json();
+
+			options = data.map((item) => ({
+				value: item.stackid,
+				label: item.stackname
+			}));
+		} catch (error) {
+			console.error('Fehler beim Laden der Daten:', error);
+		}
+	}
+	async function loadOptionsAndSetValue() {
+		await getOptions();
+		stackid = $page.params.stackid;
+		const selectElement = document.querySelector('select');
+		selectElement.value = stackid;
+	}
+
+	async function getAll(selectedOption) {
+		const API_URL = 'http://localhost:3001/SelectAllFromCardWithStack'; // Ersetzen Sie dies mit Ihrer tatsächlichen API-URL
+		const options = {
+			method: 'POST',
+			credentials: 'include',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ selectedOption })
+		};
+
+		const response = await fetch(API_URL, options);
+		const data = await response.json();
+		return data;
+	}
+
+	onMount(async () => {
+		loadOptionsAndSetValue();
+		try {
+			data = await getAll(stackid);
+			stack = await getStack();
+			status = await getStatus();
+		} catch (error) {
+			console.error('Fehler beim Laden der Daten:', error);
+			// Fehlermeldung anzeigen oder Benutzer benachrichtigen
+		}
+	});
+
+	async function updateCard(cardid, row) {
+		// Holen Sie die aktualisierten Werte aus den Eingabefeldern
+		const front = row.front;
+		const back = row.back;
+		const cardstatus = row.cardstatus;
+		const newstackid = row.stackid;
+
+		console.log('row:', row);
+		console.log('front:', front);
+		console.log('back:', back);
+		console.log('cardstatus:', cardstatus);
+		console.log('stackid:', newstackid);
+		console.log('cardid:', cardid);
+
+		// Senden Sie eine Fetch-Anfrage an das Backend
+		try {
+			const response = await fetch('http://localhost:3001/updateCard', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				credentials: 'include',
+				body: JSON.stringify({
+					cardid,
+					front,
+					back,
+					cardstatus,
+					stackid: newstackid
+				})
+			});
+
+			if (response.ok) {
+				console.log('Datensatz erfolgreich aktualisiert!');
+				getAll(stackid).then((result) => {
+					data = result;
+				});
+				// Aktualisieren Sie die Daten in der Tabelle oder zeigen Sie eine Erfolgsmeldung an
+			} else {
+				console.error('Fehler beim Aktualisieren des Datensatzes:', response.statusText);
+				// Zeigen Sie eine Fehlermeldung an
+			}
+		} catch (error) {
+			console.error('Fehler bei der Fetch-Anfrage:', error);
+			// Zeigen Sie eine Fehlermeldung an
+		}
+	}
+
+	async function getStack() {
+		const API_URL = 'http://localhost:3001/SelectAllStacks';
+		try {
+			const response = await fetch(API_URL,
+				{
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					credentials: 'include'
+				});
+
+
+		const fetchedData = await response.json();
+		return fetchedData;
+		} catch (error) {
+			console.error('Fehler beim Laden der Daten:', error);
+		}
+	}
+
+
+
+	async function getStatus() {
+		const API_URL = 'http://localhost:3001/SelectAllStatus';
+		try {
+			const response = await fetch(API_URL,
+				{
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					credentials: 'include'
+				});
+			const fetchedData = await response.json();
+			return fetchedData;
+		} catch (error) {
+			console.error('Fehler beim Laden der Daten:', error);
+		}
+
+
+	}
+
+	function handleChange(event) {
+		goto('/homePage/manageKarteikarten/' + event.target.value);
+		stackid = event.target.value;
+		console.log('selectedOption:', stackid);
+		getAll(stackid).then((result) => {
+			data = result;
+		});
+	}
+</script>
+
+<main>
+	<div class="container h-full mx-auto flex flex-row justify-center items-center mt-4">
+		<div class="space-y-5">
+			<h1 class="text-4xl text-center">Karteikarten verwalten</h1>
+
+			<div class="container h-full mx-auto flex justify-center items-center mt-4">
+				<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
+					<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Deck wählen</h2>
+
+					<select
+						class="dark:bg-primary-60 block appearance-none w-full bg-primary-0 border border-gray-200 text-primary-400 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+						on:change={handleChange}
+					>
+						{#each options as option}
+							<option value={option.value}>{option.label}</option>
+						{/each}
+					</select>
+				</div>
+			</div>
+
+			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 mx-auto w-5/6">
+				{#if data}
+					<table class="text-center">
+						<thead>
+							<tr>
+								<th class="w-32">Card-ID</th>
+								<th class="w-64">Vorderseite</th>
+								<th class="w-64">Rückseite</th>
+								<th class="w-32">Cardstatus</th>
+								<th class="w-32">Stack-ID</th>
+								<th class="w-32">Update</th>
+							</tr>
+						</thead>
+						<tbody>
+							{#each data as row}
+								<tr>
+									<td>{row.cardid}</td>
+									<td><input class="text-accent-400" bind:value={row.front} /></td>
+									<td><input class="text-accent-400" bind:value={row.back} /></td>
+									<td><input class="text-accent-400 w-1/2" bind:value={row.cardstatus} /></td>
+									<td><input class="text-accent-400 w-1/2" bind:value={row.stackid} /></td>
+									<td><button on:click={updateCard(row.cardid, row)}>✓</button> </td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				{/if}
+
+				{#await data}
+					<p>Lade Daten...</p>
+				{/await}
+			</div>
+		</div>
+	</div>
+	<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 mx-auto w-5/6 mt-5">
+		<h2 class="text-2xl text-center">Legende</h2>
+		<div class="flex flex-row justify-center gap-5 mt-4">
+			{#if stack}
+				<table class="text-center bg-white dark:bg-accent-50 text-accent-400 rounded">
+					<thead>
+						<tr>
+							<th class="w-32">Stack-ID</th>
+							<th class="w-64">Stackname</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each stack as row1}
+							<tr>
+								<td>{row1.stackid}</td>
+								<td>{row1.stackname}</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			{/if}
+			{#if status}
+				<table class="text-center bg-white dark:bg-accent-50 text-accent-400 rounded">
+					<thead>
+						<tr>
+							<th class="w-32">Cardstatus</th>
+							<th class="w-64">Statusname</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each status as row2}
+							<tr>
+								<td>{row2.statusid}</td>
+								<td>{row2.statusname}</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			{/if}
+		</div>
+	</div>
+	<div>
+		<p>
+			<a href="/homePage" class="text-blue-600 hover:text-blue-800 underline">
+				Click here to go back!
+			</a>
+		</p>
+		<p>
+			<a href="/homePage/addKarteikarten" class="text-blue-600 hover:text-blue-800 underline">
+				Click here to go to routes/addKarteikarten/+page.svelte
+			</a>
+		</p>
+		<p>
+			<a
+				href="/homePage/manageKarteikarten/manageTags"
+				class="text-blue-600 hover:text-blue-800 underline"
+			>
+				Click here to go to routes/manageKarteikarten/manageTags/+page.svelte
+			</a>
+		</p>
+		<p>
+			<a
+				href="/homePage/manageKarteikarten/shareKarteikarten"
+				class="text-blue-600 hover:text-blue-800 underline"
+			>
+				Click here to go to routes/manageKarteikarten/shareKarteikarten/+page.svelte
+			</a>
+		</p>
+	</div>
+</main>
