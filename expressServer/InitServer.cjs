@@ -231,10 +231,12 @@ app.get('/SelectAllFromCard', async (req, res) => {
 	res.json(deck);
 });
 
-app.get('/GetRandomCardWithStatus0', async (req, res) => {
+app.post('/GetRandomCardWithStatus', async (req, res) => {
+	const {cardStatus, stackId} = req.body;
 	try {
 		const card = await db('card')
-			.where('cardstatus', 0)
+			.where('cardstatus', cardStatus)
+			.where('stackid', stackId)
 			.orderByRaw('RAND()')
 			.first()
 			.select('front', 'back');
@@ -242,7 +244,7 @@ app.get('/GetRandomCardWithStatus0', async (req, res) => {
 		if (card) {
 			res.json(card);
 		} else {
-			res.status(404).send('No card found with status 0');
+			res.status(404).send('No card found with status '+ cardStatus);
 		}
 	} catch (error) {
 		console.error(error);
@@ -461,6 +463,22 @@ app.get('/SelectAllStatus', async (req, res) => {
   const status = await db.select().from('card_status');
   res.json(status);
 })
+
+app.post('/SelectAllFromCardWithStack', async (req, res) => {
+	const { selectedOption } = req.body;
+	try {
+		const data = await db
+			.select()
+			.from('card')
+			.where('stackid', selectedOption)
+
+		res.json(data);
+	} catch (error) {
+		// Wenn ein Fehler auftritt
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
+});
 
 
 

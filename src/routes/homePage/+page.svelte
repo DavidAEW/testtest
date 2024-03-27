@@ -66,7 +66,7 @@
 		</select>
 		<div class="flex justify-center space-x-4 mb-10">
 			<a
-				href="/homePage/studying/{selectedOption}/1"
+				href="/homePage/studying/{selectedOption}/0"
 				class="dark:bg-primary-200 bg-primary-0 border border-gray-200 text-primary-400 py-3 px-4 rounded-full focus:bg-white focus:border-gray-500"
 				>Start Studying</a
 			>
