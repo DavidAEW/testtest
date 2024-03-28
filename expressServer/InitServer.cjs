@@ -239,8 +239,13 @@ app.post('/LoeschenStackTag', async (req, res) => {
 	}
 });
 
-app.get('/SelectAllFromStack', async (req, res) => {
-	const stack = await db.select().from('stack');
+app.get('/SelectAllFromStack', authenticateJWT, async (req, res) => {
+	const userID = req.user.userid;
+	const stack = await db.select()
+		.from('stack')
+		.join('user_stack', 'stack.stackid', 'user_stack.stackid')
+		.where('user_stack.userid', userID);
+	console.log(stack);
 	res.json(stack);
 });
 
@@ -467,8 +472,12 @@ app.post('/updateCard', async (req, res) => {
 	res.status(200).send('Datensatz erfolgreich aktualisiert');
 });
 
-app.get('/SelectAllStacks', async (req, res) => {
-	const stacks = await db.select().from('stack');
+app.get('/SelectAllStacks', authenticateJWT, async (req, res) => {
+	const userID = req.user.userid;
+	const stacks = await db.select()
+		.from('stack')
+		.join('user_stack', 'stack.stackid', 'user_stack.stackid')
+		.where('user_stack.userid', userID);
 	res.json(stacks);
 });
 
