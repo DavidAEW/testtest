@@ -75,7 +75,7 @@
 	}
 
 	async function sendData() {
-		if (!userInputFront || !userInputBack || !selectedOption) {
+		if (!userInputFront || !userInputBack) {
 			alert('Bitte füllen Sie alle Felder aus!');
 			return;
 		}
