@@ -113,6 +113,39 @@
 		}
 	}
 
+	async function deleteCard(cardid, row) {
+		// Holen Sie die aktualisierten Werte aus den Eingabefeldern
+
+		const deleteStackId = row.cardid;
+		console.log('deleteStackId:', deleteStackId);
+
+		// Senden Sie eine Fetch-Anfrage an das Backend
+		/*try {
+			const response = await fetch('http://localhost:3001/updateCard', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				credentials: 'include',
+				body: JSON.stringify({
+					deleteStackId
+				})
+			});
+
+			if (response.ok) {
+				console.log('Datensatz erfolgreich aktualisiert!');
+
+				// Aktualisieren Sie die Daten in der Tabelle oder zeigen Sie eine Erfolgsmeldung an
+			} else {
+				console.error('Fehler beim Aktualisieren des Datensatzes:', response.statusText);
+				// Zeigen Sie eine Fehlermeldung an
+			}
+		} catch (error) {
+			console.error('Fehler bei der Fetch-Anfrage:', error);
+			// Zeigen Sie eine Fehlermeldung an
+		}*/
+	}
+
 	async function getStack() {
 		const API_URL = 'http://localhost:3001/SelectAllStacks';
 		try {
@@ -200,6 +233,7 @@
 								<th class="w-32">Cardstatus</th>
 								<th class="w-32">Stack-ID</th>
 								<th class="w-32">Update</th>
+								<th class="w-32">Delete</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -211,6 +245,7 @@
 									<td><input class="text-accent-400 w-1/2" bind:value={row.cardstatus} /></td>
 									<td><input class="text-accent-400 w-1/2" bind:value={row.stackid} /></td>
 									<td><button on:click={updateCard(row.cardid, row)}>✓</button> </td>
+									<td><button on:click={deleteCard(row.cardid, row)}>x</button></td>
 								</tr>
 							{/each}
 						</tbody>
