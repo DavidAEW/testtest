@@ -96,7 +96,7 @@
 			<a
 				href="/homePage/addStack"
 				class="dark:bg-primary-200 bg-primary-0 border border-gray-200 text-primary-400 py-3 px-4 rounded-full focus:bg-white focus:border-gray-500"
-				>add Stack</a
+				>Manage stack</a
 			>
 			
 		</div>

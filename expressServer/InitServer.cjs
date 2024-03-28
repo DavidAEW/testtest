@@ -147,7 +147,7 @@ const authenticateJWT = (req, res, next) => {
 	});
 };
 
-//app.use(authenticateJWT); // Verwende Middleware um JWT zu überprüfen
+app.use(authenticateJWT); // Verwende Middleware um JWT zu überprüfen
 
 // --> Hinzufügen eine neue Stack
 app.post('/stacks/create', authenticateJWT, async (req, res) => {
@@ -239,9 +239,10 @@ app.post('/LoeschenStackTag', async (req, res) => {
 	}
 });
 
-app.get('/SelectAllFromStack', authenticateJWT, async (req, res) => {
+app.get('/SelectAllFromStack', async (req, res) => {
 	const userID = req.user.userid;
-	const stack = await db.select()
+	const stack = await db
+		.select()
 		.from('stack')
 		.join('user_stack', 'stack.stackid', 'user_stack.stackid')
 		.where('user_stack.userid', userID);
@@ -472,9 +473,10 @@ app.post('/updateCard', async (req, res) => {
 	res.status(200).send('Datensatz erfolgreich aktualisiert');
 });
 
-app.get('/SelectAllStacks', authenticateJWT, async (req, res) => {
+app.get('/SelectAllStacks', async (req, res) => {
 	const userID = req.user.userid;
-	const stacks = await db.select()
+	const stacks = await db
+		.select()
 		.from('stack')
 		.join('user_stack', 'stack.stackid', 'user_stack.stackid')
 		.where('user_stack.userid', userID);
@@ -494,6 +496,37 @@ app.post('/SelectAllFromCardWithStack', async (req, res) => {
 		res.json(data);
 	} catch (error) {
 		// Wenn ein Fehler auftritt
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
+});
+
+app.post('/deleteStacks', async (req, res) => {
+	const { stackId } = req.body;
+
+	try {
+		// Zuerst alle Karten löschen, die zum Stapel gehören
+		await db.delete().from('card').where('stackid', stackId);
+
+		// Dann den Stapel selbst löschen
+		const dele = await db.delete().from('stack').where('stackid', stackId);
+
+		res.json({ success: true, message: 'Stapel und zugehörige Karten erfolgreich gelöscht' });
+	} catch (error) {
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
+});
+
+app.post('/deleteCard', async (req, res) => {
+	const { cardId } = req.body;
+
+	try {
+		// Dann den Stapel selbst löschen
+		const dele = await db.delete().from('card').where('cardid', cardId);
+
+		res.json({ success: true, message: 'Karte erfolgreich gelöscht' });
+	} catch (error) {
 		console.error('Fehler:', error);
 		res.status(500).json({ error: 'Interner Serverfehler' });
 	}
