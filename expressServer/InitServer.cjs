@@ -518,6 +518,21 @@ app.post('/deleteStacks', authenticateJWT, async (req, res) => {
 	}
 });
 
+app.post('/deleteCard', authenticateJWT, async (req, res) => {
+	const { cardId } = req.body;
+
+	try {
+
+		// Dann den Stapel selbst löschen
+		const dele = await db.delete().from('card').where('cardid', cardId);
+
+		res.json({ success: true, message: 'Karte erfolgreich gelöscht' });
+	} catch (error) {
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
+});
+
 //Muss am Schluss sein, da vor dem Starten erstmal alles definiert werden muss
 app.listen(PORT, (error) => {
 	if (!error) console.log('Express Server wurde gestartet auf Port ' + PORT);

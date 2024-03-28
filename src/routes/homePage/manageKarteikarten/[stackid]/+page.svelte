@@ -116,24 +116,27 @@
 	async function deleteCard(cardid, row) {
 		// Holen Sie die aktualisierten Werte aus den Eingabefeldern
 
-		const deleteStackId = row.cardid;
-		console.log('deleteStackId:', deleteStackId);
+		const cardId = row.cardid;
+		console.log('deleteStackId:', cardId);
 
 		// Senden Sie eine Fetch-Anfrage an das Backend
-		/*try {
-			const response = await fetch('http://localhost:3001/updateCard', {
+		try {
+			const response = await fetch('http://localhost:3001/deleteCard', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
 				credentials: 'include',
 				body: JSON.stringify({
-					deleteStackId
+					cardId
 				})
 			});
 
 			if (response.ok) {
-				console.log('Datensatz erfolgreich aktualisiert!');
+				console.log('Datensatz erfolgreich gelöscht!');
+				getAll(stackid).then((result) => {
+					data = result;
+				});
 
 				// Aktualisieren Sie die Daten in der Tabelle oder zeigen Sie eine Erfolgsmeldung an
 			} else {
@@ -143,7 +146,7 @@
 		} catch (error) {
 			console.error('Fehler bei der Fetch-Anfrage:', error);
 			// Zeigen Sie eine Fehlermeldung an
-		}*/
+		}
 	}
 
 	async function getStack() {
