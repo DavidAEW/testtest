@@ -239,7 +239,7 @@ app.post('/LoeschenStackTag', async (req, res) => {
 	}
 });
 
-app.get('/SelectAllFromStack', authenticateJWT, async (req, res) => {
+app.get('/SelectAllFromStack', async (req, res) => {
 	const userID = req.user.userid;
 	const stack = await db
 		.select()
@@ -473,7 +473,7 @@ app.post('/updateCard', async (req, res) => {
 	res.status(200).send('Datensatz erfolgreich aktualisiert');
 });
 
-app.get('/SelectAllStacks', authenticateJWT, async (req, res) => {
+app.get('/SelectAllStacks', async (req, res) => {
 	const userID = req.user.userid;
 	const stacks = await db
 		.select()
@@ -501,7 +501,7 @@ app.post('/SelectAllFromCardWithStack', async (req, res) => {
 	}
 });
 
-app.post('/deleteStacks', authenticateJWT, async (req, res) => {
+app.post('/deleteStacks', async (req, res) => {
 	const { stackId } = req.body;
 
 	try {
@@ -518,7 +518,7 @@ app.post('/deleteStacks', authenticateJWT, async (req, res) => {
 	}
 });
 
-app.post('/deleteCard', authenticateJWT, async (req, res) => {
+app.post('/deleteCard', async (req, res) => {
 	const { cardId } = req.body;
 
 	try {
