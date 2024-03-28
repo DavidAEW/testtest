@@ -147,7 +147,7 @@ const authenticateJWT = (req, res, next) => {
 	});
 };
 
-//app.use(authenticateJWT); // Verwende Middleware um JWT zu überprüfen
+app.use(authenticateJWT); // Verwende Middleware um JWT zu überprüfen
 
 // --> Hinzufügen eine neue Stack
 app.post('/stacks/create', authenticateJWT, async (req, res) => {
@@ -522,7 +522,6 @@ app.post('/deleteCard', authenticateJWT, async (req, res) => {
 	const { cardId } = req.body;
 
 	try {
-
 		// Dann den Stapel selbst löschen
 		const dele = await db.delete().from('card').where('cardid', cardId);
 
