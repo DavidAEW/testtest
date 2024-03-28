@@ -163,6 +163,10 @@
 			data = result;
 		});
 	}
+
+	function back() {
+		goto('/homePage');
+	}
 </script>
 
 <main>
@@ -260,32 +264,14 @@
 			{/if}
 		</div>
 	</div>
-	<div>
-		<p>
-			<a href="/homePage" class="text-blue-600 hover:text-blue-800 underline">
-				Click here to go back!
-			</a>
-		</p>
-		<p>
-			<a href="/homePage/addKarteikarten" class="text-blue-600 hover:text-blue-800 underline">
-				Click here to go to routes/addKarteikarten/+page.svelte
-			</a>
-		</p>
-		<p>
-			<a
-				href="/homePage/manageKarteikarten/manageTags"
-				class="text-blue-600 hover:text-blue-800 underline"
-			>
-				Click here to go to routes/manageKarteikarten/manageTags/+page.svelte
-			</a>
-		</p>
-		<p>
-			<a
-				href="/homePage/manageKarteikarten/shareKarteikarten"
-				class="text-blue-600 hover:text-blue-800 underline"
-			>
-				Click here to go to routes/manageKarteikarten/shareKarteikarten/+page.svelte
-			</a>
-		</p>
-	</div>
+
+	<div class="flex justify-center mx-auto mt-5 mb-5">
+	<button
+		class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded"
+		on:click={back}
+	>
+		Zurück
+	</button>
+</div>
+
 </main>
