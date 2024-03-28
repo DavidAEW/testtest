@@ -71,6 +71,11 @@
 	}
 
 	async function deleteStack(stackId) {
+		const isConfirmed = confirm('Bist du sicher, dass du diesen Stapel löschen möchtest?');
+    
+    if (!isConfirmed) {
+        return;
+    }
 		const API_URL = 'http://localhost:3001/deleteStacks';
 		try {
 			const response = await fetch(API_URL, {
