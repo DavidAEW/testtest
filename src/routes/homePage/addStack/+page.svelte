@@ -1,7 +1,14 @@
 <script>
 
+	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
+
 	let stackName = '';
 	let message = '';
+	let options = [];
+	let stackId = '';
+	let message1 = '';
+
 
 	async function addStack() {
 		const API_URL = 'http://localhost:3001/stacks/create';
@@ -22,11 +29,77 @@
 			const data = await response.json();
 			console.log('Erfolg:', data);
 			message = 'Stapel erfolgreich erstellt!';
-			stackName = ''; // Feld leeren nach dem Erfolg
+			stackName = '';
+			await getOptions();
+			setTimeout(() => {
+				message = '';
+			}, 5000);
 		} catch (error) {
 			console.error('Fehler:', error);
 			message = 'Fehler beim Erstellen des Stapels.';
 		}
+	}
+	async function getOptions() {
+		const API_URL = 'http://localhost:3001/SelectAllFromStack'; // Ersetzen Sie dies mit Ihrer tatsächlichen API-URL
+		try {
+			const response = await fetch(API_URL,
+
+				{
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					credentials: 'include'
+				});
+			const data = await response.json();
+
+			options = data.map((item) => ({
+				value: item.stackid,
+				label: item.stackname
+			}));
+		} catch (error) {
+			console.error('Fehler beim Laden der Daten:', error);
+		}
+	}
+	onMount(() => {
+		getOptions();
+	});
+
+	function handleChange(event) {
+		stackId = event.target.value;
+		console.log('selectedOption:', stackId);
+	}
+
+	async function deleteStack(stackId) {
+		const API_URL = 'http://localhost:3001/deleteStacks';
+		try {
+			const response = await fetch(API_URL, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ stackId }),
+				credentials: 'include'
+			});
+
+			if (!response.ok) {
+				throw new Error('Netzwerkantwort war nicht ok');
+			}
+
+			const data = await response.json();
+			console.log('Erfolg:', data);
+			message1 = 'Stapel erfolgreich gelöscht!';
+			await getOptions();
+			setTimeout(() => {
+				message1 = '';
+			}, 5000);
+		} catch (error) {
+			console.error('Fehler:', error);
+			message1 = 'Fehler beim Löschen des Stapels.';
+		}
+	}
+	function back() {
+		goto('/homePage');
 	}
 </script>
 
@@ -50,6 +123,37 @@
 		{#if message}
 			<p class="mt-4 text-primary-200">{message}</p>
 		{/if}
+	</div>
+	<div class="text-center mt-10">
+		<h1 class="text-3xl font-bold mb-4 text-primary-100">Stapel löschen</h1>
+		<div class="mb-4">
+			<select
+			class="dark:bg-primary-60 block appearance-none w-full bg-primary-0 border border-gray-200 text-primary-400 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+			on:change={handleChange}
+		>
+			<option value="">Wählen Sie einen Stapel aus</option>
+			{#each options as option}
+				<option value={option.value}>{option.label}</option>
+			{/each}
+		</select>
+		</div>
+		<button
+			on:click={deleteStack(stackId)}
+			class="bg-primary-100 hover:bg-primary-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+		>
+			Stapel löschen
+		</button>
+		{#if message1}
+			<p class="mt-4 text-primary-200">{message1}</p>
+		{/if}
+	</div>
+	<div class="text-center mt-10">
+		<button
+			on:click={back}
+			class="bg-primary-100 hover:bg-primary-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+		>
+			Zurück
+		</button>
 	</div>
 </main>
 

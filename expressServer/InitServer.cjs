@@ -499,6 +499,23 @@ app.post('/SelectAllFromCardWithStack', async (req, res) => {
 	}
 });
 
+app.post('/deleteStacks', authenticateJWT, async (req, res) => {
+	const { stackId } = req.body;
+
+	console.log(stackId);
+	try {
+		const dele = await db.delete().from('stack').where('stackid', stackId);
+
+
+		res.json(dele);
+	} catch (error) {
+		// Wenn ein Fehler auftritt
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
+});
+
+
 //Muss am Schluss sein, da vor dem Starten erstmal alles definiert werden muss
 app.listen(PORT, (error) => {
 	if (!error) console.log('Express Server wurde gestartet auf Port ' + PORT);
