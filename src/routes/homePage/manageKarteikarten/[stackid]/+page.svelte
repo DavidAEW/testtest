@@ -118,6 +118,11 @@
 
 		const cardId = row.cardid;
 		console.log('deleteStackId:', cardId);
+		const isConfirmed = confirm('Bist du sicher, dass du die Karte löschen möchtest?');
+    
+    if (!isConfirmed) {
+        return;
+    }
 
 		// Senden Sie eine Fetch-Anfrage an das Backend
 		try {
