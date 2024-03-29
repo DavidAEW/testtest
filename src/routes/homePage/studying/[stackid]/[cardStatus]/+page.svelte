@@ -96,7 +96,7 @@
 		}
 
 		console.log('Card status updated successfully!');
-		// You can optionally fetch a new card here
+		showBack = false;
 		await getCards();
 	}
 
@@ -206,19 +206,19 @@
 				class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16"
 				on:click={() => updateCardStatus(cardData.id, 1)}
 			>
-				gelernt
+				kann ich nicht
 			</button>
 			<button
 				class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16"
 				on:click={() => updateCardStatus(cardData.id, 2)}
 			>
-				kann ich fast
+				kann ich bisschen
 			</button>
 			<button
 				class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded"
 				on:click={() => updateCardStatus(cardData.id, 3)}
 			>
-				weiß ich
+				kann ich gut
 			</button>
 		</div>
 	{/if}
