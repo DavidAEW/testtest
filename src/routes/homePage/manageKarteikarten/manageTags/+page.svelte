@@ -12,7 +12,7 @@
     let selectedStack;
 
 
-    let isLoading = true; // Hilfsvariable für den Ladezustand
+    let isLoading = true; 
     let tagIdsWhoAreChecked = [];
 
     class Stack {
@@ -30,31 +30,42 @@
     }
 
     onMount(async () => {
-        await getEndpoint1()
-        await getEndpoint2()
-        isLoading = false; // Markiere das Laden als abgeschlossen
+        await GetAllTags()
+        await getStackListe()
+        isLoading = false; 
     });
 
-    async function getEndpoint1() {
-      const response = await fetch(endpoint);
+    async function GetAllTags() {
+      const response = await fetch(endpoint,
+      {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+        });
       const data = await response.json();
       data.map(item => {
             const newTag = new Tag(item.tagid, item.tagname);
             tagList.push(newTag);
         });
-        console.log(tagList);
     }
 
-    async function getEndpoint2() {
-      const response = await fetch(endpoint2);
+    async function getStackListe() {
+      const response = await fetch(endpoint2,
+      {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+        });
       const data = await response.json();
       
-        // Verwenden von map, um jedes Objekt in ein Stack-Objekt umzuwandeln und zur Liste hinzuzufügen
         data.map(item => {
             const newStack = new Stack(item.stackid, item.stackname);
             stackList.push(newStack);
         });
-        console.log(stackList);
     }
 
     function goBack(){
@@ -81,7 +92,6 @@
 
     async function hinzufuegenTag(){
         tagList = [];
-        try{
             const response = await fetch('http://localhost:3001/HinzufuegenTag', {
             method: 'POST',
             headers: {
@@ -90,19 +100,16 @@
             body: JSON.stringify({
                 tagname: neuerTag,
             }),
+            credentials: 'include'
         });
-        const data = await response.json(); // Wenn die Antwort JSON enthält
-        await getEndpoint1();
-        console.log(tagList);
+        const data = await response.json(); 
+        await GetAllTags();
+        loadTagIdsWhoAreChecked(tagIdsWhoAreChecked);
         neuerTag = '';
-        }catch(error){
-            console.error('Fehler beim Löschen des Tags:', error);
-        }
     }
 
     async function deleteTag(deletedtagname){
         tagList = [];
-        try{
             const response = await fetch('http://localhost:3001/LoeschenTag', {
             method: 'POST',
             headers: {
@@ -111,20 +118,15 @@
             body: JSON.stringify({
                 tagname: deletedtagname,
             }),
+            credentials: 'include'
         });
-        const data = await response.json(); // Wenn die Antwort JSON enthält
-        console.log("Rückmeldung vom Server:", data); // Hier kannst du mit der Antwort des Servers arbeiten
-        await getEndpoint1();
+        const data = await response.json(); 
+        await GetAllTags();
+        loadTagIdsWhoAreChecked(tagIdsWhoAreChecked);
         isDeleteClicked = false;
-        console.log(tagname);
-        } catch(error){
-            console.error('Fehler beim Löschen des Tags:', error);
-        }
     }
 
     async function selectStack(stackid){
-        console.log("wird aufgerufen");
-        try{
             const response = await fetch('http://localhost:3001/AnzeigenStackTag', {
             method: 'POST',
             headers: {
@@ -133,19 +135,15 @@
             body: JSON.stringify({
                 stackid: stackid,
             }),
+            credentials: 'include'
         });
-        const data = await response.json(); // Wenn die Antwort JSON enthält
+        const data = await response.json(); 
         tagIdsWhoAreChecked = data.map(item => item.tagid);
-        console.log(tagIdsWhoAreChecked + "hier auch nochmal");
         loadTagIdsWhoAreChecked(tagIdsWhoAreChecked);
-        }catch(error){
-            console.error('Fehler beim Löschen des Tags:', error);
-        }
     }
 
     async function loadTagIdsWhoAreChecked(tagIdsWhoAreChecked){
 
-        // Durchlaufe die Liste und setze das Attribut auf false
         for (var i = 0; i < tagList.length; i++) {
             tagList[i].isChecked = false;
         }
@@ -157,45 +155,33 @@
     }
 
     async function changeStatusOfCheckBox(Tag, stackid){
-        console.log(Tag.isChecked);
-        console.log(Tag.tagid);
-        console.log("und noch stack "+ stackid);
-
         if(Tag.isChecked == false){
-            try{
-                const response = await fetch('http://localhost:3001/HinzufuegenInStackTag', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    tagid: Tag.tagid,
-                    stackid: stackid
-                }),
-                });
-                const data = await response.json(); // Wenn die Antwort JSON enthält
-                console.log("Rückmeldung vom Server:", data); // Hier kannst du mit der Antwort des Servers arbeiten
-            } catch(error){
-                console.error('Fehler beim Löschen des Tags:', error);
-            }
+            const response = await fetch('http://localhost:3001/HinzufuegenInStackTag', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                tagid: Tag.tagid,
+                stackid: stackid
+            }),
+            credentials: 'include'
+            });
+            const data = await response.json(); 
         }
         else{
-            try{
-                const response = await fetch('http://localhost:3001/LoeschenStackTag', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    tagid: Tag.tagid,
-                    stackid: stackid
-                }),
-                });
-                const data = await response.json(); // Wenn die Antwort JSON enthält
-                console.log("Rückmeldung vom Server:", data); // Hier kannst du mit der Antwort des Servers arbeiten
-            } catch(error){
-                console.error('Fehler beim Löschen des Tags:', error);
-            }
+            const response = await fetch('http://localhost:3001/LoeschenStackTag', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                tagid: Tag.tagid,
+                stackid: stackid
+            }),
+            credentials: 'include'
+            });
+            const data = await response.json(); 
         }
     }
 
@@ -214,6 +200,7 @@
     </div>
     <div class="container h-full mx-auto flex justify-center items-center mt-4" >
     <select bind:value={selected} on:change={() => selectStack(selected)} class="border rounded-lg shadow-m bg-primary-300 text-primary-50">
+        <option value="" elected="selected">Wähle einen Stapel aus:</option>
         {#each stackList as stack}
         <option value={stack.stackid}>
         {stack.stackname}
@@ -237,9 +224,7 @@
                             </button>                                
                         </div>
                         {/if}
-                        <!-- Checkbox -->
                         <input type="checkbox" class="w-8 h-8 bg-primary-100 rounded mr-4"on:click={changeStatusOfCheckBox(tagList[i], selected)} bind:checked={tagList[i].isChecked}>
-                        <!-- Beschriftung -->
                         <div class="p-1 max-w-sm mx-auto border rounded-lg shadow-m bg-primary-300 text-primary-50">
                             <p>{tag.tagname}</p>
                         </div>

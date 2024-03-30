@@ -49,11 +49,6 @@ app.get('/test', (req, res) => {
 	res.send('Hello from express server');
 });
 
-app.get('/SelectAllFromTag', async (req, res) => {
-	const tags = await db.select().from('tag');
-	res.json(tags);
-});
-
 app.post('/login', async (req, res) => {
 	const { email, password } = req.body;
 	try {
@@ -149,6 +144,15 @@ const authenticateJWT = (req, res, next) => {
 
 app.use(authenticateJWT); // Verwende Middleware um JWT zu überprüfen
 
+app.get('/SelectAllFromTag', async (req, res) => {
+	const userID = req.user.userid;
+	const tags = await db
+	.select()
+	.from('tag')
+	.where('tag.userid', userID);
+	res.json(tags);
+});
+
 // --> Hinzufügen eine neue Stack
 app.post('/stacks/create', authenticateJWT, async (req, res) => {
 	const { stackName } = req.body;
@@ -173,8 +177,9 @@ app.post('/stacks/create', authenticateJWT, async (req, res) => {
 });
 
 app.post('/HinzufuegenTag', async (req, res) => {
+	const userId = req.user.userid;
 	const { tagname } = req.body;
-	const tag = await db.insert({ tagname }).into('tag');
+	const tag = await db.insert({ tagname: tagname, userid: userId }).into('tag');
 	if (tag) {
 		// Wenn der Tag erfolgreich gelöscht wurde
 		res.status(200).json({ message: 'Tag erfolgreich gelöscht' });
