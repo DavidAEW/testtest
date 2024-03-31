@@ -152,6 +152,16 @@
 			<p class="mt-4 text-primary-200">{message1}</p>
 		{/if}
 	</div>
+<div class="text-center mt-10">
+	<h1 class="text-3xl font-bold mb-4 text-primary-100">Manage Tags</h1>
+	<div class="text-center mt-10">
+	<a
+				href="/homePage/addStack/manageTags"
+				class="bg-primary-100 hover:bg-primary-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+				>Manage Tags</a
+			>
+</div>
+</div>
 	<div class="text-center mt-10">
 		<button
 			on:click={back}

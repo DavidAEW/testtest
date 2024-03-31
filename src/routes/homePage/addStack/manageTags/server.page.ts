@@ -12,3 +12,6 @@
 //     stacknames: loadImages()
 //    } 
 // };
+
+
+// --> das ist pseudocode und muss noch angepasst werden
