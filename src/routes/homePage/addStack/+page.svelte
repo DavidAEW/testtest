@@ -106,7 +106,8 @@
 	function back() {
 		goto('/homePage');
 	}
-</script><main class="h-full flex flex-row justify-center items-center flex-wrap">
+</script>
+<main class="h-full flex flex-row justify-center items-center flex-wrap">
 	<div class="text-center w-1/3 p-4 border-r border-gray-300">
 		<h1 class="text-3xl font-bold mb-4 text-primary-100">Neuen Stapel hinzufügen</h1>
 		<div class="mb-4">

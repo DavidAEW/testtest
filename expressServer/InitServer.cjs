@@ -146,15 +146,12 @@ app.use(authenticateJWT); // Verwende Middleware um JWT zu überprüfen
 
 app.get('/SelectAllFromTag', async (req, res) => {
 	const userID = req.user.userid;
-	const tags = await db
-	.select()
-	.from('tag')
-	.where('tag.userid', userID);
+	const tags = await db.select().from('tag').where('tag.userid', userID);
 	res.json(tags);
 });
 
 // --> Hinzufügen eine neue Stack
-app.post('/stacks/create', authenticateJWT, async (req, res) => {
+app.post('/stacks/create', async (req, res) => {
 	const { stackName } = req.body;
 	const userId = req.user.userid;
 	console.log(userId);
@@ -345,17 +342,26 @@ app.get('/getUser', async (req, res) => {
 });
 
 // -> Karte exportieren zum sharen
-
 app.get('/exportCards/:stackId', async (req, res) => {
-	const { stackId } = req.params; // stackId aus der URL extrahieren
+	const { stackId } = req.params;
+
 	try {
+		// Zuerst den Namen des Stacks abrufen
+		const stackInfo = await db.select('stackname').from('stack').where('stackid', stackId).first();
+
+		if (!stackInfo) {
+			return res.status(404).send('Stack nicht gefunden für stackid: ' + stackId);
+		}
+
+		// Dann die Karten des Stacks abrufen
 		const cards = await db
 			.select('cardid', 'front', 'back', 'cardstatus', 'stackid')
 			.from('card')
 			.where('stackid', stackId);
 
 		if (cards.length) {
-			res.json(cards);
+			// Stack-Name zusammen mit den Karten exportieren
+			res.json({ stackName: stackInfo.stackname, cards });
 		} else {
 			res.status(404).send('Keine Karten gefunden für stackid: ' + stackId);
 		}
@@ -363,49 +369,70 @@ app.get('/exportCards/:stackId', async (req, res) => {
 		console.error('Fehler beim Exportieren der Karten:', error);
 		res.status(500).send('Serverfehler beim Exportieren der Karten.');
 	}
-
-	/*
---> BSP Response : Test URL : http://localhost:3001/exportCards/2
-[
-    {
-        "cardid": 47,
-        "front": "bester DB-Master ",
-        "back": "Louis",
-        "cardstatus": 0,
-        "stackid": 2
-    },
-    {
-        "cardid": 48,
-        "front": "Hallo",
-        "back": "Louis",
-        "cardstatus": 2,
-        "stackid": 2
-    }
-]
-*/
 });
+
+/*
+response von export die soll dann req.body für import sein 
+{
+    "stackName": "moin",
+    "cards": [
+        {
+            "cardid": 55,
+            "front": "ich",
+            "back": "fixe",
+            "cardstatus": 2,
+            "stackid": 2
+        },
+        {
+            "cardid": 59,
+            "front": "dfa",
+            "back": "dafsdf",
+            "cardstatus": 2,
+            "stackid": 2
+        }
+	]
+	}
+*/
 
 // -> Karte importieren zum sharen
 app.post('/importCards', async (req, res) => {
-	const cards = req.body; //Ergebnis von exportCards
+	const { cards, stackName } = req.body;
+	const userId = req.user.userid;
+
 	if (!cards || cards.length === 0) {
 		return res.status(400).send('Keine Karten zum Importieren angegeben.');
 	}
 
 	try {
-		for (let i = 0; i < cards.length; i++) {
-			const card = cards[i];
+		// Erstelle einen neuen Stapel für den Import und erhalte die ID des neuen Stapels
+		const stackInsertResult = await db('stack').insert({
+			stackname: stackName
+		});
+
+		// MySQL gibt die insertId des zuletzt eingefügten Datensatzes zurück
+		const newStackId = stackInsertResult[0];
+		// Ordne den neuen Stack Benutzer zu
+		await db('user_stack').insert({
+			userid: userId,
+			stackid: newStackId
+		});
+
+		// Füge jede Karte dem neu erstellten Stapel hinzu
+		for (let card of cards) {
 			await db('card').insert({
 				front: card.front,
 				back: card.back,
-				cardstatus: 0, // Setze cardstatus standardmäßig auf 0
-				stackid: card.stackid
+				cardstatus: 0, // Standardmäßig auf 0 setzen
+				stackid: newStackId // Verwende die ID neue Stack
 			});
 		}
-		res.status(201).send('Karten erfolgreich importiert.');
+
+		res
+			.status(201)
+			.json({ success: true, message: 'Karten erfolgreich importiert', newStackId: newStackId });
 	} catch (error) {
 		console.error('Fehler beim Importieren der Karten:', error);
-		res.status(500).send('Serverfehler beim Importieren der Karten.');
+		res.status(500).json({ error: 'Interner Serverfehler beim Importieren der Karten.' });
 	}
 });
 
