@@ -67,9 +67,15 @@
 		<h1 class="text-3xl font-extrabold text-text-100">Welcome back {username}</h1>
 	</div>
 	<div class="flex-grow flex flex-col items-center mt-16">
+		<a
+			href="/homePage/addStack"
+			class="bg-primary-100 border rounded font-bold mb-3 border-gray-200 text-primary-400 py-3 px-4 hover:bg-primary-70 hover:border-gray-500"
+			>Manage decks</a
+		>
+		{#if options.length > 0}
 		<h2 class="text-2xl font-bold mb-5">Choose a deck</h2>
 		<select
-			class="dark:bg-primary-60 bg-primary-0 border border-gray-200 text-primary-400 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500 mb-4"
+			class="bg-primary-70 border border-gray-200 text-primary-400 py-3 px-4 pr-8 rounded leading-tight focus:outline-none hover:bg-primary-100 hover:border-gray-500 mb-4"
 			on:change={handleChange}
 		>
 			<option value="">Choose a deck</option>
@@ -77,27 +83,23 @@
 				<option value={option.value}>{option.label}</option>
 			{/each}
 		</select>
+		{/if}
 		{#if selectedOption !== '' && selectedOption !== undefined}
 		<div class="flex justify-center space-x-4 mb-10">
 			<a
 				href="/homePage/studying/{selectedOption}/0"
-				class="dark:bg-primary-200 bg-primary-0 border border-gray-200 text-primary-400 py-3 px-4 rounded-full focus:bg-white focus:border-gray-500"
+				class="dark:bg-primary-200 bg-primary-70 border border-gray-200 text-primary-400 py-3 px-4 rounded-full hover:bg-primary-100 dark:hover:bg-primary-70 hover:border-gray-500"
 				>Start Studying</a
 			>
 			<a
 				href="/homePage/addKarteikarten/{selectedOption}"
-				class="dark:bg-primary-200 bg-primary-0 border border-gray-200 text-primary-400 py-3 px-4 rounded-full focus:bg-white focus:border-gray-500"
+				class="dark:bg-primary-200 bg-primary-70 border border-gray-200 text-primary-400 py-3 px-4 rounded-full hover:bg-primary-100 dark:hover:bg-primary-70 hover:border-gray-500"
 				>Add a flashcard</a
 			>
 			<a
 				href="/homePage/manageKarteikarten/{selectedOption}"
-				class="dark:bg-primary-200 bg-primary-0 border border-gray-200 text-primary-400 py-3 px-4 rounded-full focus:bg-white focus:border-gray-500"
+				class="dark:bg-primary-200 bg-primary-70 border border-gray-200 text-primary-400 py-3 px-4 rounded-full hover:bg-primary-100 dark:hover:bg-primary-70 hover:border-gray-500"
 				>Manage flashcards</a
-			>
-			<a
-				href="/homePage/addStack"
-				class="dark:bg-primary-200 bg-primary-0 border border-gray-200 text-primary-400 py-3 px-4 rounded-full focus:bg-white focus:border-gray-500"
-				>Manage stack</a
 			>
 			
 		</div>
