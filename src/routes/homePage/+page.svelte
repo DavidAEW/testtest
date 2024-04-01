@@ -77,6 +77,7 @@
 				<option value={option.value}>{option.label}</option>
 			{/each}
 		</select>
+		{#if selectedOption !== '' && selectedOption !== undefined}
 		<div class="flex justify-center space-x-4 mb-10">
 			<a
 				href="/homePage/studying/{selectedOption}/0"
@@ -100,6 +101,7 @@
 			>
 			
 		</div>
+		{/if}
 		<div class="space-y-5 mt-10">
 			<p>These are some of the other pages:</p>
 			<ul class="space-y-1">
