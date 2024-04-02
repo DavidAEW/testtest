@@ -80,6 +80,12 @@
 				class="bg-primary-100 border rounded font-bold mx-4 border-gray-200 text-primary-400 py-3 px-4 hover:bg-primary-70 hover:border-gray-500"
 				>Manage tags</a
 			>
+
+			<a
+				href="/homePage/shareDeck"
+				class="bg-primary-100 border rounded font-bold mx-4 border-gray-200 text-primary-400 py-3 px-4 hover:bg-primary-70 hover:border-gray-500"
+				>Share your Deck</a
+			>
 		</div>
 		{#if options.length > 0}
 			<h2 class="text-2xl font-bold mb-5">Choose a deck</h2>
