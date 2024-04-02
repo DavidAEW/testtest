@@ -91,21 +91,27 @@
     }
 
     async function hinzufuegenTag(){
-        tagList = [];
-            const response = await fetch('http://localhost:3001/HinzufuegenTag', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                tagName: neuerTag,
-            }),
-            credentials: 'include'
-        });
-        const data = await response.json(); 
-        await GetAllTags();
-        loadTagIdsWhoAreChecked(tagIdsWhoAreChecked);
-        neuerTag = '';
+        if (!neuerTag) {
+			alert('Bitte gib deinem Tag doch wenigstens einen Namen :)');
+			return;
+		}
+        else {
+            tagList = [];
+                const response = await fetch('http://localhost:3001/HinzufuegenTag', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    tagName: neuerTag,
+                }),
+                credentials: 'include'
+            });
+            const data = await response.json(); 
+            await GetAllTags();
+            loadTagIdsWhoAreChecked(tagIdsWhoAreChecked);
+            neuerTag = '';
+        }
     }
 
     async function deleteTag(deletedTagName){
@@ -193,21 +199,21 @@
 {:else}
     <div class="container h-full mx-auto flex justify-center items-center mt-4">
         <h2>
-            <button class="p-1 max-w-sm mx-auto border rounded-lg shadow-m bg-primary-300 text-primary-50"on:click={goBack}>Zurück</button>
-            <button class="p-1 max-w-sm mx-auto border rounded-lg shadow-m bg-primary-300 text-primary-50" on:click={clickAdd}>Tag hinzufügen</button>
-            <button class="p-1 max-w-sm mx-auto border rounded-lg shadow-m bg-primary-300 text-primary-50"on:click={clickDelete}>Tag löschen</button>
+            <button class="bg-primary-100 hover:bg-primary-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"on:click={goBack}>Zurück</button>
+            <button class="bg-primary-100 hover:bg-primary-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" on:click={clickAdd}>Tag hinzufügen</button>
+            <button class="bg-primary-100 hover:bg-primary-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"on:click={clickDelete}>Tag löschen</button>
+            <select bind:value={selected} on:change={() => selectDeck(selected)} class="bg-primary-100 hover:bg-primary-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                <option value="" elected="selected">Wähle einen Stapel aus:</option>
+                {#each deckList as deck}
+                <option value={deck.deckId}>
+                {deck.deckName}
+                </option>
+                {/each}
+            </select> 
         </h2>
     </div>
-    <div class="container h-full mx-auto flex justify-center items-center mt-4" >
-    <select bind:value={selected} on:change={() => selectDeck(selected)} class="border rounded-lg shadow-m bg-primary-300 text-primary-50">
-        <option value="" elected="selected">Wähle einen Stapel aus:</option>
-        {#each deckList as deck}
-        <option value={deck.deckId}>
-        {deck.deckName}
-        </option>
-        {/each}
-    </select>    
-    </div>
+    <!-- <div class="container h-full mx-auto flex justify-center items-center mt-4" > -->   
+    <!-- </div> -->
 
     <div class="container h-full mx-auto flex justify-center items-center mt-4">
         <div class="space-y-5 grid grid-flow-row grid-cols-1">
@@ -216,16 +222,16 @@
                     <label class="inline-flex items-center cursor-pointer">
                         {#if isDeleteClicked}
                         <div class="w-8 h-8 rounded mr-4">
-                            <button type="button" class="p-1 max-w-sm mx-auto border rounded-lg shadow-m bg-primary-300 text-primary-50" on:click={deleteTag(tag.tagName)}>
-                            <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <button type="button" class="bg-primary-100 hover:bg-primary-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" on:click={deleteTag(tag.tagName)}>
+                            <svg class="w-4 h-4 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
                             </svg>
                             <span class="sr-only">Icon description</span>
                             </button>                                
                         </div>
                         {/if}
-                        <input type="checkbox" class="w-8 h-8 bg-primary-100 rounded mr-4"on:click={changeStatusOfCheckBox(tagList[i], selected)} bind:checked={tagList[i].isChecked}>
-                        <div class="p-1 max-w-sm mx-auto border rounded-lg shadow-m bg-primary-300 text-primary-50">
+                        <input type="checkbox" class="ml-5 w-8 h-8 bg-primary-100 rounded mr-4"on:click={changeStatusOfCheckBox(tagList[i], selected)} bind:checked={tagList[i].isChecked}>
+                        <div class="bg-primary-100 hover:bg-primary-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                             <p>{tag.tagName}</p>
                         </div>
                     </label>
@@ -238,8 +244,8 @@
         <div class="container h-full mx-auto flex justify-center items-center mt-4">
             <div class="space-y-5 grid grid-flow-row grid-cols-1">
             {#if isAddClicked}
-                <input class="p-1 max-w-sm mx-auto border rounded-lg shadow-m bg-primary-300 text-primary-50" bind:value={neuerTag} placeholder="Tagnamen eingeben">
-                <button class="p-1 max-w-sm mx-auto border rounded-lg shadow-m bg-primary-300 text-primary-50" on:click={hinzufuegenTag} on:click={clickAdd}>hinzufügen</button>
+                <input class="bg-primary-100 hover:bg-primary-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" bind:value={neuerTag} placeholder="Tagnamen eingeben">
+                <button class="bg-primary-100 hover:bg-primary-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" on:click={hinzufuegenTag} on:click={clickAdd}>hinzufügen</button>
             {/if}
             </div>
         </div>
