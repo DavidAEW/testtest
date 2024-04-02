@@ -4,7 +4,7 @@
 	let options = [];
 
 	async function getOptions() {
-		const API_URL = 'http://localhost:3001/SelectAllFromStack'; // Ersetzen Sie dies mit Ihrer tatsächlichen API-URL
+		const API_URL = 'http://localhost:3001/SelectAllFromDeck';
 		try {
 			const response = await fetch(API_URL,
 
@@ -18,8 +18,8 @@
 			const data = await response.json();
 
 			options = data.map((item) => ({
-				value: item.stackid,
-				label: item.stackname
+				value: item.deckId,
+				label: item.deckName
 			}));
 		} catch (error) {
 			console.error('Fehler beim Laden der Daten:', error);
@@ -68,7 +68,7 @@
 	</div>
 	<div class="flex-grow flex flex-col items-center mt-16">
 		<a
-			href="/homePage/addStack"
+			href="/homePage/addDeck"
 			class="bg-primary-100 border rounded font-bold mb-3 border-gray-200 text-primary-400 py-3 px-4 hover:bg-primary-70 hover:border-gray-500"
 			>Manage decks</a
 		>

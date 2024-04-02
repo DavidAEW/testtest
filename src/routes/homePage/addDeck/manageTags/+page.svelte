@@ -2,23 +2,23 @@
     import { onMount } from "svelte";
     import { goto } from '$app/navigation';
     const endpoint = "http://localhost:3001/SelectAllFromTag";
-    const endpoint2 = "http://localhost:3001/SelectAllFromStack";
+    const endpoint2 = "http://localhost:3001/SelectAllFromDeck";
     let selected;
     let isAddClicked = false;
     let isDeleteClicked = false;
     let neuerTag;
-    let stackList = [];
+    let deckList = [];
     let tagList = [];
-    let selectedStack;
+    let selectedDeck;
 
 
     let isLoading = true; 
     let tagIdsWhoAreChecked = [];
 
-    class Stack {
-        constructor(stackid, stackname) {
-            this.stackid = stackid;
-            this.stackname = stackname;
+    class Deck {
+        constructor(deckId, deckName) {
+            this.deckId = deckId;
+            this.deckName = deckName;
         }
     }
     class Tag {
@@ -31,7 +31,7 @@
 
     onMount(async () => {
         await GetAllTags()
-        await getStackListe()
+        await getDeckListe()
         isLoading = false; 
     });
 
@@ -51,7 +51,7 @@
         });
     }
 
-    async function getStackListe() {
+    async function getDeckListe() {
       const response = await fetch(endpoint2,
       {
         method: 'GET',
@@ -63,8 +63,8 @@
       const data = await response.json();
       
         data.map(item => {
-            const newStack = new Stack(item.stackid, item.stackname);
-            stackList.push(newStack);
+            const newDeck = new Deck(item.deckId, item.deckName);
+            deckList.push(newDeck);
         });
     }
 
@@ -126,14 +126,14 @@
         isDeleteClicked = false;
     }
 
-    async function selectStack(stackid){
-            const response = await fetch('http://localhost:3001/AnzeigenStackTag', {
+    async function selectDeck(deckId){
+            const response = await fetch('http://localhost:3001/AnzeigenDeckTag', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                stackid: stackid,
+                deckId: deckId,
             }),
             credentials: 'include'
         });
@@ -154,30 +154,30 @@
         });
     }
 
-    async function changeStatusOfCheckBox(Tag, stackid){
+    async function changeStatusOfCheckBox(Tag, deckId){
         if(Tag.isChecked == false){
-            const response = await fetch('http://localhost:3001/HinzufuegenInStackTag', {
+            const response = await fetch('http://localhost:3001/HinzufuegenInDeckTag', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
             },
             body: JSON.stringify({
                 tagid: Tag.tagid,
-                stackid: stackid
+                deckId: deckId
             }),
             credentials: 'include'
             });
             const data = await response.json(); 
         }
         else{
-            const response = await fetch('http://localhost:3001/LoeschenStackTag', {
+            const response = await fetch('http://localhost:3001/LoeschenDeckTag', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
             },
             body: JSON.stringify({
                 tagid: Tag.tagid,
-                stackid: stackid
+                deckId: deckId
             }),
             credentials: 'include'
             });
@@ -199,11 +199,11 @@
         </h2>
     </div>
     <div class="container h-full mx-auto flex justify-center items-center mt-4" >
-    <select bind:value={selected} on:change={() => selectStack(selected)} class="border rounded-lg shadow-m bg-primary-300 text-primary-50">
+    <select bind:value={selected} on:change={() => selectDeck(selected)} class="border rounded-lg shadow-m bg-primary-300 text-primary-50">
         <option value="" elected="selected">Wähle einen Stapel aus:</option>
-        {#each stackList as stack}
-        <option value={stack.stackid}>
-        {stack.stackname}
+        {#each deckList as deck}
+        <option value={deck.deckId}>
+        {deck.deckName}
         </option>
         {/each}
     </select>    

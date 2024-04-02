@@ -3,22 +3,22 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 
-	let stackName = '';
+	let deckName = '';
 	let message = '';
 	let options = [];
-	let stackId = '';
+	let deckId = '';
 	let message1 = '';
 
 
-	async function addStack() {
-		const API_URL = 'http://localhost:3001/stacks/create';
+	async function addDeck() {
+		const API_URL = 'http://localhost:3001/decks/create';
 		try {
 			const response = await fetch(API_URL, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({ stackName }),
+				body: JSON.stringify({ deckName }),
 				credentials: 'include' 
 			});
 
@@ -29,7 +29,7 @@
 			const data = await response.json();
 			console.log('Erfolg:', data);
 			message = 'Stapel erfolgreich erstellt!';
-			stackName = '';
+			deckName = '';
 			await getOptions();
 			setTimeout(() => {
 				message = '';
@@ -40,7 +40,7 @@
 		}
 	}
 	async function getOptions() {
-		const API_URL = 'http://localhost:3001/SelectAllFromStack'; // Ersetzen Sie dies mit Ihrer tatsächlichen API-URL
+		const API_URL = 'http://localhost:3001/SelectAllFromDeck'; 
 		try {
 			const response = await fetch(API_URL,
 
@@ -54,8 +54,8 @@
 			const data = await response.json();
 
 			options = data.map((item) => ({
-				value: item.stackid,
-				label: item.stackname
+				value: item.deckId,
+				label: item.deckName
 			}));
 		} catch (error) {
 			console.error('Fehler beim Laden der Daten:', error);
@@ -66,24 +66,24 @@
 	});
 
 	function handleChange(event) {
-		stackId = event.target.value;
-		console.log('selectedOption:', stackId);
+		deckId = event.target.value;
+		console.log('selectedOption:', deckId);
 	}
 
-	async function deleteStack(stackId) {
+	async function deleteDeck(deckId) {
 		const isConfirmed = confirm('Bist du sicher, dass du diesen Stapel löschen möchtest?');
     
     if (!isConfirmed) {
         return;
     }
-		const API_URL = 'http://localhost:3001/deleteStacks';
+		const API_URL = 'http://localhost:3001/deleteDecks';
 		try {
 			const response = await fetch(API_URL, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({ stackId }),
+				body: JSON.stringify({ deckId }),
 				credentials: 'include'
 			});
 
@@ -111,9 +111,9 @@
 	<div class="text-center w-1/3 p-4 border-r border-gray-300">
 		<h1 class="text-3xl font-bold mb-4 text-primary-100">Neuen Stapel hinzufügen</h1>
 		<div class="mb-4">
-			<input type="text" placeholder="Stapelname" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-background-0 border-primary-250 placeholder-primary-300 text-primary-400" bind:value={stackName}>
+			<input type="text" placeholder="Stapelname" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-background-0 border-primary-250 placeholder-primary-300 text-primary-400" bind:value={deckName}>
 		</div>
-		<button on:click={addStack} class="bg-primary-100 hover:bg-primary-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+		<button on:click={addDeck} class="bg-primary-100 hover:bg-primary-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
 			Stapel hinzufügen
 		</button>
 		{#if message}
@@ -130,7 +130,7 @@
 				{/each}
 			</select>
 		</div>
-		<button on:click={deleteStack(stackId)} class="bg-primary-100 hover:bg-primary-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+		<button on:click={deleteDeck(deckId)} class="bg-primary-100 hover:bg-primary-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
 			Stapel löschen
 		</button>
 		{#if message1}
@@ -140,7 +140,7 @@
 	<div class="text-center w-1/3 p-4">
 		<h1 class="text-3xl font-bold mb-4 text-primary-100">Manage Tags</h1>
 		<div class="mt-10">
-			<a href="/homePage/addStack/manageTags" class="bg-primary-100 hover:bg-primary-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Manage Tags</a>
+			<a href="/homePage/addDeck/manageTags" class="bg-primary-100 hover:bg-primary-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Manage Tags</a>
 		</div>
 	</div>
 	<div class="w-full p-4 text-center">

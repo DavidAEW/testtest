@@ -9,7 +9,7 @@
 //     }
 
 //    return {
-//     stacknames: loadImages()
+//     deckNames: loadImages()
 //    } 
 // };
 
