@@ -22,9 +22,9 @@
         }
     }
     class Tag {
-        constructor(tagid, tagname, isChecked = false){
-            this.tagid = tagid;
-            this.tagname = tagname;
+        constructor(tagId, tagName, isChecked = false){
+            this.tagId = tagId;
+            this.tagName = tagName;
             this.isChecked = isChecked;
         }
     }
@@ -46,7 +46,7 @@
         });
       const data = await response.json();
       data.map(item => {
-            const newTag = new Tag(item.tagid, item.tagname);
+            const newTag = new Tag(item.tagId, item.tagName);
             tagList.push(newTag);
         });
     }
@@ -69,7 +69,7 @@
     }
 
     function goBack(){
-        goto("../manageKarteikarten");
+        goto("/homePage");
     }
 
     function clickAdd(){
@@ -98,7 +98,7 @@
             'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                tagname: neuerTag,
+                tagName: neuerTag,
             }),
             credentials: 'include'
         });
@@ -108,7 +108,7 @@
         neuerTag = '';
     }
 
-    async function deleteTag(deletedtagname){
+    async function deleteTag(deletedTagName){
         tagList = [];
             const response = await fetch('http://localhost:3001/LoeschenTag', {
             method: 'POST',
@@ -116,7 +116,7 @@
             'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                tagname: deletedtagname,
+                tagName: deletedTagName,
             }),
             credentials: 'include'
         });
@@ -138,7 +138,7 @@
             credentials: 'include'
         });
         const data = await response.json(); 
-        tagIdsWhoAreChecked = data.map(item => item.tagid);
+        tagIdsWhoAreChecked = data.map(item => item.tagId);
         loadTagIdsWhoAreChecked(tagIdsWhoAreChecked);
     }
 
@@ -149,7 +149,7 @@
         }
 
         tagIdsWhoAreChecked.forEach(function(element) {
-        let index = tagList.findIndex(objekt => objekt.tagid == element);
+        let index = tagList.findIndex(objekt => objekt.tagId == element);
         tagList[index].isChecked = true;
         });
     }
@@ -162,7 +162,7 @@
             'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                tagid: Tag.tagid,
+                tagId: Tag.tagId,
                 deckId: deckId
             }),
             credentials: 'include'
@@ -176,7 +176,7 @@
             'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                tagid: Tag.tagid,
+                tagId: Tag.tagId,
                 deckId: deckId
             }),
             credentials: 'include'
@@ -216,7 +216,7 @@
                     <label class="inline-flex items-center cursor-pointer">
                         {#if isDeleteClicked}
                         <div class="w-8 h-8 rounded mr-4">
-                            <button type="button" class="p-1 max-w-sm mx-auto border rounded-lg shadow-m bg-primary-300 text-primary-50" on:click={deleteTag(tag.tagname)}>
+                            <button type="button" class="p-1 max-w-sm mx-auto border rounded-lg shadow-m bg-primary-300 text-primary-50" on:click={deleteTag(tag.tagName)}>
                             <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
                             </svg>
@@ -226,7 +226,7 @@
                         {/if}
                         <input type="checkbox" class="w-8 h-8 bg-primary-100 rounded mr-4"on:click={changeStatusOfCheckBox(tagList[i], selected)} bind:checked={tagList[i].isChecked}>
                         <div class="p-1 max-w-sm mx-auto border rounded-lg shadow-m bg-primary-300 text-primary-50">
-                            <p>{tag.tagname}</p>
+                            <p>{tag.tagName}</p>
                         </div>
                     </label>
                 {/each}

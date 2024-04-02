@@ -120,7 +120,7 @@
 			<p class="mt-4 text-primary-200">{message}</p>
 		{/if}
 	</div>
-	<div class="text-center w-1/3 p-4 border-r border-gray-300">
+	<div class="text-center w-1/3 p-4 border-gray-300">
 		<h1 class="text-3xl font-bold mb-4 text-primary-100">Stapel löschen</h1>
 		<div class="mb-4">
 			<select class="dark:bg-primary-60 block appearance-none w-full bg-primary-0 border border-gray-200 text-primary-400 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" on:change={handleChange}>
@@ -136,12 +136,6 @@
 		{#if message1}
 			<p class="mt-4 text-primary-200">{message1}</p>
 		{/if}
-	</div>
-	<div class="text-center w-1/3 p-4">
-		<h1 class="text-3xl font-bold mb-4 text-primary-100">Manage Tags</h1>
-		<div class="mt-10">
-			<a href="/homePage/addDeck/manageTags" class="bg-primary-100 hover:bg-primary-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Manage Tags</a>
-		</div>
 	</div>
 	<div class="w-full p-4 text-center">
 		<button on:click={back} class="bg-primary-100 hover:bg-primary-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">

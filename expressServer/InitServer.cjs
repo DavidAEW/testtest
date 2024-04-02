@@ -61,7 +61,7 @@ app.post('/login', async (req, res) => {
 
 		if (comparePassword) {
 			//-> wenn das Passwort auch stimmt, dann Token erstellen
-			const tocken = jwt.sign({ userid: user.userid, email: user.email }, process.env.SECRET_KEY, {
+			const tocken = jwt.sign({ userId: user.userId, email: user.email }, process.env.SECRET_KEY, {
 				algorithm: 'HS256'
 			});
 			res.cookie('jwt', tocken, {
@@ -145,15 +145,15 @@ const authenticateJWT = (req, res, next) => {
 app.use(authenticateJWT); // Verwende Middleware um JWT zu überprüfen
 
 app.get('/SelectAllFromTag', async (req, res) => {
-	const userID = req.user.userid;
-	const tags = await db.select().from('tag').where('tag.userid', userID);
+	const userId = req.user.userId;
+	const tags = await db.select().from('tag').where('tag.userId', userId);
 	res.json(tags);
 });
 
 // --> Hinzufügen eine neue Deck
 app.post('/decks/create', async (req, res) => {
 	const { deckName } = req.body;
-	const userId = req.user.userid;
+	const userId = req.user.userId;
 	console.log(userId);
 	try {
 		// Zuerst den neuen Stapel in der 'deck' Tabelle erstellen
@@ -162,7 +162,7 @@ app.post('/decks/create', async (req, res) => {
 		});
 		// Dann den Stapel dem Benutzer zuordnen in der 'user_deck' Tabelle
 		await db('user_deck').insert({
-			userid: userId,
+			userId: userId,
 			deckId: newDeckId
 		});
 
@@ -174,9 +174,9 @@ app.post('/decks/create', async (req, res) => {
 });
 
 app.post('/HinzufuegenTag', async (req, res) => {
-	const userId = req.user.userid;
-	const { tagname } = req.body;
-	const tag = await db.insert({ tagname: tagname, userid: userId }).into('tag');
+	const userId = req.user.userId;
+	const { tagName } = req.body;
+	const tag = await db.insert({ tagName: tagName, userId: userId }).into('tag');
 	if (tag) {
 		// Wenn der Tag erfolgreich gelöscht wurde
 		res.status(200).json({ message: 'Tag erfolgreich gelöscht' });
@@ -187,9 +187,9 @@ app.post('/HinzufuegenTag', async (req, res) => {
 });
 
 app.post('/LoeschenTag', async (req, res) => {
-	const { tagname } = req.body;
+	const { tagName } = req.body;
 	try {
-		const tag = await db('tag').where('tagname', tagname).del();
+		const tag = await db('tag').where('tagName', tagName).del();
 		if (tag) {
 			// Wenn der Tag erfolgreich gelöscht wurde
 			res.status(200).json({ message: 'Tag erfolgreich gelöscht' });
@@ -218,9 +218,9 @@ app.post('/AnzeigenDeckTag', async (req, res) => {
 });
 
 app.post('/HinzufuegenInDeckTag', async (req, res) => {
-	const { tagid, deckId } = req.body;
+	const { tagId, deckId } = req.body;
 	try {
-		const all = await db.insert({ tagid: tagid, deckId: deckId }).into('deck_tag');
+		const all = await db.insert({ tagId: tagId, deckId: deckId }).into('deck_tag');
 		res.json(all);
 	} catch (error) {
 		// Wenn ein Fehler auftritt
@@ -230,9 +230,9 @@ app.post('/HinzufuegenInDeckTag', async (req, res) => {
 });
 
 app.post('/LoeschenDeckTag', async (req, res) => {
-	const { tagid, deckId } = req.body;
+	const { tagId, deckId } = req.body;
 	try {
-		const all = await db('deck_tag').where('tagid', tagid).where('deckId', deckId).del();
+		const all = await db('deck_tag').where('tagId', tagId).where('deckId', deckId).del();
 		res.json(all);
 	} catch (error) {
 		// Wenn ein Fehler auftritt
@@ -242,12 +242,12 @@ app.post('/LoeschenDeckTag', async (req, res) => {
 });
 
 app.get('/SelectAllFromDeck', async (req, res) => {
-	const userID = req.user.userid;
+	const userId = req.user.userId;
 	const deck = await db
 		.select()
 		.from('deck')
 		.join('user_deck', 'deck.deckId', 'user_deck.deckId')
-		.where('user_deck.userid', userID);
+		.where('user_deck.userId', userId);
 	console.log(deck);
 	res.json(deck);
 });
@@ -259,10 +259,13 @@ app.get('/SelectAllFromCard', async (req, res) => {
 
 app.post('/GetRandomCardWithStatus', async (req, res) => {
 	const { cardStatus, deckId } = req.body;
+	const userId = req.user.userId; 
 	try {
 		const card = await db('card')
-			.where('cardstatus', cardStatus)
-			.where('deckId', deckId)
+		.where('card.deckId', deckId)
+		.where('cardStatus', cardStatus)
+		.join('user_deck', 'card.deckId', 'user_deck.deckId')
+			.where('user_deck.userId', userId)
 			.orderByRaw('RAND()')
 			.first()
 			.select('front', 'back');
@@ -279,17 +282,17 @@ app.post('/GetRandomCardWithStatus', async (req, res) => {
 });
 
 app.post('/InsertCardBackCardFrontInCard', async (req, res) => {
-	const { front, back, deckId } = req.body; // Annahme: Die Werte für front und back kommen im Request Body an
+	const { front, back, deckId } = req.body; 
 	console.log(req.body);
 	console.log(front);
-	// try {
+	try {
 	const card = await db.insert({ front: front, back: back, deckId: deckId }).into('card');
 
-	//   res.status(201).json({ message: 'Daten wurden erfolgreich eingefügt.' });
-	// } catch (error) {
-	//   console.error('Fehler beim Einfügen der Daten:', error);
-	//   res.status(500).json({ error: 'Fehler beim Einfügen der Daten.' });
-	// }
+	res.status(201).json({ message: 'Daten wurden erfolgreich eingefügt.' });
+} catch (error) {
+ console.error('Fehler beim Einfügen der Daten:', error);
+ res.status(500).json({ error: 'Fehler beim Einfügen der Daten.' });
+}
 
 	const deck = await db.select().from('deck');
 	res.json(deck);
@@ -306,7 +309,7 @@ app.get('/user', async (req, res) => {
 		}
 
 		// um Benutzerdaten zu abrufen
-		const user = await db('user').where({ userid: claims.userid }).first();
+		const user = await db('user').where({ userId: claims.userId }).first();
 		if (!user) {
 			return res.status(404).json({ message: 'Benutzer nicht gefunden.' });
 		}
@@ -355,7 +358,7 @@ app.get('/exportCards/:deckId', async (req, res) => {
 
 		// Dann die Karten des Decks abrufen
 		const cards = await db
-			.select('cardid', 'front', 'back', 'cardstatus', 'deckId')
+			.select('cardId', 'front', 'back', 'cardStatus', 'deckId')
 			.from('card')
 			.where('deckId', deckId);
 
@@ -377,17 +380,17 @@ response von export die soll dann req.body für import sein
     "deckName": "moin",
     "cards": [
         {
-            "cardid": 55,
+            "cardId": 55,
             "front": "ich",
             "back": "fixe",
-            "cardstatus": 2,
+            "cardStatus": 2,
             "deckId": 2
         },
         {
-            "cardid": 59,
+            "cardId": 59,
             "front": "dfa",
             "back": "dafsdf",
-            "cardstatus": 2,
+            "cardStatus": 2,
             "deckId": 2
         }
 	]
@@ -397,7 +400,7 @@ response von export die soll dann req.body für import sein
 // -> Karte importieren zum sharen
 app.post('/importCards', async (req, res) => {
 	const { cards, deckName } = req.body;
-	const userId = req.user.userid;
+	const userId = req.user.userId;
 
 	if (!cards || cards.length === 0) {
 		return res.status(400).send('Keine Karten zum Importieren angegeben.');
@@ -413,7 +416,7 @@ app.post('/importCards', async (req, res) => {
 		const newDeckId = deckInsertResult[0];
 		// Ordne den neuen Deck Benutzer zu
 		await db('user_deck').insert({
-			userid: userId,
+			userId: userId,
 			deckId: newDeckId
 		});
 
@@ -422,7 +425,7 @@ app.post('/importCards', async (req, res) => {
 			await db('card').insert({
 				front: card.front,
 				back: card.back,
-				cardstatus: 0, // Standardmäßig auf 0 setzen
+				cardStatus: 0, // Standardmäßig auf 0 setzen
 				deckId: newDeckId // Verwende die ID neue Deck
 			});
 		}
@@ -441,34 +444,13 @@ app.get('/SelectAllFromCard', async (req, res) => {
 	res.json(deck);
 });
 
-app.post('/GetRandomCardWithStatus', async (req, res) => {
-	const { cardStatus, deckId } = req.body;
-	try {
-		const card = await db('card')
-			.where('cardstatus', cardStatus)
-			.where('deckId', deckId)
-			.orderByRaw('RAND()')
-			.first()
-			.select('front', 'back');
-
-		if (card) {
-			res.json(card);
-		} else {
-			res.status(404).send('No card found with status 0');
-		}
-	} catch (error) {
-		console.error(error);
-		res.status(500).send('Error retrieving card');
-	}
-});
-
 app.put('/UpdateCardStatus', async (req, res) => {
 	const { front, back, newCardStatus } = req.body;
 
 	try {
 		const updatedCard = await db('card')
 			.where({ front, back })
-			.update({ cardstatus: newCardStatus });
+			.update({ cardStatus: newCardStatus });
 
 		if (updatedCard) {
 			res.status(200).json({ message: 'Kartenstatus erfolgreich aktualisiert.' });
@@ -481,37 +463,24 @@ app.put('/UpdateCardStatus', async (req, res) => {
 	}
 });
 
-app.post('/InsertCardBackCardFrontInCard', async (req, res) => {
-	const { front, back } = req.body; // Annahme: Die Werte für front und back kommen im Request Body an
-	console.log(req.body);
-	console.log(front);
-	// try {
-	const card = await db.insert({ front: front, back: back }).into('card');
-
-	//   res.status(201).json({ message: 'Daten wurden erfolgreich eingefügt.' });
-	// } catch (error) {
-	//   console.error('Fehler beim Einfügen der Daten:', error);
-	//   res.status(500).json({ error: 'Fehler beim Einfügen der Daten.' });
-	// }
-});
 
 app.post('/updateCard', async (req, res) => {
-	const { cardid, front, back, cardstatus, deckId } = req.body;
+	const { cardId, front, back, cardStatus, deckId } = req.body;
 
 	const updatecard = await db('card')
-		.where('cardid', cardid)
-		.update({ front: front, back: back, cardstatus: cardstatus, deckId: deckId });
+		.where('cardId', cardId)
+		.update({ front: front, back: back, cardStatus: cardStatus, deckId: deckId });
 
 	res.status(200).send('Datensatz erfolgreich aktualisiert');
 });
 
 app.get('/SelectAllDecks', async (req, res) => {
-	const userID = req.user.userid;
+	const userId = req.user.userId;
 	const decks = await db
 		.select()
 		.from('deck')
 		.join('user_deck', 'deck.deckId', 'user_deck.deckId')
-		.where('user_deck.userid', userID);
+		.where('user_deck.userId', userId);
 	res.json(decks);
 });
 
@@ -522,8 +491,15 @@ app.get('/SelectAllStatus', async (req, res) => {
 
 app.post('/SelectAllFromCardWithDeck', async (req, res) => {
 	const { selectedOption } = req.body;
+	const userId = req.user.userId;
 	try {
-		const data = await db.select().from('card').where('deckId', selectedOption);
+		const data = await db
+		.select()
+		.from('card')
+		.where('card.deckId', selectedOption)
+		.join('user_deck', 'card.deckId', 'user_deck.deckId')
+		.where('user_deck.userId', userId);
+
 
 		res.json(data);
 	} catch (error) {
@@ -555,7 +531,7 @@ app.post('/deleteCard', async (req, res) => {
 
 	try {
 		// Dann den Stapel selbst löschen
-		const dele = await db.delete().from('card').where('cardid', cardId);
+		const dele = await db.delete().from('card').where('cardId', cardId);
 
 		res.json({ success: true, message: 'Karte erfolgreich gelöscht' });
 	} catch (error) {
