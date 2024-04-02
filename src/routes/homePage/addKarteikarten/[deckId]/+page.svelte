@@ -4,7 +4,7 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 
-	let stackid = 0;
+	let deckId = 0;
 
 	let userInputFront = '';
 	let userInputBack = '';
@@ -14,10 +14,9 @@
 	let options = [];
 
 	async function getOptions() {
-		const API_URL = 'http://localhost:3001/SelectAllFromStack'; // Ersetzen Sie dies mit Ihrer tatsächlichen API-URL
+		const API_URL = 'http://localhost:3001/SelectAllFromDeck';
 		try {
 			const response = await fetch(API_URL,
-
 				{
 					method: 'GET',
 					headers: {
@@ -28,8 +27,8 @@
 			const data = await response.json();
 
 			options = data.map((item) => ({
-				value: item.stackid,
-				label: item.stackname
+				value: item.deckId,
+				label: item.deckName
 			}));
 		} catch (error) {
 			console.error('Fehler beim Laden der Daten:', error);
@@ -39,17 +38,17 @@
 
 	async function loadOptionsAndSetValue() {
 		await getOptions();
-		stackid = $page.params.stackid;
+		deckId = $page.params.deckId;
 		const selectElement = document.querySelector('select');
-		selectElement.value = stackid;
+		selectElement.value = deckId;
 	}
 
 	onMount(() => {
 		loadOptionsAndSetValue();
 	});
 
-	function getLabelForStackId(stackId) {
-		const firstoption = options.find((firstoption) => firstoption.value === stackId);
+	function getLabelForDeckId(deckId) {
+		const firstoption = options.find((firstoption) => firstoption.value === deckId);
 		return firstoption ? firstoption.label : null;
 	}
 
@@ -88,7 +87,7 @@
 			body: JSON.stringify({
 				front: userInputFront,
 				back: userInputBack,
-				stackid: stackid
+				deckId: deckId
 			})
 		});
 

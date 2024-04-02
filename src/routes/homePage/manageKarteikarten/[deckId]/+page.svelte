@@ -4,13 +4,13 @@
 	import { goto } from '$app/navigation';
 
 	let data = [];
-	let stack;
+	let deck;
 	let status;
 	let options = [];
-	let stackid = $page.params.stackid;
+	let deckId = $page.params.deckId;
 
 	async function getOptions() {
-		const API_URL = 'http://localhost:3001/SelectAllFromStack'; // Ersetzen Sie dies mit Ihrer tatsächlichen API-URL
+		const API_URL = 'http://localhost:3001/SelectAllFromDeck'; 
 		try {
 			const response = await fetch(API_URL,
 
@@ -24,8 +24,8 @@
 			const data = await response.json();
 
 			options = data.map((item) => ({
-				value: item.stackid,
-				label: item.stackname
+				value: item.deckId,
+				label: item.deckName
 			}));
 		} catch (error) {
 			console.error('Fehler beim Laden der Daten:', error);
@@ -33,13 +33,13 @@
 	}
 	async function loadOptionsAndSetValue() {
 		await getOptions();
-		stackid = $page.params.stackid;
+		deckId = $page.params.deckId;
 		const selectElement = document.querySelector('select');
-		selectElement.value = stackid;
+		selectElement.value = deckId;
 	}
 
 	async function getAll(selectedOption) {
-		const API_URL = 'http://localhost:3001/SelectAllFromCardWithStack'; // Ersetzen Sie dies mit Ihrer tatsächlichen API-URL
+		const API_URL = 'http://localhost:3001/SelectAllFromCardWithDeck'; // Ersetzen Sie dies mit Ihrer tatsächlichen API-URL
 		const options = {
 			method: 'POST',
 			credentials: 'include',
@@ -57,8 +57,8 @@
 	onMount(async () => {
 		loadOptionsAndSetValue();
 		try {
-			data = await getAll(stackid);
-			stack = await getStack();
+			data = await getAll(deckId);
+			deck = await getDeck();
 			status = await getStatus();
 		} catch (error) {
 			console.error('Fehler beim Laden der Daten:', error);
@@ -71,13 +71,13 @@
 		const front = row.front;
 		const back = row.back;
 		const cardstatus = row.cardstatus;
-		const newstackid = row.stackid;
+		const newDeckId = row.deckId;
 
 		console.log('row:', row);
 		console.log('front:', front);
 		console.log('back:', back);
 		console.log('cardstatus:', cardstatus);
-		console.log('stackid:', newstackid);
+		console.log('deckId:', newDeckId);
 		console.log('cardid:', cardid);
 
 		// Senden Sie eine Fetch-Anfrage an das Backend
@@ -93,13 +93,13 @@
 					front,
 					back,
 					cardstatus,
-					stackid: newstackid
+					deckId: newDeckId
 				})
 			});
 
 			if (response.ok) {
 				console.log('Datensatz erfolgreich aktualisiert!');
-				getAll(stackid).then((result) => {
+				getAll(deckId).then((result) => {
 					data = result;
 				});
 				// Aktualisieren Sie die Daten in der Tabelle oder zeigen Sie eine Erfolgsmeldung an
@@ -117,7 +117,7 @@
 		// Holen Sie die aktualisierten Werte aus den Eingabefeldern
 
 		const cardId = row.cardid;
-		console.log('deleteStackId:', cardId);
+		console.log('deleteDeckId:', cardId);
 		const isConfirmed = confirm('Bist du sicher, dass du die Karte löschen möchtest?');
     
     if (!isConfirmed) {
@@ -139,7 +139,7 @@
 
 			if (response.ok) {
 				console.log('Datensatz erfolgreich gelöscht!');
-				getAll(stackid).then((result) => {
+				getAll(deckId).then((result) => {
 					data = result;
 				});
 
@@ -154,8 +154,8 @@
 		}
 	}
 
-	async function getStack() {
-		const API_URL = 'http://localhost:3001/SelectAllStacks';
+	async function getDeck() {
+		const API_URL = 'http://localhost:3001/SelectAllDecks';
 		try {
 			const response = await fetch(API_URL,
 				{
@@ -198,9 +198,9 @@
 
 	function handleChange(event) {
 		goto('/homePage/manageKarteikarten/' + event.target.value);
-		stackid = event.target.value;
-		console.log('selectedOption:', stackid);
-		getAll(stackid).then((result) => {
+		deckId = event.target.value;
+		console.log('selectedOption:', deckId);
+		getAll(deckId).then((result) => {
 			data = result;
 		});
 	}
@@ -239,7 +239,7 @@
 								<th class="w-64">Vorderseite</th>
 								<th class="w-64">Rückseite</th>
 								<th class="w-32">Cardstatus</th>
-								<th class="w-32">Stack-ID</th>
+								<th class="w-32">Deck-ID</th>
 								<th class="w-32">Update</th>
 								<th class="w-32">Delete</th>
 							</tr>
@@ -251,7 +251,7 @@
 									<td><input class="text-accent-400" bind:value={row.front} /></td>
 									<td><input class="text-accent-400" bind:value={row.back} /></td>
 									<td><input class="text-accent-400 w-1/2" bind:value={row.cardstatus} /></td>
-									<td><input class="text-accent-400 w-1/2" bind:value={row.stackid} /></td>
+									<td><input class="text-accent-400 w-1/2" bind:value={row.deckId} /></td>
 									<td><button on:click={updateCard(row.cardid, row)}>✓</button> </td>
 									<td><button on:click={deleteCard(row.cardid, row)}>x</button></td>
 								</tr>
@@ -269,19 +269,19 @@
 	<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 mx-auto w-5/6 mt-5">
 		<h2 class="text-2xl text-center">Legende</h2>
 		<div class="flex flex-row justify-center gap-5 mt-4">
-			{#if stack}
+			{#if deck}
 				<table class="text-center bg-white dark:bg-accent-50 text-accent-400 rounded">
 					<thead>
 						<tr>
-							<th class="w-32">Stack-ID</th>
-							<th class="w-64">Stackname</th>
+							<th class="w-32">Deck-ID</th>
+							<th class="w-64">Deckname</th>
 						</tr>
 					</thead>
 					<tbody>
-						{#each stack as row1}
+						{#each deck as row1}
 							<tr>
-								<td>{row1.stackid}</td>
-								<td>{row1.stackname}</td>
+								<td>{row1.deckId}</td>
+								<td>{row1.deckName}</td>
 							</tr>
 						{/each}
 					</tbody>

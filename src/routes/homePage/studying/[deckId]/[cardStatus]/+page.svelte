@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-	let stackid = $page.params.stackid;
+	let deckId = $page.params.deckId;
 	let cardStatus = $page.params.cardStatus;
 	let options = [];
 	const cardOptions = [
@@ -13,7 +13,7 @@
 		{ value: 3, label: 'kann ich' }
 	];
 	let showBack = false;
-	console.log('stackId: ' + stackid);
+	console.log('deckId: ' + deckId);
 	console.log('cardStatus: ' + cardStatus);
 	function toggleBack() {
 		showBack = !showBack;
@@ -25,7 +25,7 @@
 	let error = null;
 
 	async function getDecks() {
-		const API_URL = 'http://localhost:3001/SelectAllFromStack'; // Ersetzen Sie dies mit Ihrer tatsächlichen API-URL
+		const API_URL = 'http://localhost:3001/SelectAllFromDeck';
 		try {
 			const response = await fetch(API_URL,
 
@@ -39,8 +39,8 @@
 			const data = await response.json();
 
 			options = data.map((item) => ({
-				value: item.stackid,
-				label: item.stackname
+				value: item.deckId,
+				label: item.deckName
 			}));
 		} catch (error) {
 			console.error('Fehler beim Laden der Daten:', error);
@@ -58,7 +58,7 @@
 				},
 				body: JSON.stringify({
 					cardStatus: Number(cardStatus),
-					stackId: Number(stackid)
+					deckId: Number(deckId)
 				})
 			});
 			const data = await response.json();
@@ -101,7 +101,7 @@
 	}
 
 	async function handleChangeStatus(event) {
-		goto('/homePage/studying/' + stackid + '/' + event.target.value + '/');
+		goto('/homePage/studying/' + deckId + '/' + event.target.value + '/');
 		await getCards();
 	}
 	async function handleChangeID(event) {
@@ -110,10 +110,10 @@
 	}
 	async function loadOptionsAndSetValue() {
 		await getDecks();
-		stackid = $page.params.stackid;
+		deckId = $page.params.deckId;
 		cardStatus = $page.params.cardStatus;
 		const selectElement = document.querySelector('select');
-		selectElement.value = stackid;
+		selectElement.value = deckId;
 		const selectElementStatus = document.querySelector('select[name="cardStatus"]');
 		selectElementStatus.value = cardStatus;
 	}
@@ -129,7 +129,7 @@
 			<h2 class="font-bold mb-2 text-center text-primary-900 my-auto mr-2">Stapel</h2>
 			<select
 				class="border overflow-wrap: break-words border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60 mr-4"
-				bind:value={stackid}
+				bind:value={deckId}
 				on:change={handleChangeID}
 			>
 				{#each options as option}
