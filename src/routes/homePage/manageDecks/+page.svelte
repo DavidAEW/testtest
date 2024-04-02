@@ -111,7 +111,7 @@
 	<div class="text-center w-1/3 p-4 border-r border-gray-300">
 		<h1 class="text-3xl font-bold mb-4 text-primary-100">Neuen Stapel hinzufügen</h1>
 		<div class="mb-4">
-			<input type="text" placeholder="Stapelname" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-background-0 border-primary-250 placeholder-primary-300 text-primary-400" bind:value={deckName}>
+			<input type="text" placeholder="Stapelname" class="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline bg-background-0 border-primary-250 placeholder-primary-300 text-primary-400" bind:value={deckName}>
 		</div>
 		<button on:click={addDeck} class="bg-primary-100 hover:bg-primary-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
 			Stapel hinzufügen
