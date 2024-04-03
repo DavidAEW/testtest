@@ -10,7 +10,7 @@
     }
 </script>
 
-<main class="min-h-screen flex items-center justify-center bg-background-500 overflow-hidden">
+<main class="h-full flex items-center justify-center bg-background-500 overflow-hidden">
     <div class="max-w-md w-full space-y-8 p-10 bg-background-50 rounded-lg shadow-md">
         <div>
             <h1 class="mt-6 text-center text-3xl font-extrabold text-primary-300">Contact Page</h1>
