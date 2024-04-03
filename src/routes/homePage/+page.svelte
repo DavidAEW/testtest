@@ -80,6 +80,12 @@
 				class="bg-primary-100 border rounded font-bold mx-4 border-gray-200 text-primary-400 py-3 px-4 hover:bg-primary-70 hover:border-gray-500"
 				>Manage tags</a
 			>
+
+			<a
+				href="/homePage/importDeck"
+				class="bg-primary-100 border rounded font-bold mx-4 border-gray-200 text-primary-400 py-3 px-4 hover:bg-primary-70 hover:border-gray-500"
+				>Import a Deck</a
+			>
 		</div>
 		{#if options.length > 0}
 			<h2 class="text-2xl font-bold mb-5">Choose a deck</h2>
@@ -109,6 +115,11 @@
 					href="/homePage/manageKarteikarten/{selectedOption}"
 					class="dark:bg-primary-200 bg-primary-70 border border-gray-200 text-primary-400 py-3 px-4 rounded-full hover:bg-primary-100 dark:hover:bg-primary-70 hover:border-gray-500"
 					>Manage flashcards</a
+				>
+				<a
+					href="/homePage/shareDeck/{selectedOption}"
+					class="dark:bg-primary-200 bg-primary-70 border border-gray-200 text-primary-400 py-3 px-4 rounded-full hover:bg-primary-100 dark:hover:bg-primary-70 hover:border-gray-500"
+					>Share the deck</a
 				>
 			</div>
 		{/if}
