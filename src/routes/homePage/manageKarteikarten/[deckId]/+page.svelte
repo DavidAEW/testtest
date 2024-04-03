@@ -5,9 +5,15 @@
 
 	let data = [];
 	let deck;
-	let status;
 	let options = [];
 	let deckId = $page.params.deckId;
+
+	const status = [
+		{ value: 0, label: 'neu' },
+		{ value: 1, label: 'etwas gelernt' },
+		{ value: 2, label: 'kann ich teilweise' },
+		{ value: 3, label: 'kann ich' }
+	];
 
 	async function getOptions() {
 		const API_URL = 'http://localhost:3001/SelectAllFromDeck'; 
@@ -59,7 +65,6 @@
 		try {
 			data = await getAll(deckId);
 			deck = await getDeck();
-			status = await getStatus();
 		} catch (error) {
 			console.error('Fehler beim Laden der Daten:', error);
 			// Fehlermeldung anzeigen oder Benutzer benachrichtigen
@@ -113,10 +118,10 @@
 		}
 	}
 
-	async function deleteCard(cardid, row) {
+	async function deleteCard(row) {
 		// Holen Sie die aktualisierten Werte aus den Eingabefeldern
 
-		const cardId = row.cardid;
+		const cardId = row.cardId;
 		console.log('deleteDeckId:', cardId);
 		const isConfirmed = confirm('Bist du sicher, dass du die Karte löschen möchtest?');
     
@@ -176,25 +181,6 @@
 
 
 
-	async function getStatus() {
-		const API_URL = 'http://localhost:3001/SelectAllStatus';
-		try {
-			const response = await fetch(API_URL,
-				{
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					credentials: 'include'
-				});
-			const fetchedData = await response.json();
-			return fetchedData;
-		} catch (error) {
-			console.error('Fehler beim Laden der Daten:', error);
-		}
-
-
-	}
 
 	function handleChange(event) {
 		goto('/homePage/manageKarteikarten/' + event.target.value);
@@ -247,13 +233,13 @@
 						<tbody>
 							{#each data as row}
 								<tr>
-									<td>{row.cardid}</td>
+									<td>{row.cardId}</td>
 									<td><input class="text-accent-400" bind:value={row.front} /></td>
 									<td><input class="text-accent-400" bind:value={row.back} /></td>
-									<td><input class="text-accent-400 w-1/2" bind:value={row.cardstatus} /></td>
+									<td><input class="text-accent-400 w-1/2" bind:value={row.cardStatus} /></td>
 									<td><input class="text-accent-400 w-1/2" bind:value={row.deckId} /></td>
-									<td><button on:click={updateCard(row.cardid, row)}>✓</button> </td>
-									<td><button on:click={deleteCard(row.cardid, row)}>x</button></td>
+									<td><button on:click={updateCard(row.cardId, row)}>✓</button> </td>
+									<td><button on:click={deleteCard(row)}>x</button></td>
 								</tr>
 							{/each}
 						</tbody>
@@ -298,8 +284,8 @@
 					<tbody>
 						{#each status as row2}
 							<tr>
-								<td>{row2.statusid}</td>
-								<td>{row2.statusname}</td>
+								<td>{row2.value}</td>
+								<td>{row2.label}</td>
 							</tr>
 						{/each}
 					</tbody>
