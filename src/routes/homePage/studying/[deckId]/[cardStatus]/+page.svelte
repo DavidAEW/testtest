@@ -103,10 +103,12 @@
 	async function handleChangeStatus(event) {
 		goto('/homePage/studying/' + deckId + '/' + event.target.value + '/');
 		await getCards();
+		showBack = false;
 	}
 	async function handleChangeID(event) {
 		goto('/homePage/studying/' + event.target.value + '/' + cardStatus + '/');
 		await getCards();
+		showBack = false;
 	}
 	async function loadOptionsAndSetValue() {
 		await getDecks();
