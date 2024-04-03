@@ -288,14 +288,14 @@ app.post('/InsertCardBackCardFrontInCard', async (req, res) => {
 	try {
 	const card = await db.insert({ front: front, back: back, deckId: deckId }).into('card');
 
-	res.status(201).json({ message: 'Daten wurden erfolgreich eingefügt.' });
+	return res.status(201).json({ message: 'Daten wurden erfolgreich eingefügt.' });
 } catch (error) {
  console.error('Fehler beim Einfügen der Daten:', error);
- res.status(500).json({ error: 'Fehler beim Einfügen der Daten.' });
+ return res.status(500).json({ error: 'Fehler beim Einfügen der Daten.' });
 }
 
 	const deck = await db.select().from('deck');
-	res.json(deck);
+	return res.json(deck);
 });
 
 app.get('/user', async (req, res) => {
