@@ -183,7 +183,7 @@
 
 
 	function handleChange(event) {
-		goto('/homePage/manageKarteikarten/' + event.target.value);
+		goto('/homePage/manageKarteikarten/deck/' + event.target.value);
 		deckId = event.target.value;
 		console.log('selectedOption:', deckId);
 		getAll(deckId).then((result) => {

@@ -1,9 +1,10 @@
 <script>
 	import { onMount } from 'svelte';
 
-	let options = [];
+	let deckOptions = [];
+	let tagOptions = [];
 
-	async function getOptions() {
+	async function getDeckOptions() {
 		const API_URL = 'http://localhost:3001/SelectAllFromDeck';
 		try {
 			const response = await fetch(
@@ -19,9 +20,34 @@
 			);
 			const data = await response.json();
 
-			options = data.map((item) => ({
+			deckOptions = data.map((item) => ({
 				value: item.deckId,
 				label: item.deckName
+			}));
+		} catch (error) {
+			console.error('Fehler beim Laden der Daten:', error);
+		}
+	}
+
+	async function getTagOptions() {
+		const API_URL = 'http://localhost:3001/SelectAllFromTag';
+		try {
+			const response = await fetch(
+				API_URL,
+
+				{
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					credentials: 'include'
+				}
+			);
+			const data = await response.json();
+
+			tagOptions = data.map((item) => ({
+				value: item.tagId,
+				label: item.tagName
 			}));
 		} catch (error) {
 			console.error('Fehler beim Laden der Daten:', error);
@@ -51,24 +77,31 @@
 		}
 	}
 
-	let selectedOption = '';
+	let selectedDeckOption = '';
 
-	function handleChange(event) {
-		selectedOption = event.target.value;
-		console.log(selectedOption);
+	function handleDeckChange(event) {
+		selectedDeckOption = event.target.value;
+		console.log(selectedDeckOption);
+	}
+	let selectedTagOption = '';
+
+	function handleTagChange(event) {
+		selectedTagOption = event.target.value;
+		console.log(selectedTagOption);
 	}
 
 	onMount(() => {
 		getUserInfo();
-		getOptions();
+		getDeckOptions();
+		getTagOptions();
 	});
 </script>
 
 <main class="h-full flex flex-col">
-	<div class="mt-4 mb-8 text-center">
+	<div class="my-8 text-center">
 		<h1 class="text-3xl font-extrabold text-text-100">Welcome back {username}</h1>
 	</div>
-	<div class="flex-grow flex flex-col items-center mt-16">
+	<div class="flex-grow flex flex-col items-center mt-40">
 		<div class="mb-10">
 			<a
 				href="/homePage/manageDecks"
@@ -87,69 +120,68 @@
 				>Import a Deck</a
 			>
 		</div>
-		{#if options.length > 0}
+		{#if deckOptions.length > 0}
 			<h2 class="text-2xl font-bold mb-5">Choose a deck</h2>
 			<select
 				class="bg-primary-70 border border-gray-200 text-primary-400 py-3 px-4 pr-8 rounded leading-tight focus:outline-none hover:bg-primary-100 hover:border-gray-500 mb-4"
-				on:change={handleChange}
+				on:change={handleDeckChange}
 			>
 				<option value="">Choose a deck</option>
-				{#each options as option}
-					<option value={option.value}>{option.label}</option>
+				{#each deckOptions as deckOption}
+					<option value={deckOption.value}>{deckOption.label}</option>
 				{/each}
 			</select>
 		{/if}
-		{#if selectedOption !== '' && selectedOption !== undefined}
+		{#if selectedDeckOption !== '' && selectedDeckOption !== undefined}
 			<div class="flex justify-center space-x-4 mb-10">
 				<a
-					href="/homePage/studying/{selectedOption}/0"
+					href="/homePage/studyDeck/{selectedDeckOption}/0"
 					class="dark:bg-primary-200 bg-primary-70 border border-gray-200 text-primary-400 py-3 px-4 rounded-full hover:bg-primary-100 dark:hover:bg-primary-70 hover:border-gray-500"
 					>Start Studying</a
 				>
 				<a
-					href="/homePage/addKarteikarten/{selectedOption}"
+					href="/homePage/addKarteikarten/{selectedDeckOption}"
 					class="dark:bg-primary-200 bg-primary-70 border border-gray-200 text-primary-400 py-3 px-4 rounded-full hover:bg-primary-100 dark:hover:bg-primary-70 hover:border-gray-500"
 					>Add a flashcard</a
 				>
 				<a
-					href="/homePage/manageKarteikarten/{selectedOption}"
+					href="/homePage/manageKarteikarten/deck/{selectedDeckOption}"
 					class="dark:bg-primary-200 bg-primary-70 border border-gray-200 text-primary-400 py-3 px-4 rounded-full hover:bg-primary-100 dark:hover:bg-primary-70 hover:border-gray-500"
 					>Manage flashcards</a
 				>
 				<a
-					href="/homePage/shareDeck/{selectedOption}"
+					href="/homePage/shareDeck/{selectedDeckOption}"
 					class="dark:bg-primary-200 bg-primary-70 border border-gray-200 text-primary-400 py-3 px-4 rounded-full hover:bg-primary-100 dark:hover:bg-primary-70 hover:border-gray-500"
 					>Share the deck</a
 				>
 			</div>
 		{/if}
-		<div class="space-y-5 mt-10">
-			<p>These are some of the other pages:</p>
-			<ul class="space-y-1">
-				<li>
-					Click here to go to
-					<a href="/homePage/addKarteikarten" class="text-blue-600 hover:text-blue-800 underline"
-						>routes/addKarteikarten/+page.svelte</a
-					>
-				</li>
-				<li>
-					Click here to go to
-					<a href="/homePage/manageKarteikarten" class="text-blue-600 hover:text-blue-800 underline"
-						>routes/manageKarteikarten/+page.svelte</a
-					>
-				</li>
-				<li>
-					Click here to go to
-					<a href="/homePage/manageDecks" class="text-blue-600 hover:text-blue-800 underline"
-						>routes/manageDecks/+page.svelte</a
-					>
-				</li>
-				<li>
-					<a href="/farben" class="text-blue-600 hover:text-blue-800 underline"
-						>Click here to go checkout our colorscheme</a
-					>
-				</li>
-			</ul>
-		</div>
+
+		{#if tagOptions.length > 0}
+			<h2 class="text-2xl font-bold mb-5">Choose a tag</h2>
+			<select
+				class="bg-primary-70 border border-gray-200 text-primary-400 py-3 px-4 pr-8 rounded leading-tight focus:outline-none hover:bg-primary-100 hover:border-gray-500 mb-4"
+				on:change={handleTagChange}
+			>
+				<option value="">Choose a deck</option>
+				{#each tagOptions as tagOption}
+					<option value={tagOption.value}>{tagOption.label}</option>
+				{/each}
+			</select>
+		{/if}
+		{#if selectedTagOption !== '' && selectedTagOption !== undefined}
+			<div class="flex justify-center space-x-4 mb-10">
+				<a
+					href="/homePage/studyTag/{selectedTagOption}/0"
+					class="dark:bg-primary-200 bg-primary-70 border border-gray-200 text-primary-400 py-3 px-4 rounded-full hover:bg-primary-100 dark:hover:bg-primary-70 hover:border-gray-500"
+					>Start Studying</a
+				>
+				<a
+					href="/homePage/manageKarteikarten/tag/{selectedTagOption}"
+					class="dark:bg-primary-200 bg-primary-70 border border-gray-200 text-primary-400 py-3 px-4 rounded-full hover:bg-primary-100 dark:hover:bg-primary-70 hover:border-gray-500"
+					>Manage flashcards</a
+				>
+			</div>
+		{/if}
 	</div>
 </main>
