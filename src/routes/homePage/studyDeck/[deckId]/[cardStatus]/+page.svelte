@@ -13,8 +13,6 @@
 		{ value: 3, label: 'kann ich' }
 	];
 	let showBack = false;
-	console.log('deckId: ' + deckId);
-	console.log('cardStatus: ' + cardStatus);
 	function toggleBack() {
 		showBack = !showBack;
 	}
@@ -62,7 +60,7 @@
 				})
 			});
 			const data = await response.json();
-			console.log(data);
+
 
 			if (response.ok) {
 				cardData = data;
@@ -77,6 +75,7 @@
 	async function updateCardStatus(cardId, learnStatus) {
 		const API_URL = `http://localhost:3001/UpdateCardStatus`;
 
+
 		const response = await fetch(API_URL, {
 			method: 'PUT',
 			credentials: 'include',
@@ -84,8 +83,7 @@
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
-				front: cardData.front,
-				back: cardData.back,
+				cardId: Number(cardId),
 				newCardStatus: Number(learnStatus)
 			})
 		});
@@ -103,10 +101,12 @@
 	async function handleChangeStatus(event) {
 		goto('/homePage/studying/' + deckId + '/' + event.target.value + '/');
 		await getCards();
+		showBack = false;
 	}
 	async function handleChangeID(event) {
 		goto('/homePage/studying/' + event.target.value + '/' + cardStatus + '/');
 		await getCards();
+		showBack = false;
 	}
 	async function loadOptionsAndSetValue() {
 		await getDecks();
@@ -204,19 +204,19 @@
 		<div class="container h-full mx-auto flex justify-center items-center mt-4">
 			<button
 				class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16"
-				on:click={() => updateCardStatus(cardData.id, 1)}
+				on:click={() => updateCardStatus(cardData.cardId, 1)}
 			>
 				kann ich nicht
 			</button>
 			<button
 				class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16"
-				on:click={() => updateCardStatus(cardData.id, 2)}
+				on:click={() => updateCardStatus(cardData.cardId, 2)}
 			>
 				kann ich bisschen
 			</button>
 			<button
 				class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded"
-				on:click={() => updateCardStatus(cardData.id, 3)}
+				on:click={() => updateCardStatus(cardData.cardId, 3)}
 			>
 				kann ich gut
 			</button>
