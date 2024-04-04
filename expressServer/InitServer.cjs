@@ -268,7 +268,7 @@ app.post('/GetRandomCardWithStatus', async (req, res) => {
 			.where('user_deck.userId', userId)
 			.orderByRaw('RAND()')
 			.first()
-			.select('front', 'back');
+			.select('front', 'back','cardId');
 
 		if (card) {
 			res.json(card);
@@ -445,11 +445,11 @@ app.get('/SelectAllFromCard', async (req, res) => {
 });
 
 app.put('/UpdateCardStatus', async (req, res) => {
-	const { front, back, newCardStatus } = req.body;
+	const { cardId, newCardStatus } = req.body;
 
 	try {
 		const updatedCard = await db('card')
-			.where({ front, back })
+			.where({ cardId: cardId })
 			.update({ cardStatus: newCardStatus });
 
 		if (updatedCard) {
@@ -472,16 +472,6 @@ app.post('/updateCard', async (req, res) => {
 		.update({ front: front, back: back, cardStatus: cardStatus, deckId: deckId });
 
 	res.status(200).send('Datensatz erfolgreich aktualisiert');
-});
-
-app.get('/SelectAllDecks', async (req, res) => {
-	const userId = req.user.userId;
-	const decks = await db
-		.select()
-		.from('deck')
-		.join('user_deck', 'deck.deckId', 'user_deck.deckId')
-		.where('user_deck.userId', userId);
-	res.json(decks);
 });
 
 app.get('/SelectAllStatus', async (req, res) => {

@@ -28,11 +28,11 @@
 					credentials: 'include'
 				});
 			const data = await response.json();
-
 			options = data.map((item) => ({
 				value: item.deckId,
 				label: item.deckName
 			}));
+			return data;
 		} catch (error) {
 			console.error('Fehler beim Laden der Daten:', error);
 		}
@@ -64,7 +64,7 @@
 		loadOptionsAndSetValue();
 		try {
 			data = await getAll(deckId);
-			deck = await getDeck();
+			deck = await getOptions();
 		} catch (error) {
 			console.error('Fehler beim Laden der Daten:', error);
 			// Fehlermeldung anzeigen oder Benutzer benachrichtigen
@@ -158,28 +158,6 @@
 			// Zeigen Sie eine Fehlermeldung an
 		}
 	}
-
-	async function getDeck() {
-		const API_URL = 'http://localhost:3001/SelectAllDecks';
-		try {
-			const response = await fetch(API_URL,
-				{
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					credentials: 'include'
-				});
-
-
-		const fetchedData = await response.json();
-		return fetchedData;
-		} catch (error) {
-			console.error('Fehler beim Laden der Daten:', error);
-		}
-	}
-
-
 
 
 	function handleChange(event) {
