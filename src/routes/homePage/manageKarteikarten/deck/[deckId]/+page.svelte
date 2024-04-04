@@ -161,7 +161,7 @@
 
 
 	function handleChange(event) {
-		goto('/homePage/manageKarteikarten/' + event.target.value);
+		goto('/homePage/manageKarteikarten/deck/' + event.target.value);
 		deckId = event.target.value;
 		getAll(deckId).then((result) => {
 			data = result;

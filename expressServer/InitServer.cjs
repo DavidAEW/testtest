@@ -551,6 +551,32 @@ app.post('/deleteCard', async (req, res) => {
 	}
 });
 
+
+app.post('/GetRandomCardWithStatusFromTag', async (req, res) => {
+	const { cardStatus, tagId } = req.body;
+	const userId = req.user.userId; 
+	try {
+		const card = await db('card')
+		.select()
+		.join('deck_tag', 'card.deckId', 'deck_tag.deckId')
+		.where('deck_tag.tagId', '132')
+		.join('user_deck', 'card.deckId', 'user_deck.deckId')
+		.where('user_deck.userId', userId)
+		.where('cardStatus', cardStatus)
+		.orderByRaw('RAND()')
+		.first()
+
+		if (card) {
+			res.json(card);
+		} else {
+			res.status(404).send('No card found with status ' + cardStatus);
+		}
+	} catch (error) {
+		console.error(error);
+		res.status(500).send('Error retrieving card');
+	}
+});
+
 //Muss am Schluss sein, da vor dem Starten erstmal alles definiert werden muss
 app.listen(PORT, (error) => {
 	if (!error) console.log('Express Server wurde gestartet auf Port ' + PORT);
