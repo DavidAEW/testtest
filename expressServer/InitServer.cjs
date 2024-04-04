@@ -242,19 +242,30 @@ app.post('/LoeschenDeckTag', async (req, res) => {
 });
 
 app.get('/SelectAllFromDeck', async (req, res) => {
-	const userId = req.user.userId;
-	const deck = await db
-		.select()
-		.from('deck')
-		.join('user_deck', 'deck.deckId', 'user_deck.deckId')
-		.where('user_deck.userId', userId);
-	console.log(deck);
-	res.json(deck);
+	try { const userId = req.user.userId;
+		const deck = await db
+			.select()
+			.from('deck')
+			.join('user_deck', 'deck.deckId', 'user_deck.deckId')
+			.where('user_deck.userId', userId);
+		console.log(deck);
+		res.json(deck);
+	} catch (error) {
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler beim Deck laden.' });
+	}
+
 });
 
 app.get('/SelectAllFromCard', async (req, res) => {
-	const deck = await db.select().from('card');
-	res.json(deck);
+	try{
+		const cards = await db.select().from('card');
+		res.json(cards);
+	} catch (error) {
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler beim Laden der Karten.' });
+	}
+
 });
 
 app.post('/GetRandomCardWithStatus', async (req, res) => {
@@ -440,8 +451,13 @@ app.post('/importCards', async (req, res) => {
 });
 
 app.get('/SelectAllFromCard', async (req, res) => {
-	const deck = await db.select().from('card');
-	res.json(deck);
+	try {
+		const cards = await db.select().from('card');
+		res.json(cards);
+	} catch (error) {
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler beim Laden der Karten.' });
+	}
 });
 
 app.put('/UpdateCardStatus', async (req, res) => {
@@ -466,13 +482,18 @@ app.put('/UpdateCardStatus', async (req, res) => {
 
 app.post('/updateCard', async (req, res) => {
 	const { cardId, front, back, cardStatus, deckId } = req.body;
+	try{
+		const updatecard = await db('card')
+			.where('cardId', cardId)
+			.update({ front: front, back: back, cardStatus: cardStatus, deckId: deckId });
 
-	const updatecard = await db('card')
-		.where('cardId', cardId)
-		.update({ front: front, back: back, cardStatus: cardStatus, deckId: deckId });
+		res.status(200).send('Datensatz erfolgreich aktualisiert');
+	} catch (error) {
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
 
-	res.status(200).send('Datensatz erfolgreich aktualisiert');
-});
+	});
 
 app.get('/SelectAllStatus', async (req, res) => {
 	const status = await db.select().from('card_status');

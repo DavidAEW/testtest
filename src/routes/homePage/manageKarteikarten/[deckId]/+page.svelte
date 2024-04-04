@@ -70,20 +70,22 @@
 			// Fehlermeldung anzeigen oder Benutzer benachrichtigen
 		}
 	});
+	let front;
+	let back;
+	let cardStatus;
+	let newDeckId;
+	let cardId;
 
 	async function updateCard(cardid, row) {
 		// Holen Sie die aktualisierten Werte aus den Eingabefeldern
-		const front = row.front;
-		const back = row.back;
-		const cardstatus = row.cardstatus;
-		const newDeckId = row.deckId;
+		cardId = cardid;
+		front = row.front;
+		back = row.back;
+		cardStatus = row.cardStatus;
+		newDeckId = row.deckId;
 
-		console.log('row:', row);
-		console.log('front:', front);
-		console.log('back:', back);
-		console.log('cardstatus:', cardstatus);
-		console.log('deckId:', newDeckId);
-		console.log('cardid:', cardid);
+		console.log(cardid, front, back, cardStatus, newDeckId);
+
 
 		// Senden Sie eine Fetch-Anfrage an das Backend
 		try {
@@ -94,10 +96,10 @@
 				},
 				credentials: 'include',
 				body: JSON.stringify({
-					cardid,
+					cardId,
 					front,
 					back,
-					cardstatus,
+					cardStatus,
 					deckId: newDeckId
 				})
 			});
@@ -115,6 +117,7 @@
 		} catch (error) {
 			console.error('Fehler bei der Fetch-Anfrage:', error);
 			// Zeigen Sie eine Fehlermeldung an
+
 		}
 	}
 
@@ -122,7 +125,6 @@
 		// Holen Sie die aktualisierten Werte aus den Eingabefeldern
 
 		const cardId = row.cardId;
-		console.log('deleteDeckId:', cardId);
 		const isConfirmed = confirm('Bist du sicher, dass du die Karte löschen möchtest?');
     
     if (!isConfirmed) {
@@ -163,13 +165,12 @@
 	function handleChange(event) {
 		goto('/homePage/manageKarteikarten/' + event.target.value);
 		deckId = event.target.value;
-		console.log('selectedOption:', deckId);
 		getAll(deckId).then((result) => {
 			data = result;
 		});
 	}
 
-	function back() {
+	function backtopage() {
 		goto('/homePage');
 	}
 </script>
@@ -275,7 +276,7 @@
 	<div class="flex justify-center mx-auto mt-5 mb-5">
 	<button
 		class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded"
-		on:click={back}
+		on:click={backtopage}
 	>
 		Zurück
 	</button>
