@@ -13,8 +13,6 @@
 		{ value: 3, label: 'kann ich' }
 	];
 	let showBack = false;
-	console.log('deckId: ' + deckId);
-	console.log('cardStatus: ' + cardStatus);
 	function toggleBack() {
 		showBack = !showBack;
 	}
@@ -62,7 +60,7 @@
 				})
 			});
 			const data = await response.json();
-			console.log(data);
+
 
 			if (response.ok) {
 				cardData = data;
@@ -76,7 +74,7 @@
 	}
 	async function updateCardStatus(cardId, learnStatus) {
 		const API_URL = `http://localhost:3001/UpdateCardStatus`;
-		console.log(cardData.cardId, learnStatus);
+
 
 		const response = await fetch(API_URL, {
 			method: 'PUT',

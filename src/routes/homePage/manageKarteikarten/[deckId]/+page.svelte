@@ -78,12 +78,6 @@
 		const cardstatus = row.cardstatus;
 		const newDeckId = row.deckId;
 
-		console.log('row:', row);
-		console.log('front:', front);
-		console.log('back:', back);
-		console.log('cardstatus:', cardstatus);
-		console.log('deckId:', newDeckId);
-		console.log('cardid:', cardid);
 
 		// Senden Sie eine Fetch-Anfrage an das Backend
 		try {
@@ -122,7 +116,6 @@
 		// Holen Sie die aktualisierten Werte aus den Eingabefeldern
 
 		const cardId = row.cardId;
-		console.log('deleteDeckId:', cardId);
 		const isConfirmed = confirm('Bist du sicher, dass du die Karte löschen möchtest?');
     
     if (!isConfirmed) {
@@ -163,7 +156,6 @@
 	function handleChange(event) {
 		goto('/homePage/manageKarteikarten/' + event.target.value);
 		deckId = event.target.value;
-		console.log('selectedOption:', deckId);
 		getAll(deckId).then((result) => {
 			data = result;
 		});
