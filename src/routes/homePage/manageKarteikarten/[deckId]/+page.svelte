@@ -84,8 +84,6 @@
 		cardStatus = row.cardStatus;
 		newDeckId = row.deckId;
 
-		console.log(cardid, front, back, cardStatus, newDeckId);
-
 
 		// Senden Sie eine Fetch-Anfrage an das Backend
 		try {
