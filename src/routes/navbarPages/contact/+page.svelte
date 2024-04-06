@@ -7,6 +7,8 @@
 
     function handleSubmit() {
         // insert Request-Logic
+        alert("Request submitted successfully!");
+        location.reload();
     }
 </script>
 
@@ -15,7 +17,7 @@
         <div>
             <h1 class="mt-6 text-center text-3xl font-extrabold text-primary-300">Contact Page</h1>
         </div>
-        <form class="mt-8 space-y-6" on:submit|preventDefault={handleSubmit}>
+        <form class="mt-8 space-y-6" on:submit={handleSubmit}>
             <div class="rounded-md shadow-sm -space-y-px">
                 <div>
                     <label for="name" class="sr-only">Name</label>
