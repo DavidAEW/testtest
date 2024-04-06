@@ -35,7 +35,30 @@ const db = knex({
 
 app.use(express.json());
 
-app.post('/Login', async (req, res) => {
+const authenticateJWT = (req, res, next) => {
+	const token = req.cookies['jwt'];
+
+	if (!token) {
+		return res.status(401).json({ message: 'Auth token is missing' });
+	}
+
+	jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+		if (err) {
+			return res.status(403).json({ message: 'Unauthorized. Invalid token.' });
+		}
+
+		req.user = user;
+		next();
+	});
+};
+
+app.use(authenticateJWT); // Verwende Middleware um JWT zu überprüfen
+
+//##################################################################################################
+//Session
+//##################################################################################################
+
+app.post('/session', async (req, res) => {
 	const { email, password } = req.body;
 	try {
 		const user = await db.select('*').from('user').where('email', email).first(); //-> erst mal nach email suchen
@@ -65,24 +88,10 @@ app.post('/Login', async (req, res) => {
 	}
 });
 
-const authenticateJWT = (req, res, next) => {
-	const token = req.cookies['jwt'];
-
-	if (!token) {
-		return res.status(401).json({ message: 'Auth token is missing' });
-	}
-
-	jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
-		if (err) {
-			return res.status(403).json({ message: 'Unauthorized. Invalid token.' });
-		}
-
-		req.user = user;
-		next();
-	});
-};
-
-app.use(authenticateJWT); // Verwende Middleware um JWT zu überprüfen
+app.delete('/session', (req, res) => {
+	res.clearCookie('jwt', '', { maxAge: 0 });
+	res.send('Erfolgreich ausgeloggt');
+});
 
 //##################################################################################################
 //Card
@@ -413,7 +422,7 @@ app.post('/User', async (req, res) => {
 	}
 });
 
-app.get('/User/', async (req, res) => {
+app.get('/User', async (req, res) => {
 	try {
 		const cookie = req.cookies['jwt'];
 		const claims = jwt.verify(cookie, process.env.SECRET_KEY);
@@ -441,11 +450,6 @@ app.get('/User/', async (req, res) => {
 //##################################################################################################
 
 //##################################################################################################
-
-app.post('/Logout', (req, res) => {
-	res.clearCookie('jwt', '', { maxAge: 0 });
-	res.send('Erfolgreich ausgeloggt');
-});
 
 // -> Karte exportieren zum sharen
 app.get('/ExportCards/:deckId', async (req, res) => {

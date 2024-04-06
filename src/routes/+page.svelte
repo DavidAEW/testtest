@@ -4,7 +4,7 @@
 
   let loggedIn = false;
 	async function getUserInfo() {
-		const url = 'http://localhost:3001/User/';
+		const url = 'http://localhost:3001/User';
 		try {
 			const response = await fetch(url, {
 				method: 'GET',
@@ -44,7 +44,7 @@
     console.log('Data:', userData);
 
     const url = "http://localhost:3001";
-    const endpoint = "/Login";  
+    const endpoint = "/session";  
     const endpointURL= url + endpoint;
 
     try {

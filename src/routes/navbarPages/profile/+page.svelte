@@ -33,10 +33,10 @@ let email = ""
 
 	// logout 
 	async function logout() {
-	  const url = "http://localhost:3001/logout";
+	  const url = "http://localhost:3001/session";
 	  try {
 		const response = await fetch(url, {
-		  method: 'POST',
+		  method: 'DELETE',
 		  credentials: "include"
 		});
 		if (response.ok) {
