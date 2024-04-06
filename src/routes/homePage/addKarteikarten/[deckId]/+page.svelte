@@ -14,7 +14,7 @@
 	let options = [];
 
 	async function getOptions() {
-		const API_URL = 'http://localhost:3001/SelectAllFromDeck';
+		const API_URL = 'http://localhost:3001/Deck';
 		try {
 			const response = await fetch(API_URL,
 				{
@@ -79,7 +79,7 @@
 			return;
 		}
 
-		const API_URL = 'http://localhost:3001/InsertCardBackCardFrontInCard';
+		const API_URL = 'http://localhost:3001/Card';
 		const response = await fetch(API_URL, {
 			method: 'POST',
 			credentials: 'include', //mitbringen des Cookies

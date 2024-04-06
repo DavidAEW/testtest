@@ -35,21 +35,7 @@ const db = knex({
 
 app.use(express.json());
 
-// Überprüfung der Datenbankverbindung
-db.raw('SELECT 1')
-	.then(() => {
-		console.log('Verbindung zur Datenbank hergestellt.');
-	})
-	.catch((err) => {
-		console.error('Fehler bei der Verbindung zur Datenbank:', err);
-		process.exit(1); // Beende den Server, wenn die Verbindung fehlschlägt
-	});
-
-app.get('/test', (req, res) => {
-	res.send('Hello from express server');
-});
-
-app.post('/login', async (req, res) => {
+app.post('/Login', async (req, res) => {
 	const { email, password } = req.body;
 	try {
 		const user = await db.select('*').from('user').where('email', email).first(); //-> erst mal nach email suchen
@@ -79,7 +65,309 @@ app.post('/login', async (req, res) => {
 	}
 });
 
-app.post('/addUser', async (req, res) => {
+const authenticateJWT = (req, res, next) => {
+	const token = req.cookies['jwt'];
+
+	if (!token) {
+		return res.status(401).json({ message: 'Auth token is missing' });
+	}
+
+	jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+		if (err) {
+			return res.status(403).json({ message: 'Unauthorized. Invalid token.' });
+		}
+
+		req.user = user;
+		next();
+	});
+};
+
+app.use(authenticateJWT); // Verwende Middleware um JWT zu überprüfen
+
+//##################################################################################################
+//Card
+//##################################################################################################
+
+app.post('/Card', async (req, res) => {
+	const { front, back, deckId } = req.body; 
+	try {
+	const card = await db.insert({ front: front, back: back, deckId: deckId }).into('card');
+
+	return res.status(201).json({ message: 'Daten wurden erfolgreich eingefügt.' });
+} catch (error) {
+ console.error('Fehler beim Einfügen der Daten:', error);
+ return res.status(500).json({ error: 'Fehler beim Einfügen der Daten.' });
+}
+
+	const deck = await db.select().from('deck');
+	return res.json(deck);
+});
+
+app.get('/Card', async (req, res) => {
+	try{
+		const cards = await db.select().from('card');
+		res.json(cards);
+	} catch (error) {
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler beim Laden der Karten.' });
+	}
+});
+
+app.get('/Card/:cardStatus/deckId/:deckId', async (req, res) => {
+	 const { cardStatus, deckId } = req.params;
+	const userId = req.user.userId; 
+	try {
+		const card = await db('card')
+		.where('card.deckId', deckId)
+		.where('cardStatus', cardStatus)
+		.join('user_deck', 'card.deckId', 'user_deck.deckId')
+			.where('user_deck.userId', userId)
+			.orderByRaw('RAND()')
+			.first()
+			.select('front', 'back','cardId');
+
+		if (card) {
+			res.json(card);
+		} else {
+			res.status(404).send('No card found with status ' + cardStatus);
+		}
+	} catch (error) {
+		console.error(error);
+		res.status(500).send('Error retrieving card');
+	}
+});
+
+app.get('/Card/:cardStatus/tagId/:tagId', async (req, res) => {
+	const { cardStatus, tagId } = req.params;
+	const userId = req.user.userId; 
+	try {
+		const card = await db('card')
+		.select()
+		.join('deck_tag', 'card.deckId', 'deck_tag.deckId')
+		.where('deck_tag.tagId', tagId)
+		.join('user_deck', 'card.deckId', 'user_deck.deckId')
+		.where('user_deck.userId', userId)
+		.where('cardStatus', cardStatus)
+		.orderByRaw('RAND()')
+		.first()
+
+		if (card) {
+			res.json(card);
+		} else {
+			res.status(404).send('No card found with status ' + cardStatus);
+		}
+	} catch (error) {
+		console.error(error);
+		res.status(500).send('Error retrieving card');
+	}
+});
+
+app.get('/Card', async (req, res) => {
+	try {
+		const cards = await db.select().from('card');
+		res.json(cards);
+	} catch (error) {
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler beim Laden der Karten.' });
+	}
+});
+
+app.put('/Card', async (req, res) => {
+	const { cardId, front, back, cardStatus, deckId } = req.body;
+	try{
+		const updatecard = await db('card')
+			.where('cardId', cardId)
+			.update({ front: front, back: back, cardStatus: cardStatus, deckId: deckId });
+
+		res.status(200).send('Datensatz erfolgreich aktualisiert');
+	} catch (error) {
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
+
+});
+
+app.delete('/Card', async (req, res) => {
+	const { cardId } = req.body;
+
+	try {
+		// Dann den Stapel selbst löschen
+		const dele = await db.delete().from('card').where('cardId', cardId);
+
+		res.json({ success: true, message: 'Karte erfolgreich gelöscht' });
+	} catch (error) {
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
+});
+
+//##################################################################################################
+//Card_Deck
+//##################################################################################################
+
+app.get('/Card_Deck/:selectedOption', async (req, res) => {
+	const { selectedOption } = req.params;
+	const userId = req.user.userId;
+	try {
+		const data = await db
+		.select()
+		.from('card')
+		.where('card.deckId', selectedOption)
+		.join('user_deck', 'card.deckId', 'user_deck.deckId')
+		.where('user_deck.userId', userId);
+
+
+		res.json(data);
+	} catch (error) {
+		// Wenn ein Fehler auftritt
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
+});
+
+//##################################################################################################
+//Deck
+//##################################################################################################
+
+app.post('/Deck', async (req, res) => {
+	const { deckName } = req.body;
+	const userId = req.user.userId;
+	try {
+		// Zuerst den neuen Stapel in der 'deck' Tabelle erstellen
+		const [newDeckId] = await db('deck').insert({
+			deckName: deckName
+		});
+		// Dann den Stapel dem Benutzer zuordnen in der 'user_deck' Tabelle
+		await db('user_deck').insert({
+			userId: userId,
+			deckId: newDeckId
+		});
+
+		res.json({ success: true, message: 'Stapel erfolgreich erstellt', deckId: newDeckId });
+	} catch (error) {
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
+});
+
+app.get('/Deck', async (req, res) => {
+	try { const userId = req.user.userId;
+		const deck = await db
+			.select()
+			.from('deck')
+			.join('user_deck', 'deck.deckId', 'user_deck.deckId')
+			.where('user_deck.userId', userId);
+		res.json(deck);
+	} catch (error) {
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler beim Deck laden.' });
+	}
+
+});
+
+app.delete('/Deck', async (req, res) => {
+	const { deckId } = req.body;
+
+	try {
+		// Zuerst alle Karten löschen, die zum Stapel gehören
+		await db.delete().from('card').where('deckId', deckId);
+
+		// Dann den Stapel selbst löschen
+		const dele = await db.delete().from('deck').where('deckId', deckId);
+
+		res.json({ success: true, message: 'Stapel und zugehörige Karten erfolgreich gelöscht' });
+	} catch (error) {
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
+});
+
+//##################################################################################################
+//Deck_Tag
+//##################################################################################################
+app.post('/Deck_Tag', async (req, res) => {
+	const { tagId, deckId } = req.body;
+	try {
+		const all = await db.insert({ tagId: tagId, deckId: deckId }).into('deck_tag');
+		res.json(all);
+	} catch (error) {
+		// Wenn ein Fehler auftritt
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
+});
+
+app.get('/Deck_Tag/:deckId', async (req, res) => {
+	const { deckId } = req.params;
+	try {
+		const all = await db.select().from('deck_tag').where('deckId', deckId);
+
+		res.json(all);
+	} catch (error) {
+		// Wenn ein Fehler auftritt
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
+});
+
+app.delete('/Deck_Tag', async (req, res) => {
+	const { tagId, deckId } = req.body;
+	try {
+		const all = await db('deck_tag').where('tagId', tagId).where('deckId', deckId).del();
+		res.json(all);
+	} catch (error) {
+		// Wenn ein Fehler auftritt
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
+});
+
+//##################################################################################################
+//Tag
+//##################################################################################################
+
+app.post('/Tag', async (req, res) => {
+	const userId = req.user.userId;
+	const { tagName } = req.body;
+	const tag = await db.insert({ tagName: tagName, userId: userId }).into('tag');
+	if (tag) {
+		// Wenn der Tag erfolgreich gelöscht wurde
+		res.status(200).json({ message: 'Tag erfolgreich gelöscht' });
+	} else {
+		// Wenn der Tag nicht gefunden wurde
+		res.status(404).json({ error: 'Tag nicht gefunden' });
+	}
+});
+
+app.get('/Tag', async (req, res) => {
+	const userId = req.user.userId;
+	const tags = await db.select().from('tag').where('tag.userId', userId);
+	res.json(tags);
+});
+
+app.delete('/Tag', async (req, res) => {
+	const { tagName } = req.body;
+	try {
+		const tag = await db('tag').where('tagName', tagName).del();
+		if (tag) {
+			// Wenn der Tag erfolgreich gelöscht wurde
+			res.status(200).json({ message: 'Tag erfolgreich gelöscht' });
+		} else {
+			// Wenn der Tag nicht gefunden wurde
+			res.status(404).json({ error: 'Tag nicht gefunden' });
+		}
+	} catch (error) {
+		// Wenn ein Fehler auftritt
+		console.error('Fehler beim Löschen des Tags:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
+});
+
+//##################################################################################################
+//User
+//##################################################################################################
+
+app.post('/User', async (req, res) => {
 	const { email, username, password } = req.body;
 
 	try {
@@ -125,191 +413,7 @@ app.post('/addUser', async (req, res) => {
 	}
 });
 
-const authenticateJWT = (req, res, next) => {
-	const token = req.cookies['jwt'];
-
-	if (!token) {
-		return res.status(401).json({ message: 'Auth token is missing' });
-	}
-
-	jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
-		if (err) {
-			return res.status(403).json({ message: 'Unauthorized. Invalid token.' });
-		}
-
-		req.user = user;
-		next();
-	});
-};
-
-app.use(authenticateJWT); // Verwende Middleware um JWT zu überprüfen
-
-app.get('/SelectAllFromTag', async (req, res) => {
-	const userId = req.user.userId;
-	const tags = await db.select().from('tag').where('tag.userId', userId);
-	res.json(tags);
-});
-
-// --> Hinzufügen eine neue Deck
-app.post('/decks/create', async (req, res) => {
-	const { deckName } = req.body;
-	const userId = req.user.userId;
-	console.log(userId);
-	try {
-		// Zuerst den neuen Stapel in der 'deck' Tabelle erstellen
-		const [newDeckId] = await db('deck').insert({
-			deckName: deckName
-		});
-		// Dann den Stapel dem Benutzer zuordnen in der 'user_deck' Tabelle
-		await db('user_deck').insert({
-			userId: userId,
-			deckId: newDeckId
-		});
-
-		res.json({ success: true, message: 'Stapel erfolgreich erstellt', deckId: newDeckId });
-	} catch (error) {
-		console.error('Fehler:', error);
-		res.status(500).json({ error: 'Interner Serverfehler' });
-	}
-});
-
-app.post('/HinzufuegenTag', async (req, res) => {
-	const userId = req.user.userId;
-	const { tagName } = req.body;
-	const tag = await db.insert({ tagName: tagName, userId: userId }).into('tag');
-	if (tag) {
-		// Wenn der Tag erfolgreich gelöscht wurde
-		res.status(200).json({ message: 'Tag erfolgreich gelöscht' });
-	} else {
-		// Wenn der Tag nicht gefunden wurde
-		res.status(404).json({ error: 'Tag nicht gefunden' });
-	}
-});
-
-app.post('/LoeschenTag', async (req, res) => {
-	const { tagName } = req.body;
-	try {
-		const tag = await db('tag').where('tagName', tagName).del();
-		if (tag) {
-			// Wenn der Tag erfolgreich gelöscht wurde
-			res.status(200).json({ message: 'Tag erfolgreich gelöscht' });
-		} else {
-			// Wenn der Tag nicht gefunden wurde
-			res.status(404).json({ error: 'Tag nicht gefunden' });
-		}
-	} catch (error) {
-		// Wenn ein Fehler auftritt
-		console.error('Fehler beim Löschen des Tags:', error);
-		res.status(500).json({ error: 'Interner Serverfehler' });
-	}
-});
-
-app.post('/AnzeigenDeckTag', async (req, res) => {
-	const { deckId } = req.body;
-	try {
-		const all = await db.select().from('deck_tag').where('deckId', deckId);
-
-		res.json(all);
-	} catch (error) {
-		// Wenn ein Fehler auftritt
-		console.error('Fehler:', error);
-		res.status(500).json({ error: 'Interner Serverfehler' });
-	}
-});
-
-app.post('/HinzufuegenInDeckTag', async (req, res) => {
-	const { tagId, deckId } = req.body;
-	try {
-		const all = await db.insert({ tagId: tagId, deckId: deckId }).into('deck_tag');
-		res.json(all);
-	} catch (error) {
-		// Wenn ein Fehler auftritt
-		console.error('Fehler:', error);
-		res.status(500).json({ error: 'Interner Serverfehler' });
-	}
-});
-
-app.post('/LoeschenDeckTag', async (req, res) => {
-	const { tagId, deckId } = req.body;
-	try {
-		const all = await db('deck_tag').where('tagId', tagId).where('deckId', deckId).del();
-		res.json(all);
-	} catch (error) {
-		// Wenn ein Fehler auftritt
-		console.error('Fehler:', error);
-		res.status(500).json({ error: 'Interner Serverfehler' });
-	}
-});
-
-app.get('/SelectAllFromDeck', async (req, res) => {
-	try { const userId = req.user.userId;
-		const deck = await db
-			.select()
-			.from('deck')
-			.join('user_deck', 'deck.deckId', 'user_deck.deckId')
-			.where('user_deck.userId', userId);
-		console.log(deck);
-		res.json(deck);
-	} catch (error) {
-		console.error('Fehler:', error);
-		res.status(500).json({ error: 'Interner Serverfehler beim Deck laden.' });
-	}
-
-});
-
-app.get('/SelectAllFromCard', async (req, res) => {
-	try{
-		const cards = await db.select().from('card');
-		res.json(cards);
-	} catch (error) {
-		console.error('Fehler:', error);
-		res.status(500).json({ error: 'Interner Serverfehler beim Laden der Karten.' });
-	}
-
-});
-
-app.post('/GetRandomCardWithStatus', async (req, res) => {
-	const { cardStatus, deckId } = req.body;
-	const userId = req.user.userId; 
-	try {
-		const card = await db('card')
-		.where('card.deckId', deckId)
-		.where('cardStatus', cardStatus)
-		.join('user_deck', 'card.deckId', 'user_deck.deckId')
-			.where('user_deck.userId', userId)
-			.orderByRaw('RAND()')
-			.first()
-			.select('front', 'back','cardId');
-
-		if (card) {
-			res.json(card);
-		} else {
-			res.status(404).send('No card found with status ' + cardStatus);
-		}
-	} catch (error) {
-		console.error(error);
-		res.status(500).send('Error retrieving card');
-	}
-});
-
-app.post('/InsertCardBackCardFrontInCard', async (req, res) => {
-	const { front, back, deckId } = req.body; 
-	console.log(req.body);
-	console.log(front);
-	try {
-	const card = await db.insert({ front: front, back: back, deckId: deckId }).into('card');
-
-	return res.status(201).json({ message: 'Daten wurden erfolgreich eingefügt.' });
-} catch (error) {
- console.error('Fehler beim Einfügen der Daten:', error);
- return res.status(500).json({ error: 'Fehler beim Einfügen der Daten.' });
-}
-
-	const deck = await db.select().from('deck');
-	return res.json(deck);
-});
-
-app.get('/user', async (req, res) => {
+app.get('/User/', async (req, res) => {
 	try {
 		const cookie = req.cookies['jwt'];
 		const claims = jwt.verify(cookie, process.env.SECRET_KEY);
@@ -334,34 +438,22 @@ app.get('/user', async (req, res) => {
 	}
 });
 
-app.post('/logout', (req, res) => {
+//##################################################################################################
+
+//##################################################################################################
+
+app.post('/Logout', (req, res) => {
 	res.clearCookie('jwt', '', { maxAge: 0 });
 	res.send('Erfolgreich ausgeloggt');
 });
 
-app.get('/getUser', async (req, res) => {
-	const userInfo = await db.select('username', 'email').from('user');
-	res.json(userInfo);
-	console.log(userInfo);
-
-	/*
-	--> BSP Response 
-	[
-    {
-        "username": "Test",
-        "email": "test@g.com"
-    }
-	]
-	*/
-});
-
 // -> Karte exportieren zum sharen
-app.get('/exportCards/:deckId', async (req, res) => {
+app.get('/ExportCards/:deckId', async (req, res) => {
 	const { deckId } = req.params;
 
 	try {
 		// Zuerst den Namen des Decks abrufen
-		const deckInfo = await db.select('deckName').from('deck').where('deckId', deckId).first();
+		const deckInfo = await db.select('deckName').from('deck').where('deckId', deckId);
 
 		if (!deckInfo) {
 			return res.status(404).send('Deck nicht gefunden für deckId: ' + deckId);
@@ -409,7 +501,7 @@ response von export die soll dann req.body für import sein
 */
 
 // -> Karte importieren zum sharen
-app.post('/importCards', async (req, res) => {
+app.post('/ImportCards', async (req, res) => {
 	const { cards, deckName } = req.body;
 	const userId = req.user.userId;
 
@@ -447,133 +539,6 @@ app.post('/importCards', async (req, res) => {
 	} catch (error) {
 		console.error('Fehler beim Importieren der Karten:', error);
 		res.status(500).json({ error: 'Interner Serverfehler beim Importieren der Karten.' });
-	}
-});
-
-app.get('/SelectAllFromCard', async (req, res) => {
-	try {
-		const cards = await db.select().from('card');
-		res.json(cards);
-	} catch (error) {
-		console.error('Fehler:', error);
-		res.status(500).json({ error: 'Interner Serverfehler beim Laden der Karten.' });
-	}
-});
-
-app.put('/UpdateCardStatus', async (req, res) => {
-	const { cardId, newCardStatus } = req.body;
-
-	try {
-		const updatedCard = await db('card')
-			.where({ cardId: cardId })
-			.update({ cardStatus: newCardStatus });
-
-		if (updatedCard) {
-			res.status(200).json({ message: 'Kartenstatus erfolgreich aktualisiert.' });
-		} else {
-			res.status(404).json({ message: 'Keine Karte gefunden.', error: true });
-		}
-	} catch (error) {
-		console.error('Fehler beim Aktualisieren des Kartenstatus:', error);
-		res.status(500).json({ error: 'Fehler beim Aktualisieren des Kartenstatus.' });
-	}
-});
-
-
-app.post('/updateCard', async (req, res) => {
-	const { cardId, front, back, cardStatus, deckId } = req.body;
-	try{
-		const updatecard = await db('card')
-			.where('cardId', cardId)
-			.update({ front: front, back: back, cardStatus: cardStatus, deckId: deckId });
-
-		res.status(200).send('Datensatz erfolgreich aktualisiert');
-	} catch (error) {
-		console.error('Fehler:', error);
-		res.status(500).json({ error: 'Interner Serverfehler' });
-	}
-
-	});
-
-app.get('/SelectAllStatus', async (req, res) => {
-	const status = await db.select().from('card_status');
-	res.json(status);
-});
-
-app.post('/SelectAllFromCardWithDeck', async (req, res) => {
-	const { selectedOption } = req.body;
-	const userId = req.user.userId;
-	try {
-		const data = await db
-		.select()
-		.from('card')
-		.where('card.deckId', selectedOption)
-		.join('user_deck', 'card.deckId', 'user_deck.deckId')
-		.where('user_deck.userId', userId);
-
-
-		res.json(data);
-	} catch (error) {
-		// Wenn ein Fehler auftritt
-		console.error('Fehler:', error);
-		res.status(500).json({ error: 'Interner Serverfehler' });
-	}
-});
-
-app.post('/deleteDecks', async (req, res) => {
-	const { deckId } = req.body;
-
-	try {
-		// Zuerst alle Karten löschen, die zum Stapel gehören
-		await db.delete().from('card').where('deckId', deckId);
-
-		// Dann den Stapel selbst löschen
-		const dele = await db.delete().from('deck').where('deckId', deckId);
-
-		res.json({ success: true, message: 'Stapel und zugehörige Karten erfolgreich gelöscht' });
-	} catch (error) {
-		console.error('Fehler:', error);
-		res.status(500).json({ error: 'Interner Serverfehler' });
-	}
-});
-
-app.post('/deleteCard', async (req, res) => {
-	const { cardId } = req.body;
-
-	try {
-		// Dann den Stapel selbst löschen
-		const dele = await db.delete().from('card').where('cardId', cardId);
-
-		res.json({ success: true, message: 'Karte erfolgreich gelöscht' });
-	} catch (error) {
-		console.error('Fehler:', error);
-		res.status(500).json({ error: 'Interner Serverfehler' });
-	}
-});
-
-
-app.post('/GetRandomCardWithStatusFromTag', async (req, res) => {
-	const { cardStatus, tagId } = req.body;
-	const userId = req.user.userId; 
-	try {
-		const card = await db('card')
-		.select()
-		.join('deck_tag', 'card.deckId', 'deck_tag.deckId')
-		.where('deck_tag.tagId', '132')
-		.join('user_deck', 'card.deckId', 'user_deck.deckId')
-		.where('user_deck.userId', userId)
-		.where('cardStatus', cardStatus)
-		.orderByRaw('RAND()')
-		.first()
-
-		if (card) {
-			res.json(card);
-		} else {
-			res.status(404).send('No card found with status ' + cardStatus);
-		}
-	} catch (error) {
-		console.error(error);
-		res.status(500).send('Error retrieving card');
 	}
 });
 

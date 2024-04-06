@@ -20,7 +20,7 @@
     console.log('Daten:', userData);
 
     const url = "http://localhost:3001";
-    const endpoint = "/addUser/";  
+    const endpoint = "/User";  
     const endpointURL= url + endpoint;
 
     try {

@@ -25,7 +25,7 @@
 	let error = null;
 
 	async function getTagOptions() {
-		const API_URL = 'http://localhost:3001/SelectAllFromTag';
+		const API_URL = 'http://localhost:3001/Tag';
 		try {
 			const response = await fetch(
 				API_URL,
@@ -50,18 +50,14 @@
 	}
 
 	async function getCards() {
-		const API_URL = 'http://localhost:3001/GetRandomCardWithStatusFromTag';
+		const API_URL = `http://localhost:3001/Card/${cardStatus}/tagId/${tagId}`;
 		try {
 			const response = await fetch(API_URL, {
-				method: 'POST',
+				method: 'GET',
 				credentials: 'include',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({
-					cardStatus: Number(cardStatus),
-					tagId: Number(tagId)
-				})
 			});
 			const data = await response.json();
 			console.log(data);
@@ -76,10 +72,9 @@
 			cardData = null;
 		}
 	}
-	async function updateCardStatus(cardId, learnStatus) {
-		console.log("Methode funktioniert");
-		console.log(cardId + " " + learnStatus );
-		const API_URL = `http://localhost:3001/UpdateCardStatus`;
+
+	async function updateCardStatus(cardId, learnStatus, front, back, deckId) {
+		const API_URL = `http://localhost:3001/Card`;
 
 		const response = await fetch(API_URL, {
 			method: 'PUT',
@@ -89,7 +84,10 @@
 			},
 			body: JSON.stringify({
 				cardId: Number(cardId),
-				newCardStatus: Number(learnStatus)
+				cardStatus: Number(learnStatus),
+				front: front,
+				back: back,
+				deckId: deckId
 			})
 		});
 
@@ -207,19 +205,19 @@
 		<div class="container h-full mx-auto flex justify-center items-center mt-4">
 			<button
 				class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16"
-				on:click={() => updateCardStatus(cardData.cardId, 1)}
+				on:click={() => updateCardStatus(cardData.cardId, 1, cardData?.front, cardData?.back, cardData.deckId)}
 			>
 				kann ich nicht
 			</button>
 			<button
 				class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16"
-				on:click={() => updateCardStatus(cardData.cardId, 2)}
+				on:click={() => updateCardStatus(cardData.cardId, 2, cardData?.front, cardData?.back, cardData.deckId)}
 			>
 				kann ich bisschen
 			</button>
-			<button
+			<button	
 				class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded"
-				on:click={() => updateCardStatus(cardData.cardId, 3)}
+				on:click={() => updateCardStatus(cardData.cardId, 3, cardData?.front, cardData?.back, cardData.deckId)}
 			>
 				kann ich gut
 			</button>

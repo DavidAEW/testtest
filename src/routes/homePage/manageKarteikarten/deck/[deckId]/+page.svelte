@@ -16,7 +16,7 @@
 	];
 
 	async function getOptions() {
-		const API_URL = 'http://localhost:3001/SelectAllFromDeck'; 
+		const API_URL = 'http://localhost:3001/Deck'; 
 		try {
 			const response = await fetch(API_URL,
 
@@ -45,14 +45,13 @@
 	}
 
 	async function getAll(selectedOption) {
-		const API_URL = 'http://localhost:3001/SelectAllFromCardWithDeck'; // Ersetzen Sie dies mit Ihrer tatsächlichen API-URL
+		const API_URL = `http://localhost:3001/Card_Deck/${selectedOption}`;
 		const options = {
-			method: 'POST',
+			method: 'GET',
 			credentials: 'include',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ selectedOption })
 		};
 
 		const response = await fetch(API_URL, options);
@@ -87,8 +86,8 @@
 
 		// Senden Sie eine Fetch-Anfrage an das Backend
 		try {
-			const response = await fetch('http://localhost:3001/updateCard', {
-				method: 'POST',
+			const response = await fetch('http://localhost:3001/Card', {
+				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
 				},
@@ -131,8 +130,8 @@
 
 		// Senden Sie eine Fetch-Anfrage an das Backend
 		try {
-			const response = await fetch('http://localhost:3001/deleteCard', {
-				method: 'POST',
+			const response = await fetch('http://localhost:3001/Card', {
+				method: 'DELETE',
 				headers: {
 					'Content-Type': 'application/json'
 				},

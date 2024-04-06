@@ -11,7 +11,7 @@
 
 
 	async function addDeck() {
-		const API_URL = 'http://localhost:3001/decks/create';
+		const API_URL = 'http://localhost:3001/Deck';
 		try {
 			const response = await fetch(API_URL, {
 				method: 'POST',
@@ -40,7 +40,7 @@
 		}
 	}
 	async function getOptions() {
-		const API_URL = 'http://localhost:3001/SelectAllFromDeck'; 
+		const API_URL = 'http://localhost:3001/Deck'; 
 		try {
 			const response = await fetch(API_URL,
 
@@ -76,10 +76,10 @@
     if (!isConfirmed) {
         return;
     }
-		const API_URL = 'http://localhost:3001/deleteDecks';
+		const API_URL = 'http://localhost:3001/Deck';
 		try {
 			const response = await fetch(API_URL, {
-				method: 'POST',
+				method: 'DELETE',
 				headers: {
 					'Content-Type': 'application/json',
 				},

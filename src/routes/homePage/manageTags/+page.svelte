@@ -1,8 +1,8 @@
 <script>
     import { onMount } from "svelte";
     import { goto } from '$app/navigation';
-    const endpoint = "http://localhost:3001/SelectAllFromTag";
-    const endpoint2 = "http://localhost:3001/SelectAllFromDeck";
+    const endpoint = "http://localhost:3001/Tag";
+    const endpoint2 = "http://localhost:3001/Deck";
     let selected;
     let isAddClicked = false;
     let isDeleteClicked = false;
@@ -97,7 +97,7 @@
 		}
         else {
             tagList = [];
-                const response = await fetch('http://localhost:3001/HinzufuegenTag', {
+                const response = await fetch('http://localhost:3001/Tag', {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
@@ -116,8 +116,8 @@
 
     async function deleteTag(deletedTagName){
         tagList = [];
-            const response = await fetch('http://localhost:3001/LoeschenTag', {
-            method: 'POST',
+            const response = await fetch('http://localhost:3001/Tag', {
+            method: 'DELETE',
             headers: {
             'Content-Type': 'application/json',
             },
@@ -133,14 +133,19 @@
     }
 
     async function selectDeck(deckId){
-            const response = await fetch('http://localhost:3001/AnzeigenDeckTag', {
-            method: 'POST',
+        if(deckId == 0)
+        {
+            loadTagIdsWhoAreChecked();
+            return;
+        }
+            const response = await fetch(`http://localhost:3001/Deck_Tag/${deckId}`, {
+            method: 'GET',
             headers: {
             'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                deckId: deckId,
-            }),
+            // body: JSON.stringify({
+            //     deckId: deckId,
+            // }),
             credentials: 'include'
         });
         const data = await response.json(); 
@@ -162,7 +167,7 @@
 
     async function changeStatusOfCheckBox(Tag, deckId){
         if(Tag.isChecked == false){
-            const response = await fetch('http://localhost:3001/HinzufuegenInDeckTag', {
+            const response = await fetch('http://localhost:3001/Deck_Tag', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
@@ -176,8 +181,8 @@
             const data = await response.json(); 
         }
         else{
-            const response = await fetch('http://localhost:3001/LoeschenDeckTag', {
-            method: 'POST',
+            const response = await fetch('http://localhost:3001/Deck_Tag', {
+            method: 'DELETE',
             headers: {
             'Content-Type': 'application/json',
             },

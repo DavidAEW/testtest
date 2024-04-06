@@ -5,7 +5,7 @@
 	let tagOptions = [];
 
 	async function getDeckOptions() {
-		const API_URL = 'http://localhost:3001/SelectAllFromDeck';
+		const API_URL = 'http://localhost:3001/Deck';
 		try {
 			const response = await fetch(
 				API_URL,
@@ -30,7 +30,7 @@
 	}
 
 	async function getTagOptions() {
-		const API_URL = 'http://localhost:3001/SelectAllFromTag';
+		const API_URL = 'http://localhost:3001/Tag';
 		try {
 			const response = await fetch(
 				API_URL,
@@ -56,7 +56,7 @@
 
 	let username = '';
 	async function getUserInfo() {
-		const url = 'http://localhost:3001/user/';
+		const url = 'http://localhost:3001/User';
 		try {
 			const response = await fetch(url, {
 				method: 'GET',

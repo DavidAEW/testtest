@@ -8,7 +8,7 @@
 	let options = [];
 
 	async function getOptions() {
-		const API_URL = 'http://localhost:3001/SelectAllFromDeck';
+		const API_URL = 'http://localhost:3001/Deck';
 		try {
 			const response = await fetch(
 				API_URL,
