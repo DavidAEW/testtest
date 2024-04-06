@@ -1,6 +1,11 @@
 <script>
+    import { Avatar } from '@skeletonlabs/skeleton';
+    import samuel from '$lib/img/samuel.jpg'
+    import kim from '$lib/img/kim.jpg'
+    import tyler from '$lib/img/tyler.jpg'
+    import david from '$lib/img/david.jpg'
+    import louis from '$lib/img/louis.jpg'
 
-    
     let showParticipants = false;
 
     function toggleParticipants() {
@@ -9,38 +14,36 @@
 </script>
 
 <main class="h-full flex items-center justify-center bg-background-500 overflow-hidden">
-    <div class="max-w-md w-full space-y-8 p-10 bg-background-50 rounded-lg shadow-md">
+    <div class="w-full md:w-1/2 space-y-8 p-10 bg-background-50 rounded-lg shadow-md">
         <div>
             <h1 class="mt-6 text-center text-3xl font-extrabold text-primary-300">About Page</h1>
         </div>
         <div class="divide-y divide-gray-200">
             <div class="py-8 text-base leading-6 space-y-4 text-primary-300 sm:text-lg sm:leading-7">
-                <!-- Die Beschreibung der App ist immer sichtbar -->
                 <div class="mt-4 space-y-4">
                     <p>The flashcard project aims to create a web-based learning platform that enables users to learn efficiently and interactively. Inspired by the Anki system, this platform offers a dynamic method of repeating and consolidating knowledge through flashcards. Developed by DHBW students on the Business Informatics course, this project combines modern web technologies with proven learning methods.</p>
                     <br/>
                 </div>
-                <div class="mt-4 flex space-x-4">
-                    <!-- Die Teilnehmer werden immer angezeigt -->
-                    <div>
-                        <img src="/path/to/image1.jpg" alt="Bild von Tyler" class="w-16 h-16 rounded-full object-cover">
-                        <p>Sean Tyler Straub</p>
+                <div class="mt-4 flex space-x-8 justify-center">
+                    <div class="flex flex-col items-center">
+                        <Avatar src={tyler} class="w-24 h-24 rounded-full" />
+                        <p class="text-lg mt-2">S. Tyler Straub</p>
                     </div>
-                    <div>
-                        <img src="/path/to/image2.jpg" alt="Bild von Kim" class="w-16 h-16 rounded-full object-cover">
-                        <p>Uiyoung Kim</p>
+                    <div class="flex flex-col items-center">
+                        <Avatar src={kim} class="w-24 h-24 rounded-full" />
+                        <p class="text-lg mt-2">Uiyoung Kim</p>
                     </div>
-                    <div>
-                        <img src="/path/to/image3.jpg" alt="Bild von David" class="w-16 h-16 rounded-full object-cover">
-                        <p>David Alexander Eugen Wolf</p>
+                    <div class="flex flex-col items-center">
+                        <Avatar src={david} class="w-24 h-24 rounded-full" />
+                        <p class="text-lg mt-2">David A. E. Wolf</p>
                     </div>
-                    <div>
-                        <img src="/path/to/image4.jpg" alt="Bild von Samuel" class="w-16 h-16 rounded-full object-cover">
-                        <p>Samuel Julius Hilpert III.</p>
+                    <div class="flex flex-col items-center">
+                        <Avatar src={samuel} class="w-24 h-24 rounded-full" />
+                        <p class="text-lg mt-2">Samuel J. Hilpert</p>
                     </div>
-                    <div>
-                        <img src="/path/to/image5.jpg" alt="Bild von Louis" class="w-16 h-16 rounded-full object-cover">
-                        <p>Bob Ross</p>
+                    <div class="flex flex-col items-center">
+                        <Avatar src={louis} class="w-24 h-24 rounded-full" />
+                        <p class="text-lg mt-2">Louis Rau</p>
                     </div>
                 </div>
             </div>
