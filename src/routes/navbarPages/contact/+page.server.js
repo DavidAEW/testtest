@@ -5,10 +5,9 @@ export const actions = {
     default: async ({request}) => {
         try {
             const formData = await request.formData();
-            const email = "samuelhilpert@web.de; davidalexandereugenwolf@gmail.com; seantylerstraub@gmail.com";
+            const email = "samuelhilpert@web.de; davidalexandereugenwolf@gmail.com; seantylerstraub@gmail.com; uiyoungkim2002@gmail.com; raulouis22@gmail.com";
             const subject = formData.get("subject");
             const body = formData.get("body");
-            console.log(body);
             let html = `<h2>${subject}</h2><pre>${body}</pre>`;
 
             const message = {
