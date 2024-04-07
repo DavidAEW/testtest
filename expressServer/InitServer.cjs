@@ -35,6 +35,36 @@ const db = knex({
 
 app.use(express.json());
 
+app.post('/session', async (req, res) => {
+	const { email, password } = req.body;
+	try {
+		const user = await db.select('*').from('user').where('email', email).first(); //-> erst mal nach email suchen
+		if (!user) {
+			return res.status(400).json({ message: 'Benutzer nicht gefunden.' });
+		}
+
+		const comparePassword = await argon2.verify(user.password, password); //-> dann das Passwort vergleichen
+
+		if (comparePassword) {
+			//-> wenn das Passwort auch stimmt, dann Token erstellen
+			const tocken = jwt.sign({ userId: user.userId, email: user.email }, process.env.SECRET_KEY, {
+				algorithm: 'HS256'
+			});
+			res.cookie('jwt', tocken, {
+				httpOnly: true,
+				secure: true,
+				maxAge: 24 * 60 * 60 * 1000 // ein Tag
+			});
+			res.status(201).json({ message: 'Login erfolgreich.' });
+		} else {
+			res.status(400).json({ message: 'Falsches Passwort.' });
+		}
+	} catch (error) {
+		console.error('Fehler beim Einloggen:', error);
+		res.status(500).json({ message: 'Serverfehler beim Einloggen.' });
+	}
+});
+
 const authenticateJWT = (req, res, next) => {
 	const token = req.cookies['jwt'];
 
@@ -53,10 +83,6 @@ const authenticateJWT = (req, res, next) => {
 };
 
 app.use(authenticateJWT); // Verwende Middleware um JWT zu überprüfen
-
-//##################################################################################################
-//Session
-//##################################################################################################
 
 app.post('/session', async (req, res) => {
 	const { email, password } = req.body;
