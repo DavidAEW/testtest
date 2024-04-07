@@ -51,10 +51,6 @@
                     </div>
                     <div>
                         <div class="input hidden">
-                            <label for="">To:</label>
-                            <input name="to" type="email" value="samuelhilpert@web.de"/>
-                        </div>
-                        <div class="input hidden">
                             <label for="">Subject:</label>
                             <input name="subject" type="text" value="New request on CardHub from {name}"/>
                         </div>
