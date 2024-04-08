@@ -9,7 +9,7 @@
 	import { AppShell } from '@skeletonlabs/skeleton';
 	import person from '$lib/img/person.webp';
 	import logoWeiss from '$lib/img/logoWeiss.png';
-	import logoTransparent from '$lib/img/karteikartenmanager-high-resolution-logo-transparent.png';
+	import logo from '$lib/img/logofinal.png';
 	// Highlight JS
 	import hljs from 'highlight.js/lib/core';
 	import 'highlight.js/styles/github-dark.css';
@@ -73,10 +73,10 @@
 							</svg>
 						</span>
 					</button>
-					<img class="hidden lg:block w-40 ml-5" src={logoTransparent} alt="logo" />
+					<img class="hidden lg:block w-40 ml-5" src={logo} alt="logo" />
 				</div>
 			</svelte:fragment>
-			<strong class="text-xl uppercase">Karteikartenmanager</strong>
+			
 			<svelte:fragment slot="trail">
 				<ThemeSwitch />
 				{#if !isOnHomePage}
@@ -98,7 +98,8 @@
 	<svelte:fragment slot="pageFooter">
 		<div class="flex justify-center items-center bg-background-300 text-background-50">
 			<ul class="text-sm">
-				<li>Legal</li>
+				<a href="/navbarPages/legal">Legal |</a>
+				<a href="/navbarPages/eagle">Eagle</a>
 			</ul>
 		</div>
 	</svelte:fragment>
