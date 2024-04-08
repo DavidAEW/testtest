@@ -8,7 +8,6 @@
 	import { AppBar } from '@skeletonlabs/skeleton';
 	import { AppShell } from '@skeletonlabs/skeleton';
 	import person from '$lib/img/person.webp';
-	import logoWeiss from '$lib/img/logoWeiss.png';
 	import logo from '$lib/img/logofinal.png';
 	// Highlight JS
 	import hljs from 'highlight.js/lib/core';
