@@ -3,6 +3,6 @@
 	import { pics } from './pictures.js';
 </script>
 
-<div class="flex justify-center items-center h-full">
-	<img class="h-full" src={pics[$page.status] ?? pics[500]} alt="Logo" />
+<div class="flex justify-center items-center h-full overflow-hidden">
+	<img class="h-full overflow-hidden" src={pics[$page.status] ?? pics[500]} alt="Logo" />
 </div>
