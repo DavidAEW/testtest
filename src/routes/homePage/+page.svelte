@@ -101,7 +101,7 @@
 	<div class="my-8 text-center">
 		<h1 class="text-3xl font-extrabold text-text-100">Welcome back {username}</h1>
 	</div>
-	<div class="flex-grow flex flex-col items-center mt-40">
+	<div class="flex-grow flex flex-col items-center">
 		<div class="mb-10">
 			<a
 				href="/homePage/manageDecks"
