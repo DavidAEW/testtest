@@ -98,7 +98,8 @@
 	<svelte:fragment slot="pageFooter">
 		<div class="flex justify-center items-center bg-background-300 text-background-50">
 			<ul class="text-sm">
-				<li>Legal</li>
+				<a href="/navbarPages/legal">Legal |</a>
+				<a href="/navbarPages/eagle">Eagle</a>
 			</ul>
 		</div>
 	</svelte:fragment>
