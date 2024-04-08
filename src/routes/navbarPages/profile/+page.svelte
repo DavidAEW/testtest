@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	
 	onMount(() => {
 	  getUserInfo();
@@ -40,7 +41,7 @@ let email = ""
 		  credentials: "include"
 		});
 		if (response.ok) {
-			window.location.href = "/";
+			goto('/');
 		  console.log('Erfolgreich ausgeloggt');
 		} else {
 		  console.error('Logout fehlgeschlagen.');
