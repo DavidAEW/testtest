@@ -26,24 +26,24 @@
                 </div>
                 <div class="mt-4 flex space-x-8 justify-center">
                     <div class="flex flex-col items-center">
-                        <Avatar src={tyler} class="w-24 h-24 rounded-full" />
-                        <p class="text-lg mt-2">S. Tyler Straub</p>
+                        <Avatar src={tyler} class="max-w-full h-auto rounded-full" />
+                        <p class="text-base sm:text-lg mt-2">S. Tyler Straub</p>
                     </div>
                     <div class="flex flex-col items-center">
-                        <Avatar src={kim} class="w-24 h-24 rounded-full" />
-                        <p class="text-lg mt-2">Uiyoung Kim</p>
+                        <Avatar src={kim} class="max-w-full h-auto rounded-full" />
+                        <p class="text-base sm:text-lg mt-2">Uiyoung Kim</p>
                     </div>
                     <div class="flex flex-col items-center">
-                        <Avatar src={david} class="w-24 h-24 rounded-full" />
-                        <p class="text-lg mt-2">David A. E. Wolf</p>
+                        <Avatar src={david} class="max-w-full h-auto rounded-full" />
+                        <p class="text-base sm:text-lg mt-2">David A. E. Wolf</p>
                     </div>
                     <div class="flex flex-col items-center">
-                        <Avatar src={samuel} class="w-24 h-24 rounded-full" />
-                        <p class="text-lg mt-2">Samuel J. Hilpert</p>
+                        <Avatar src={samuel} class="max-w-full h-auto rounded-full" />
+                        <p class="text-base sm:text-lg mt-2">Samuel J. Hilpert</p>
                     </div>
                     <div class="flex flex-col items-center">
-                        <Avatar src={louis} class="w-24 h-24 rounded-full" />
-                        <p class="text-lg mt-2">Louis Rau</p>
+                        <Avatar src={louis} class="max-w-full h-auto rounded-full" />
+                        <p class="text-base sm:text-lg mt-2">Louis Rau</p>
                     </div>
                 </div>
             </div>
