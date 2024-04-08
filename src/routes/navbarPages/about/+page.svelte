@@ -42,7 +42,7 @@
                         <p class="text-base sm:text-lg mt-2">Samuel J. Hilpert</p>
                     </div>
                     <div class="flex flex-col items-center">
-                        <Avatar src={louis} class="max-w-full h-auto rounded-full" />
+                        <a href="/navbarPages/ross"><Avatar src={louis} class="max-w-full h-auto rounded-full" /></a>
                         <p class="text-base sm:text-lg mt-2">Louis Rau</p>
                     </div>
                 </div>
