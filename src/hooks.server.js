@@ -11,7 +11,7 @@ export async function handle({ event, resolve }) {
 	if (!openPaths.includes(event.url.pathname)) {
 		// Wenn kein Token -> redirect to URL
 		if (!token) {
-			throw redirect(302, 'http://localhost:5173/test');
+			throw redirect(302, 'http://localhost:5173/noToken');
 		}
 
 		try {
@@ -19,7 +19,7 @@ export async function handle({ event, resolve }) {
 			event.locals.user = user; // Benutzerdaten für nachfolgende Anfragen speichern
 		} catch (error) {
 			console.log(error);
-			throw redirect(302, 'http://localhost:5173/test2');
+			throw redirect(302, 'http://localhost:5173/wrongToken');
 		}
 	}
 

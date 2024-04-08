@@ -17,7 +17,7 @@
       password,
     };
 
-    console.log('Daten:', userData);
+    
 
     const url = "http://localhost:3001";
     const endpoint = "/User";  
@@ -35,7 +35,7 @@
 
       if (response.ok) {
         console.log('Registrierung erfolgreich.');
-        goto('/homePage'); // Nutze goto für die Navigation
+        goto('/'); // Nutze goto für die Navigation
       } else {
         console.error('Registrierung fehlgeschlagen.');
         errorMessage.set('Try Again');
