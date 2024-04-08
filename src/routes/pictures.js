@@ -3,7 +3,7 @@ import foureighteen from '$lib/img/418.jpg';
 import fourtwenty from '$lib/img/420.jpg';
 import fivehundred from '$lib/img/500.jpg';
 import freedom from '$lib/img/100.jpg';
-import surprise from '$lib/img/101.jpg';
+import surprise from '$lib/img/101.gif';
 export const pics = {
 	404: fourofour,
 	406: freedom,
