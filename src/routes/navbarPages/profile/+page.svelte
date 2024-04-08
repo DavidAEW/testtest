@@ -67,6 +67,9 @@ let email = ""
 				<button on:click={logout} class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-background-50 bg-primary-300 hover:bg-primary-350 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
 					Logout
 				</button>
+				<a href="/navbarPages/logo" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-background-50 bg-primary-300 hover:bg-primary-350 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 mt-4">
+					Surprise me?!
+				</a>
 			</div>
 		</div>
 	</div>
