@@ -72,7 +72,7 @@
 							</svg>
 						</span>
 					</button>
-					<img class="hidden lg:block w-40 ml-5" src={logo} alt="logo" />
+					<a href="/navbarPages/logo"><img class="hidden lg:block w-40 ml-5" src={logo} alt="logo"/></a>
 				</div>
 			</svelte:fragment>
 			
