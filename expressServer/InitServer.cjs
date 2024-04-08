@@ -242,9 +242,6 @@ app.post('/Card', async (req, res) => {
 		console.error('Fehler beim Einfügen der Daten:', error);
 		return res.status(500).json({ error: 'Fehler beim Einfügen der Daten.' });
 	}
-
-	const deck = await db.select().from('deck');
-	return res.json(deck);
 });
 
 app.get('/Card', async (req, res) => {
