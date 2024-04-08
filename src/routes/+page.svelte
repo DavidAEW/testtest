@@ -12,7 +12,6 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				credentials: 'include'
 			});
 
 			if (response.ok) {
@@ -41,7 +40,6 @@
       password
     };
 
-    console.log('Data:', userData);
 
     const url = "http://localhost:3001";
     const endpoint = "/session";  
