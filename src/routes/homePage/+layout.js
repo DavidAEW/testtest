@@ -1,5 +1,4 @@
 export async function load({ fetch }) {
-
     async function getDecks() {
         const API_URL = 'http://localhost:3001/Deck';
         try {

@@ -20,34 +20,11 @@
 	function back() {
 		goto('/homePage');
 	}
-	let cardData = null;
-	let error = null;
-
-	async function getCards() {
-		const url = `http://localhost:3001/Card/${cardStatus}/deckId/${deckId}`;
-		try {
-			const response = await fetch(url, {
-				method: 'GET',
-				credentials: 'include',
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			});
-			const data = await response.json();
-
-			if (response.ok) {
-				cardData = data;
-			} else {
-				error = data.error;
-			}
-		} catch (error) {
-			console.error('Fehler beim Laden der Karten:', error);
-			cardData = null;
-		}
-	}
+	
 	async function updateCardStatus(cardId, learnStatus, front, back, deckId) {
 		const API_URL = `http://localhost:3001/Card`;
-		const response = await fetch(API_URL, {
+		const response = await fetch(
+			API_URL, {
 			method: 'PUT',
 			credentials: 'include',
 			headers: {
@@ -69,21 +46,23 @@
 
 		console.log('Card status updated successfully!');
 		showBack = false;
-		await getCards();
+
 	}
 
 	async function handleChangeStatus(event) {
 		goto(`/homePage/studyDeck/${deckId}/${event.target.value}/`);
 		showBack = false;
-		await getCards();
+
 	}
 	async function handleChangeID(event) {
-		goto(`/homePage/studyDeck/${event.target.value}/${cardStatus}/`);
+		window.location.href = `/homePage/studyDeck/${event.target.value}/${cardStatus}/`;
+
 		showBack = false;
-		await getCards();
+
 	}
 	async function loadOptionsAndSetValue() {
 		await data.decks;
+		await data.cardData;
 		deckId = $page.params.deckId;
 		cardStatus = $page.params.cardStatus;
 		const selectElement = document.querySelector('select');
@@ -91,9 +70,8 @@
 		const selectElementStatus = document.querySelector('select[name="cardStatus"]');
 		selectElementStatus.value = cardStatus;
 	}
-	onMount(() => {
-		loadOptionsAndSetValue();
-		getCards();
+	onMount(async () => {
+		await loadOptionsAndSetValue();
 	});
 </script>
 
@@ -110,7 +88,9 @@
 					on:change={handleChangeID}
 				>
 					{#each decks as deck}
-						<option value={deck.value} selected={deck.value == deckId}>{deck.label}</option>
+						<option value={deck.value}>
+							{deck.label}
+						</option>
 					{/each}
 				</select>
 			{/await}
@@ -129,24 +109,9 @@
 			</select>
 		</div>
 	</div>
-
-	{#if !cardData}
-		<div class="container h-full mx-auto flex justify-center items-center mt-4">
-			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
-				<h2 class="text-xl font-bold mb-2 text-center text-primary-900">
-					Glückwunsch, keine neue Karte gefunden!
-				</h2>
-				<div
-					class="border overflow-wrap: break-words border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60"
-				>
-					Du hast alle Karten mit diesem Status/in diesem Deck gelernt! Füge neue Karten hinzu oder
-					lerne alte Karten erneut, um diese weiter zu festigen.
-				</div>
-			</div>
-		</div>
-	{/if}
-
-	{#if cardData}
+	{#await data.cardData}
+		<span><Circle2 /></span>
+	{:then cardData}
 		<div class="container h-full mx-auto flex justify-center items-center mt-4">
 			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
 				<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Vorderseite</h2>
@@ -166,43 +131,57 @@
 				{showBack ? 'Antwort ausblenden' : 'Antwort zeigen'}
 			</button>
 		</div>
-	{/if}
 
-	{#if showBack}
+		{#if showBack}
+			<div class="container h-full mx-auto flex justify-center items-center mt-4">
+				<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
+					<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Rückseite</h2>
+					<div
+						class="border border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60"
+					>
+						{cardData?.back}
+					</div>
+				</div>
+			</div>
+			<div class="container h-full mx-auto flex justify-center items-center mt-4">
+				<button
+					class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16"
+					on:click={() =>
+						updateCardStatus(cardData.cardId, 1, cardData?.front, cardData?.back, deckId)}
+				>
+					kann ich nicht
+				</button>
+				<button
+					class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16"
+					on:click={() =>
+						updateCardStatus(cardData.cardId, 2, cardData?.front, cardData?.back, deckId)}
+				>
+					kann ich bisschen
+				</button>
+				<button
+					class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded"
+					on:click={() =>
+						updateCardStatus(cardData.cardId, 3, cardData?.front, cardData?.back, deckId)}
+				>
+					kann ich gut
+				</button>
+			</div>
+		{/if}
+	{:catch}
 		<div class="container h-full mx-auto flex justify-center items-center mt-4">
 			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
-				<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Rückseite</h2>
+				<h2 class="text-xl font-bold mb-2 text-center text-primary-900">
+					Glückwunsch, keine neue Karte gefunden!
+				</h2>
 				<div
-					class="border border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60"
+					class="border overflow-wrap: break-words border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60"
 				>
-					{cardData?.back}
+					Du hast alle Karten mit diesem Status/in diesem Deck gelernt! Füge neue Karten hinzu oder
+					lerne alte Karten erneut, um diese weiter zu festigen.
 				</div>
 			</div>
 		</div>
-		<div class="container h-full mx-auto flex justify-center items-center mt-4">
-			<button
-				class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16"
-				on:click={() =>
-					updateCardStatus(cardData.cardId, 1, cardData?.front, cardData?.back, deckId)}
-			>
-				kann ich nicht
-			</button>
-			<button
-				class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16"
-				on:click={() =>
-					updateCardStatus(cardData.cardId, 2, cardData?.front, cardData?.back, deckId)}
-			>
-				kann ich bisschen
-			</button>
-			<button
-				class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded"
-				on:click={() =>
-					updateCardStatus(cardData.cardId, 3, cardData?.front, cardData?.back, deckId)}
-			>
-				kann ich gut
-			</button>
-		</div>
-	{/if}
+	{/await}
 
 	<div class="container h-full mx-auto flex justify-center items-center mt-4">
 		<button
