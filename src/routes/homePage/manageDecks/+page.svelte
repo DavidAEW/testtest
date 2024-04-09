@@ -1,15 +1,17 @@
 <script>
 
+	// Importiere die Funktionen onMount und goto
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 
+	// Deklaration der Variablen
 	let deckName = '';
 	let message = '';
 	let options = [];
 	let deckId = '';
 	let message1 = '';
 
-
+// Funktion um einen neuen Stapel hinzuzufügen
 	async function addDeck() {
 		const API_URL = 'http://localhost:3001/Deck';
 		try {
@@ -27,7 +29,6 @@
 			}
 
 			const data = await response.json();
-			console.log('Erfolg:', data);
 			message = 'Stapel erfolgreich erstellt!';
 			deckName = '';
 			await getOptions();
@@ -39,6 +40,7 @@
 			message = 'Fehler beim Erstellen des Stapels.';
 		}
 	}
+	// Funktion um die Stapel anhand der User-Id zu laden
 	async function getOptions() {
 		const API_URL = 'http://localhost:3001/Deck'; 
 		try {
@@ -61,15 +63,17 @@
 			console.error('Fehler beim Laden der Daten:', error);
 		}
 	}
+	//Ausführen der Funktion getOptions beim Laden der Seite
 	onMount(() => {
 		getOptions();
 	});
 
+	// Funktion um den ausgewählten Stapel zu speichern
 	function handleChange(event) {
 		deckId = event.target.value;
-		console.log('selectedOption:', deckId);
 	}
 
+	// Funktion um einen Stapel zu löschen
 	async function deleteDeck(deckId) {
 		const isConfirmed = confirm('Bist du sicher, dass du diesen Stapel löschen möchtest?');
     
@@ -92,7 +96,6 @@
 			}
 
 			const data = await response.json();
-			console.log('Erfolg:', data);
 			message1 = 'Stapel erfolgreich gelöscht!';
 			await getOptions();
 			setTimeout(() => {
@@ -103,11 +106,14 @@
 			message1 = 'Fehler beim Löschen des Stapels.';
 		}
 	}
+
+	// Funktion um zur Startseite zurückzukehren
 	function back() {
 		goto('/homePage');
 	}
 </script>
 <main class="h-full flex flex-row justify-center items-center flex-wrap">
+	<!-- Formular um einen neuen Stapel hinzuzufügen -->
 	<div class="text-center w-1/3 p-4 border-r border-gray-300">
 		<h1 class="text-3xl font-bold mb-4 text-primary-100">Neuen Stapel hinzufügen</h1>
 		<div class="mb-4">
@@ -120,6 +126,7 @@
 			<p class="mt-4 text-primary-200">{message}</p>
 		{/if}
 	</div>
+	<!-- Formular um einen Stapel zu löschen -->
 	<div class="text-center w-1/3 p-4 border-gray-300">
 		<h1 class="text-3xl font-bold mb-4 text-primary-100">Stapel löschen</h1>
 		<div class="mb-4">
