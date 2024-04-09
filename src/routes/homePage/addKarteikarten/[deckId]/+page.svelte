@@ -1,18 +1,17 @@
 <!--- Karteikarten hinzufuegen --->
 <script>
+	// Importieren Sie die Funktionen, die Sie benötigen
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 
+	// Deklaration der Variablen
 	let deckId = 0;
-
 	let userInputFront = '';
 	let userInputBack = '';
-	let cardContentFront = '';
-	let cardContentBack = '';
-	let selectedOption = '';
 	let options = [];
 
+	// Funktion, um die Optionen für das Dropdown-Menü zu laden
 	async function getOptions() {
 		const API_URL = 'http://localhost:3001/Deck';
 		try {
@@ -36,6 +35,7 @@
 	}
 
 
+	// Funktion, um die Optionen für das Dropdown-Menü zu laden und den Slug-Wert zu setzen
 	async function loadOptionsAndSetValue() {
 		await getOptions();
 		deckId = $page.params.deckId;
@@ -43,9 +43,11 @@
 		selectElement.value = deckId;
 	}
 
+	// Funktion, um die Optionen für das Dropdown-Menü zu laden und den Slug-Wert zu setzen
 	onMount(() => {
 		loadOptionsAndSetValue();
 	});
+
 
 	function getLabelForDeckId(deckId) {
 		const firstoption = options.find((firstoption) => firstoption.value === deckId);
@@ -57,22 +59,21 @@
 		goto('/homePage/addKarteikarten/' + event.target.value);
 	}
 
-	//funktion um den inhalt der karteikarten nach button klick anzuzeigen
-	function showCardContent() {
-		cardContentFront = userInputFront;
-		cardContentBack = userInputBack;
-	}
 
+
+	// Funktionen, um die Daten an die Funktion zum Sender der Daten an die Datenbank auszuführen und die Eingabefelder zu leeren
 	function save() {
 		sendData();
 		userInputFront = '';
 		userInputBack = '';
 	}
 
+	// Funktion, um zur Startseite zurückzukehren
 	function back() {
 		goto('/homePage');
 	}
 
+	// Funktion, um die Daten an die Datenbank zu senden
 	async function sendData() {
 		if (!userInputFront || !userInputBack) {
 			alert('Bitte füllen Sie alle Felder aus!');
@@ -93,18 +94,18 @@
 
 		if (response.ok) {
 			alert('Karteikarte erfolgreich hinzugefügt!');
-			// Leeren Sie die Felder nach erfolgreicher送信ung
+			// Leeren der Felder nach erfolgreicher Übermittlung der Daten
 			userInputFront = '';
 			userInputBack = '';
-			//selectedOption = "";
 		} else {
 			alert('Fehler beim Senden der Daten. Bitte versuchen Sie es erneut.');
 		}
 	}
+
+	// Funktion, um die Höhe des Textfelds automatisch anzupassen
 	function handleInput(event) {
 		const textarea = event.target;
 		if (textarea.value.length > 100) {
-			// Adjust the limit as needed
 			textarea.style.height = 'auto';
 			textarea.style.height = textarea.scrollHeight + 'px';
 		} else {
@@ -120,6 +121,7 @@
 		</div>
 	</div>
 	<div>
+		<!-- Dropdown-Menü, um das Deck auszuwählen -->
 		<div class="container h-full mx-auto flex justify-center items-center mt-4">
 			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
 				<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Deck wählen</h2>
@@ -148,6 +150,7 @@
 		</div>
 	</div>
 
+	<!-- Box um den Inhalt der Vorderseite einzugeben -->
 	<div class="container h-full mx-auto flex justify-center items-center mt-4">
 		<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
 			<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Vorderseite</h2>
@@ -160,6 +163,7 @@
 		</div>
 	</div>
 
+	<!-- Box um den Inhalt der Rückseite einzugeben -->
 	<div class="container h-full mx-auto flex justify-center items-center mt-4">
 		<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
 			<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Rückseite</h2>
@@ -172,6 +176,7 @@
 		</div>
 	</div>
 
+	<!-- Button zum Speichern der Daten und zum Zurückkehren zur Startseite -->
 	<div class="flex justify-center mt-5 mb-5">
 		<button
 			class="mr-10 md:mr-16 ml-10 md:ml-16 bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded"

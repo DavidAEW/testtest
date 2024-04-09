@@ -1,11 +1,17 @@
 <!--- Study --->
 <script>
+	// Imortieren der benötigten Funktionen und Stores
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+
+	// Initialisieren der Variablen
 	let deckId = $page.params.deckId;
 	let cardStatus = $page.params.cardStatus;
 	let options = [];
+	let cardData = null;
+	let error = null;
+
 	const cardOptions = [
 		{ value: 0, label: 'neu' },
 		{ value: 1, label: 'etwas gelernt' },
@@ -13,15 +19,17 @@
 		{ value: 3, label: 'kann ich' }
 	];
 	let showBack = false;
+	// Funktion um Variable showBack zu ändern, um die Rückseite der Karte anzuzeigen oder zu verstecken
 	function toggleBack() {
 		showBack = !showBack;
 	}
+	// Funktion um zurück zur Home-Seite zu navigieren
 	function back() {
 		goto('/homePage');
 	}
-	let cardData = null;
-	let error = null;
 
+
+	// Funktion um alle Decks anhand der User-ID zu laden
 	async function getDecks() {
 		const API_URL = 'http://localhost:3001/Deck';
 		try {
@@ -45,6 +53,7 @@
 		}
 	}
 
+	// Funktion um alle Karten anhand des Status und der Deck-ID zu laden
 	async function getCards() {
 		const API_URL = `http://localhost:3001/Card/${cardStatus}/deckId/${deckId}`;
 		try {
@@ -68,6 +77,8 @@
 			cardData = null;
 		}
 	}
+
+	// Funktion um den Status einer Karte zu aktualisieren
 	async function updateCardStatus(cardId, learnStatus, front, back, deckId) {
 		const API_URL = `http://localhost:3001/Card`;
 
@@ -92,21 +103,25 @@
 			return;
 		}
 
-		console.log('Card status updated successfully!');
 		showBack = false;
 		await getCards();
 	}
 
+	// Funktion um die Deck-ID zu ändern
 	async function handleChangeStatus(event) {
 		goto('/homePage/studyDeck/' + deckId + '/' + event.target.value + '/');
 		await getCards();
 		showBack = false;
 	}
+
+	// Funktion um die Status zu ändern
 	async function handleChangeID(event) {
 		goto('/homePage/studyDeck/' + event.target.value + '/' + cardStatus + '/');
 		await getCards();
 		showBack = false;
 	}
+
+	// Funktion um die Optionen zu laden und die Werte zu setzen
 	async function loadOptionsAndSetValue() {
 		await getDecks();
 		deckId = $page.params.deckId;
@@ -116,6 +131,8 @@
 		const selectElementStatus = document.querySelector('select[name="cardStatus"]');
 		selectElementStatus.value = cardStatus;
 	}
+
+	// Führt die Funktionen aus, wenn die Seite geladen wird
 	onMount(() => {
 		loadOptionsAndSetValue();
 		getCards();
@@ -124,6 +141,7 @@
 
 <main>
 	<div class="container h-full mx-auto flex justify-center items-center mt-4">
+		<!--- Dropdowns um Deck und Status zu wählen --->
 		<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6 flex-row flex">
 			<h2 class="font-bold mb-2 text-center text-primary-900 my-auto mr-2">Stapel</h2>
 			<select
@@ -151,6 +169,7 @@
 		</div>
 	</div>
 
+	<!-- Wenn keine Karte gefunden wurde, wird dies angezeigt -->
 	{#if !cardData}
 		<div class="container h-full mx-auto flex justify-center items-center mt-4">
 			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
@@ -167,6 +186,7 @@
 		</div>
 	{/if}
 
+	<!-- Anzeigen der Vorderseite der Karte, wenn verfügbar -->
 	{#if cardData}
 		<div class="container h-full mx-auto flex justify-center items-center mt-4">
 			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
@@ -179,6 +199,7 @@
 			</div>
 		</div>
 
+		<!-- Button um die Rückseite der Karte anzuzeigen oder zu verstecken -->
 		<div class="container h-full mx-auto flex justify-center items-center mt-4">
 			<button
 				class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded"
@@ -189,6 +210,7 @@
 		</div>
 	{/if}
 
+	<!-- Anzeigen der Rückseite der Karte, wenn verfügbar und gewolllt -->
 	{#if showBack}
 		<div class="container h-full mx-auto flex justify-center items-center mt-4">
 			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
@@ -200,6 +222,7 @@
 				</div>
 			</div>
 		</div>
+		<!-- Buttons um den Lernstatus der Karte zu aktualisieren -->
 		<div class="container h-full mx-auto flex justify-center items-center mt-4">
 			<button
 				class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16"
@@ -222,6 +245,7 @@
 		</div>
 	{/if}
 
+	<!-- Buttons zum Navigieren -->
 	<div class="container h-full mx-auto flex justify-center items-center mt-4">
 		<button
 			class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded"
