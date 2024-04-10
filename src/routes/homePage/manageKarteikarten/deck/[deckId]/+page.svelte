@@ -3,9 +3,10 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import { Circle2 } from 'svelte-loading-spinners';
+	export let data;
 
 	// Deklarieren Sie die Variablen
-	let data = [];
 	let deck;
 	let options = [];
 	let deckId = $page.params.deckId;
@@ -15,6 +16,24 @@
 	let newDeckId;
 	let cardId;
 
+	data.deckData.then((opts) => {
+		console.log(opts);
+	});
+
+	let selectedDeck = { value: '' };
+	data.decks.then((opts) => {
+		let idx = opts.findIndex((opt) => opt.value == deckId);
+		if (idx !== -1) {
+			selectedDeck.value = opts[idx].value;
+		} else {
+			console.error(
+				'You do not have the deck number: ',
+				deckId,
+				'. Please stick to navigating with links and buttons'
+			);
+		}
+	});
+
 	// Deklarieren Sie die Konstanten für die Legende der möglichen Statuswerte
 	const status = [
 		{ value: 0, label: 'neu' },
@@ -23,68 +42,8 @@
 		{ value: 3, label: 'kann ich' }
 	];
 
-	//Funktion zum Abrufen der Decks anhand der User-ID
-	async function getOptions() {
-		const API_URL = 'http://localhost:3001/Deck'; 
-		try {
-			const response = await fetch(API_URL,
-
-				{
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					credentials: 'include'
-				});
-			const data = await response.json();
-			options = data.map((item) => ({
-				value: item.deckId,
-				label: item.deckName
-			}));
-			return data;
-		} catch (error) {
-			console.error('Fehler beim Laden der Daten:', error);
-		}
-	}
-	//Funktion zum Ausführen der Funktion, um die Decks anhand der User-ID zu laden und anzuzeigen
-	async function loadOptionsAndSetValue() {
-		await getOptions();
-		deckId = $page.params.deckId;
-		const selectElement = document.querySelector('select');
-		selectElement.value = deckId;
-	}
-
-	//Funktion zum Abrufen der Karteikarten anhand der Deck-ID
-	async function getAll(selectedOption) {
-		const API_URL = `http://localhost:3001/Card_Deck/${selectedOption}`;
-		const options = {
-			method: 'GET',
-			credentials: 'include',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-		};
-
-		const response = await fetch(API_URL, options);
-		const data = await response.json();
-		return data;
-	}
-
-	//Funktion zum Ausführen der Funktionen beim Seitenladen
-	onMount(async () => {
-		loadOptionsAndSetValue();
-		try {
-			data = await getAll(deckId);
-			deck = await getOptions();
-		} catch (error) {
-			console.error('Fehler beim Laden der Daten:', error);
-		}
-	});
-
-
 	//Funktion zum Aktualisieren der Karteikarten nach der Änderung
 	async function updateCard(cardid, row) {
-
 		cardId = cardid;
 		front = row.front;
 		back = row.back;
@@ -108,15 +67,12 @@
 			});
 
 			if (response.ok) {
-				getAll(deckId).then((result) => {
-					data = result;
-				});
+				window.location.reload();
 			} else {
 				console.error('Fehler beim Aktualisieren des Datensatzes:', response.statusText);
 			}
 		} catch (error) {
 			console.error('Fehler bei der Fetch-Anfrage:', error);
-
 		}
 	}
 
@@ -124,10 +80,10 @@
 	async function deleteCard(row) {
 		const cardId = row.cardId;
 		const isConfirmed = confirm('Bist du sicher, dass du die Karte löschen möchtest?');
-    
-    if (!isConfirmed) {
-        return;
-    }
+
+		if (!isConfirmed) {
+			return;
+		}
 
 		try {
 			const response = await fetch('http://localhost:3001/Card', {
@@ -142,10 +98,7 @@
 			});
 
 			if (response.ok) {
-				getAll(deckId).then((result) => {
-					data = result;
-				});
-
+				window.location.reload();
 			} else {
 				console.error('Fehler beim Aktualisieren des Datensatzes:', response.statusText);
 			}
@@ -156,11 +109,7 @@
 
 	//Funktion zum Navigieren zum neuen Deck
 	function handleChange(event) {
-		goto('/homePage/manageKarteikarten/deck/' + event.target.value);
-		deckId = event.target.value;
-		getAll(deckId).then((result) => {
-			data = result;
-		});
+		goto(`/homePage/manageKarteikarten/deck/${event.target.value}`);
 	}
 
 	//Funktion zum Navigieren zurück zur Home-Seite
@@ -176,51 +125,55 @@
 			<!-- Dropdown zur Auswahl des Decks -->
 			<div class="container h-full mx-auto flex justify-center items-center mt-4">
 				<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
-					<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Deck wählen</h2>
-
-					<select
-						class="dark:bg-primary-60 block appearance-none w-full bg-primary-0 border border-gray-200 text-primary-400 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-						on:change={handleChange}
-					>
-						{#each options as option}
-							<option value={option.value}>{option.label}</option>
-						{/each}
-					</select>
+					{#await data.decks}
+						<span><Circle2 /></span>
+					{:then decks}
+						<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Deck wählen</h2>
+						<select
+							class="dark:bg-primary-60 block appearance-none w-full bg-primary-0 border border-gray-200 text-primary-400 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+							bind:value={selectedDeck.value}
+							on:change={handleChange}
+						>
+							{#each decks as deck}
+								<option value={deck.value}>{deck.label} </option>
+							{/each}
+						</select>
+					{/await}
 				</div>
 			</div>
 			<!-- Tabelle zur Anzeige der Karteikarten -->
 			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 mx-auto w-5/6">
-				{#if data}
-					<table class="text-center">
-						<thead>
-							<tr>
-								<th class="w-32">Card-ID</th>
-								<th class="w-64">Vorderseite</th>
-								<th class="w-64">Rückseite</th>
-								<th class="w-32">Cardstatus</th>
-								<th class="w-32">Deck-ID</th>
-								<th class="w-32">Update</th>
-								<th class="w-32">Delete</th>
-							</tr>
-						</thead>
-						<tbody>
-							{#each data as row}
+				{#await data.deckData}
+					<span><Circle2 /></span>
+				{:then deckData}
+					{#if deckData}
+						<table class="text-center">
+							<thead>
 								<tr>
-									<td>{row.cardId}</td>
-									<td><input class="text-accent-400" bind:value={row.front} /></td>
-									<td><input class="text-accent-400" bind:value={row.back} /></td>
-									<td><input class="text-accent-400 w-1/2" bind:value={row.cardStatus} /></td>
-									<td><input class="text-accent-400 w-1/2" bind:value={row.deckId} /></td>
-									<td><button on:click={updateCard(row.cardId, row)}>✓</button> </td>
-									<td><button on:click={deleteCard(row)}>x</button></td>
+									<th class="w-32">Card-ID</th>
+									<th class="w-64">Vorderseite</th>
+									<th class="w-64">Rückseite</th>
+									<th class="w-32">Cardstatus</th>
+									<th class="w-32">Deck-ID</th>
+									<th class="w-32">Update</th>
+									<th class="w-32">Delete</th>
 								</tr>
-							{/each}
-						</tbody>
-					</table>
-				{/if}
-
-				{#await data}
-					<p>Lade Daten...</p>
+							</thead>
+							<tbody>
+								{#each deckData as row}
+									<tr>
+										<td>{row.cardId}</td>
+										<td><input class="text-accent-400" bind:value={row.front} /></td>
+										<td><input class="text-accent-400" bind:value={row.back} /></td>
+										<td><input class="text-accent-400 w-1/2" bind:value={row.cardStatus} /></td>
+										<td><input class="text-accent-400 w-1/2" bind:value={row.deckId} /></td>
+										<td><button on:click={updateCard(row.cardId, row)}>✓</button> </td>
+										<td><button on:click={deleteCard(row)}>x</button></td>
+									</tr>
+								{/each}
+							</tbody>
+						</table>
+					{/if}
 				{/await}
 			</div>
 		</div>
@@ -229,24 +182,28 @@
 		<h2 class="text-2xl text-center">Legende</h2>
 		<!-- Tabelle zur Anzeige der Legende der möglichen Decks -->
 		<div class="flex flex-row justify-center gap-5 mt-4">
-			{#if deck}
-				<table class="text-center bg-white dark:bg-accent-50 text-accent-400 rounded">
-					<thead>
-						<tr>
-							<th class="w-32">Deck-ID</th>
-							<th class="w-64">Deckname</th>
-						</tr>
-					</thead>
-					<tbody>
-						{#each deck as row1}
+			{#await data.decks}
+				<span><Circle2 /></span>
+			{:then decks}
+				{#if decks}
+					<table class="text-center bg-white dark:bg-accent-50 text-accent-400 rounded">
+						<thead>
 							<tr>
-								<td>{row1.deckId}</td>
-								<td>{row1.deckName}</td>
+								<th class="w-32">Deck-ID</th>
+								<th class="w-64">Deckname</th>
 							</tr>
-						{/each}
-					</tbody>
-				</table>
-			{/if}
+						</thead>
+						<tbody>
+							{#each decks as row1}
+								<tr>
+									<td>{row1.value}</td>
+									<td>{row1.label}</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				{/if}
+			{/await}
 			<!-- Tabelle zur Anzeige der Legende der möglichen Statuswerte -->
 			{#if status}
 				<table class="text-center bg-white dark:bg-accent-50 text-accent-400 rounded">
@@ -271,12 +228,11 @@
 
 	<!-- Button zum Navigieren zurück zur Home-Seite -->
 	<div class="flex justify-center mx-auto mt-5 mb-5">
-	<button
-		class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded"
-		on:click={backtopage}
-	>
-		Zurück
-	</button>
-</div>
-
+		<button
+			class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded"
+			on:click={backtopage}
+		>
+			Zurück
+		</button>
+	</div>
 </main>

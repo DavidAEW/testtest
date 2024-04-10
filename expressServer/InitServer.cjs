@@ -315,14 +315,14 @@ app.delete('/Card', async (req, res) => {
 //Card_Deck
 //##################################################################################################
 
-app.get('/Card_Deck/:selectedOption', async (req, res) => {
-	const { selectedOption } = req.params;
+app.get('/Card_Deck/:deckId', async (req, res) => {
+	const { deckId } = req.params;
 	const userId = req.user.userId;
 	try {
 		const data = await db
 			.select()
 			.from('card')
-			.where('card.deckId', selectedOption)
+			.where('card.deckId', deckId)
 			.join('user_deck', 'card.deckId', 'user_deck.deckId')
 			.where('user_deck.userId', userId);
 

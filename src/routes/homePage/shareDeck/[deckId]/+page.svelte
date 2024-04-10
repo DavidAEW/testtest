@@ -45,8 +45,7 @@
 
 			const answer = await response.json();
 			cards = answer.cards;
-			console.log("answer: "+answer.deckName);
-			console.log(cards);
+			console.log(JSON.stringify(answer));
 			const deckName = answer.deckName;
 			const jsonCards = JSON.stringify(cards);
 
