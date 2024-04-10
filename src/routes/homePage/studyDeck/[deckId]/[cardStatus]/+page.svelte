@@ -130,7 +130,7 @@
 	{#await data.cardData}
 		<span><Circle2 /></span>
 	{:then cardData}
-  //Vorderseite zeigen wenn Verfügbar
+	<!--- Vorderseite zeigen wenn möglich --->
 		<div class="container h-full mx-auto flex justify-center items-center mt-4">
 			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
 				<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Vorderseite</h2>
@@ -190,45 +190,44 @@
 				</button>
 			</div>
 		{/if}
-	{:catch}
-  <!-- Wenn keine Karte gefunden wurde, wird dies angezeigt -->
-		<div class="container h-full mx-auto flex justify-center items-center mt-4">
-			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
-				<h2 class="text-xl font-bold mb-2 text-center text-primary-900">
-					Glückwunsch, keine neue Karte gefunden!
-				</h2>
-				<div
-					class="border overflow-wrap: break-words border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60"
-				>
-					Du hast alle Karten mit diesem Status/in diesem Deck gelernt! Füge neue Karten hinzu oder
-					lerne alte Karten erneut, um diese weiter zu festigen.
-				</div>
-			</div>
-		</div>
-
+		
 		<!-- Buttons um den Lernstatus der Karte zu aktualisieren -->
 		<div class="container h-full mx-auto flex justify-center items-center mt-4">
 			<button
-				class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16"
-				on:click={() => updateCardStatus(cardData.cardId, 1, cardData?.front, cardData?.back, deckId)}
+			class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16"
+			on:click={() => updateCardStatus(cardData.cardId, 1, cardData?.front, cardData?.back, deckId)}
 			>
-				kann ich nicht
-			</button>
-			<button
-				class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16"
-				on:click={() => updateCardStatus(cardData.cardId, 2, cardData?.front, cardData?.back, deckId)}
+			kann ich nicht
+		</button>
+		<button
+		class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16"
+		on:click={() => updateCardStatus(cardData.cardId, 2, cardData?.front, cardData?.back, deckId)}
+		>
+		kann ich bisschen
+	</button>
+	<button
+	class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded"
+	on:click={() => updateCardStatus(cardData.cardId, 3, cardData?.front, cardData?.back, deckId)}
+	>
+	kann ich gut
+</button>
+</div>
+{:catch}
+<!-- Wenn keine Karte gefunden wurde, wird dies angezeigt -->
+	<div class="container h-full mx-auto flex justify-center items-center mt-4">
+		<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
+			<h2 class="text-xl font-bold mb-2 text-center text-primary-900">
+				Glückwunsch, keine neue Karte gefunden!
+			</h2>
+			<div
+				class="border overflow-wrap: break-words border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60"
 			>
-				kann ich bisschen
-			</button>
-			<button
-				class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded"
-				on:click={() => updateCardStatus(cardData.cardId, 3, cardData?.front, cardData?.back, deckId)}
-			>
-				kann ich gut
-			</button>
+				Du hast alle Karten mit diesem Status/in diesem Deck gelernt! Füge neue Karten hinzu oder
+				lerne alte Karten erneut, um diese weiter zu festigen.
+			</div>
 		</div>
-	{/if}
-	{/await}
+	</div>
+{/await}
 
 
 	<!-- Buttons zum Navigieren -->
