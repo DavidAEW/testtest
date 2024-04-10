@@ -15,10 +15,12 @@ export async function load({ params, fetch }) {
 				const cardData = await response.json();
                 return cardData;
 			} else {
-                throw new Error('Fehler beim Laden der Karten');
+				console.error('Fehler beim Laden der Karten:', response);
+				return null;
             }
 		} catch (error) {
-            throw new Error('Fehler beim Laden der Karten');
+			console.error('Fehler beim Laden der Karten:', error);
+			return null;
 		}
 	}
     return {

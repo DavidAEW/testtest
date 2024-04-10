@@ -1,6 +1,5 @@
-<!--- Study --->
+<!--- Study Tag --->
 <script>
-	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { Circle2 } from 'svelte-loading-spinners';
@@ -22,6 +21,21 @@
 	function back() {
 		goto('/homePage');
 	}
+	let selectedTag = { value: '' };
+	let selectedStatus = { value: '' };
+	data.tags.then((opts) => {
+		let idx = opts.findIndex((opt) => opt.value == tagId);
+		if (idx !== -1) {
+			selectedTag.value = opts[idx].value;
+		} else {
+			console.error(
+				'You do not have the deck number: ',
+				tagId,
+				'. Please stick to navigating with links and buttons'
+			);
+		}
+		selectedStatus.value = cardOptions[cardStatus].value;
+	});
 
 	async function updateCardStatus(cardId, learnStatus, front, back, deckId) {
 		const API_URL = `http://localhost:3001/Card`;
@@ -45,33 +59,18 @@
 			console.error('Error updating card status:', await response.text());
 			return;
 		}
-
-		console.log('Card status updated successfully!');
 		showBack = false;
-
+		window.location.reload();
 	}
 
 	async function handleChangeStatus(event) {
 		goto(`/homePage/studyTag/${tagId}/${event.target.value}/`);
-
+		showBack = false;
 	}
 	async function handleChangeID(event) {
 		goto(`/homePage/studyTag/${event.target.value}/${cardStatus}/`);
-		
+		showBack = false;
 	}
-	async function loadOptionsAndSetValue() {
-		await data.tags;
-		await data.cardData;
-		tagId = $page.params.tagId;
-		cardStatus = $page.params.cardStatus;
-		const selectElement = document.querySelector('select');
-		selectElement.value = tagId;
-		const selectElementStatus = document.querySelector('select[name="cardStatus"]');
-		selectElementStatus.value = cardStatus;
-	}
-	onMount(() => {
-		loadOptionsAndSetValue();
-	});
 </script>
 
 <main>
@@ -83,11 +82,11 @@
 				<h2 class="font-bold mb-2 text-center text-primary-900 my-auto mr-2">Tag</h2>
 				<select
 					class="border overflow-wrap: break-words border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60 mr-4"
-					bind:value={tagId}
+					bind:value={selectedTag.value}
 					on:change={handleChangeID}
 				>
 					{#each tags as tag}
-						<option value={tag.value} selected>{tag.label} </option>
+						<option value={tag.value}>{tag.label} </option>
 					{/each}
 				</select>
 			{/await}
@@ -97,7 +96,7 @@
 			<select
 				name="cardStatus"
 				class="border overflow-wrap: break-words border-gray-300 p-2 w-full h-auto rounded text-primary-900 dark:text-primary-400 bg-background-0 dark:bg-primary-60"
-				bind:value={cardStatus}
+				bind:value={selectedStatus.value}
 				on:change={handleChangeStatus}
 			>
 				{#each cardOptions as cardoption}
@@ -110,6 +109,7 @@
 	{#await data.cardData}
 		<span><Circle2 /></span>
 	{:then cardData}
+	{#if cardData !== null}
 		<div class="container h-full mx-auto flex justify-center items-center mt-4">
 			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
 				<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Vorderseite</h2>
@@ -165,7 +165,7 @@
 				</button>
 			</div>
 		{/if}
-	{:catch}
+	{:else}
 		<div class="container h-full mx-auto flex justify-center items-center mt-4">
 			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
 				<h2 class="text-xl font-bold mb-2 text-center text-primary-900">
@@ -179,6 +179,7 @@
 				</div>
 			</div>
 		</div>
+	{/if}
 	{/await}
 
 	<div class="container h-full mx-auto flex justify-center items-center mt-4">
