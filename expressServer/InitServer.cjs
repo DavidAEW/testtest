@@ -176,7 +176,8 @@ app.get('/ExportCards/:deckId', async (req, res) => {
 		// Zuerst den Namen des Decks abrufen
 		const deckInfo = await db.select('deckName').from('deck').where('deckId', deckId);
 
-		if (!deckInfo) {
+		// Überprüfen, ob das Deck gefunden wurde
+		if (deckInfo.length === 0) {
 			return res.status(404).send('Deck nicht gefunden für deckId: ' + deckId);
 		}
 
@@ -186,9 +187,10 @@ app.get('/ExportCards/:deckId', async (req, res) => {
 			.from('card')
 			.where('deckId', deckId);
 
-		if (cards.length) {
+		// Überprüfen, ob Karten im Deck vorhanden sind
+		if (cards.length > 0) {
 			// Deck-Name zusammen mit den Karten exportieren
-			res.json({ deckName: deckInfo.deckName, cards });
+			res.json({ deckName: deckInfo[0].deckName, cards });
 		} else {
 			res.status(404).send('Keine Karten gefunden für deckId: ' + deckId);
 		}
