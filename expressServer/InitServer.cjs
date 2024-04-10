@@ -85,31 +85,6 @@ app.post('/User', async (req, res) => {
 	}
 });
 
-app.get('/User', async (req, res) => {
-	try {
-		const cookie = req.cookies['jwt'];
-		const claims = jwt.verify(cookie, process.env.SECRET_KEY);
-
-		// Stelle sicher, dass claims vorhanden sind
-		if (!claims) {
-			return res.status(401).json({ message: 'Nicht autorisiert' });
-		}
-
-		// um Benutzerdaten zu abrufen
-		const user = await db('user').where({ userId: claims.userId }).first();
-		if (!user) {
-			return res.status(404).json({ message: 'Benutzer nicht gefunden.' });
-		}
-
-		// Entferne das Passwort aus der Antwort wir wollen pw nicht anzeigen lassen
-		const { password, ...data } = user;
-		res.json(data);
-	} catch (error) {
-		console.error('Fehler beim Abrufen des Benutzers:', error);
-		res.status(500).json({ message: 'Serverfehler' });
-	}
-});
-
 app.post('/session', async (req, res) => {
 	const { email, password } = req.body;
 	try {
@@ -158,6 +133,31 @@ const authenticateJWT = (req, res, next) => {
 };
 
 app.use(authenticateJWT); // Verwende Middleware um JWT zu überprüfen
+
+app.get('/User', async (req, res) => {
+	try {
+		const cookie = req.cookies['jwt'];
+		const claims = jwt.verify(cookie, process.env.SECRET_KEY);
+
+		// Stelle sicher, dass claims vorhanden sind
+		if (!claims) {
+			return res.status(401).json({ message: 'Nicht autorisiert' });
+		}
+
+		// um Benutzerdaten zu abrufen
+		const user = await db('user').where({ userId: claims.userId }).first();
+		if (!user) {
+			return res.status(404).json({ message: 'Benutzer nicht gefunden.' });
+		}
+
+		// Entferne das Passwort aus der Antwort wir wollen pw nicht anzeigen lassen
+		const { password, ...data } = user;
+		res.json(data);
+	} catch (error) {
+		console.error('Fehler beim Abrufen des Benutzers:', error);
+		res.status(500).json({ message: 'Serverfehler' });
+	}
+});
 
 app.delete('/session', (req, res) => {
 	res.clearCookie('jwt', '', { maxAge: 0 });
