@@ -1,8 +1,3 @@
-<script>
-    /** @type {import('./$types').PageData} */
-    export let data;
-</script>
-
 <main class="h-full flex items-center justify-center bg-background-500 overflow-hidden">
     <div class="max-w-md w-full space-y-8 p-10 bg-background-50 rounded-lg shadow-md">
         <div>

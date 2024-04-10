@@ -1,105 +1,29 @@
 <script>
-	import { onMount } from 'svelte';
+	import { Circle2 } from 'svelte-loading-spinners';
 
-	let deckOptions = [];
-	let tagOptions = [];
-
-	async function getDeckOptions() {
-		const API_URL = 'http://localhost:3001/Deck';
-		try {
-			const response = await fetch(
-				API_URL,
-
-				{
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					credentials: 'include'
-				}
-			);
-			const data = await response.json();
-
-			deckOptions = data.map((item) => ({
-				value: item.deckId,
-				label: item.deckName
-			}));
-		} catch (error) {
-			console.error('Fehler beim Laden der Daten:', error);
-		}
-	}
-
-	async function getTagOptions() {
-		const API_URL = 'http://localhost:3001/Tag';
-		try {
-			const response = await fetch(
-				API_URL,
-
-				{
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					credentials: 'include'
-				}
-			);
-			const data = await response.json();
-
-			tagOptions = data.map((item) => ({
-				value: item.tagId,
-				label: item.tagName
-			}));
-		} catch (error) {
-			console.error('Fehler beim Laden der Daten:', error);
-		}
-	}
-
-	let username = '';
-	async function getUserInfo() {
-		const url = 'http://localhost:3001/User';
-		try {
-			const response = await fetch(url, {
-				method: 'GET',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				credentials: 'include'
-			});
-
-			if (response.ok) {
-				const userData = await response.json();
-				username = userData.username;
-			} else {
-				console.error('Fehler beim Abrufen der Benutzerdaten.');
-			}
-		} catch (error) {
-			console.error('Fehler:', error);
-		}
-	}
+	export let data;
 
 	let selectedDeckOption = '';
+	let selectedTagOption = '';
 
 	function handleDeckChange(event) {
 		selectedDeckOption = event.target.value;
 		console.log(selectedDeckOption);
 	}
-	let selectedTagOption = '';
 
 	function handleTagChange(event) {
 		selectedTagOption = event.target.value;
 		console.log(selectedTagOption);
 	}
-
-	onMount(() => {
-		getUserInfo();
-		getDeckOptions();
-		getTagOptions();
-	});
 </script>
 
 <main class="h-full flex flex-col">
 	<div class="my-8 text-center">
-		<h1 class="text-3xl font-extrabold text-text-100">Welcome back {username}</h1>
+		{#await data.userData}
+			<span><Circle2 /></span>
+		{:then userData}
+			<h1 class="text-3xl font-extrabold text-text-100">Welcome back {userData.username}</h1>
+		{/await}
 	</div>
 	<div class="flex-grow flex flex-col items-center">
 		<div class="mb-10">
@@ -120,18 +44,22 @@
 				>Import a Deck</a
 			>
 		</div>
-		{#if deckOptions.length > 0}
-			<h2 class="text-2xl font-bold mb-5">Choose a deck</h2>
-			<select
-				class="bg-primary-70 border border-gray-200 text-primary-400 py-3 px-4 pr-8 rounded leading-tight focus:outline-none hover:bg-primary-100 hover:border-gray-500 mb-4"
-				on:change={handleDeckChange}
-			>
-				<option value="">Choose a deck</option>
-				{#each deckOptions as deckOption}
-					<option value={deckOption.value}>{deckOption.label}</option>
-				{/each}
-			</select>
-		{/if}
+		{#await data.decks}
+			<span><Circle2 /></span>
+		{:then decks}
+			{#if decks.length > 0}
+				<h2 class="text-2xl font-bold mb-5">Choose a deck</h2>
+				<select
+					class="bg-primary-70 border border-gray-200 text-primary-400 py-3 px-4 pr-8 rounded leading-tight focus:outline-none hover:bg-primary-100 hover:border-gray-500 mb-4"
+					on:change={handleDeckChange}
+				>
+					<option value="">Choose a deck</option>
+					{#each decks as option}
+						<option value={option.value}>{option.label}</option>
+					{/each}
+				</select>
+			{/if}
+		{/await}
 		{#if selectedDeckOption !== '' && selectedDeckOption !== undefined}
 			<div class="flex justify-center space-x-4 mb-10">
 				<a
@@ -156,19 +84,22 @@
 				>
 			</div>
 		{/if}
-
-		{#if tagOptions.length > 0}
-			<h2 class="text-2xl font-bold mb-5">Choose a tag</h2>
-			<select
-				class="bg-primary-70 border border-gray-200 text-primary-400 py-3 px-4 pr-8 rounded leading-tight focus:outline-none hover:bg-primary-100 hover:border-gray-500 mb-4"
-				on:change={handleTagChange}
-			>
-				<option value="">Choose a deck</option>
-				{#each tagOptions as tagOption}
-					<option value={tagOption.value}>{tagOption.label}</option>
-				{/each}
-			</select>
-		{/if}
+		{#await data.tags}
+			<span><Circle2/></span>
+		{:then tags}
+			{#if tags.length > 0}
+				<h2 class="text-2xl font-bold mb-5">Choose a tag</h2>
+				<select
+					class="bg-primary-70 border border-gray-200 text-primary-400 py-3 px-4 pr-8 rounded leading-tight focus:outline-none hover:bg-primary-100 hover:border-gray-500 mb-4"
+					on:change={handleTagChange}
+				>
+					<option value="">Choose a deck</option>
+					{#each tags as tag}
+						<option value={tag.value}>{tag.label}</option>
+					{/each}
+				</select>
+			{/if}
+		{/await}
 		{#if selectedTagOption !== '' && selectedTagOption !== undefined}
 			<div class="flex justify-center space-x-4 mb-10">
 				<a
