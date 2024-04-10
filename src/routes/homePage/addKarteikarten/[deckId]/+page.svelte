@@ -1,65 +1,34 @@
 <!--- Karteikarten hinzufuegen --->
 <script>
 	// Importieren Sie die Funktionen, die Sie benötigen
-	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
-
+	import { Circle2 } from 'svelte-loading-spinners';
+	export let data;
 	// Deklaration der Variablen
-	let deckId = 0;
+	let deckId = $page.params.deckId;
 	let userInputFront = '';
 	let userInputBack = '';
-	let options = [];
 
-	// Funktion, um die Optionen für das Dropdown-Menü zu laden
-	async function getOptions() {
-		const API_URL = 'http://localhost:3001/Deck';
-		try {
-			const response = await fetch(API_URL,
-				{
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					credentials: 'include'
-				});
-			const data = await response.json();
-
-			options = data.map((item) => ({
-				value: item.deckId,
-				label: item.deckName
-			}));
-		} catch (error) {
-			console.error('Fehler beim Laden der Daten:', error);
+	let selectedDeck = { value: '' };
+	data.decks.then((opts) => {
+		let idx = opts.findIndex((opt) => opt.value == deckId);
+		if (idx !== -1) {
+			selectedDeck.value = opts[idx].value;
+		} else {
+			console.error(
+				'You do not have the deck number: ',
+				deckId,
+				'. Please stick to navigating with links and buttons'
+			);
 		}
-	}
-
-
-	// Funktion, um die Optionen für das Dropdown-Menü zu laden und den Slug-Wert zu setzen
-	async function loadOptionsAndSetValue() {
-		await getOptions();
-		deckId = $page.params.deckId;
-		const selectElement = document.querySelector('select');
-		selectElement.value = deckId;
-	}
-
-	// Funktion, um die Optionen für das Dropdown-Menü zu laden und den Slug-Wert zu setzen
-	onMount(() => {
-		loadOptionsAndSetValue();
 	});
 
 
-	function getLabelForDeckId(deckId) {
-		const firstoption = options.find((firstoption) => firstoption.value === deckId);
-		return firstoption ? firstoption.label : null;
-	}
-
 	// Funktion, die aufgerufen wird, wenn sich die Auswahl ändert
 	function handleChange(event) {
-		goto('/homePage/addKarteikarten/' + event.target.value);
+		goto(`/homePage/addKarteikarten/${event.target.value}`);
 	}
-
-
 
 	// Funktionen, um die Daten an die Funktion zum Sender der Daten an die Datenbank auszuführen und die Eingabefelder zu leeren
 	function save() {
@@ -124,28 +93,21 @@
 		<!-- Dropdown-Menü, um das Deck auszuwählen -->
 		<div class="container h-full mx-auto flex justify-center items-center mt-4">
 			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
+				{#await data.decks}
+				<span><Circle2 /></span>
+			{:then decks}
 				<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Deck wählen</h2>
 
 				<select
 					class="dark:bg-primary-60 block appearance-none w-full bg-primary-0 border border-gray-200 text-primary-400 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-					on:change={handleChange}
-				>
-					{#if options.length === 0}
-						{#await getOptions()}
-							<option value="">Laden...</option>
-						{:then}
-							{#each options as option}
-								<option value={option.value}>{option.label}</option>
-							{/each}
-						{:catch error}
-							<option value="">Fehler beim Laden</option>
-						{/await}
-					{:else}
-						{#each options as option}
-							<option value={option.value}>{option.label}</option>
+					bind:value={selectedDeck.value}
+						on:change={handleChange}
+					>
+						{#each decks as deck}
+							<option value={deck.value}>{deck.label} </option>
 						{/each}
-					{/if}
-				</select>
+					</select>
+				{/await}
 			</div>
 		</div>
 	</div>

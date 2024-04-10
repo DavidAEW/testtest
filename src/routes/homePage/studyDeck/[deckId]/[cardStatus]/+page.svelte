@@ -153,6 +153,7 @@
 						</div>
 					</div>
 				</div>
+				<!-- Buttons um den Lernstatus der Karte zu aktualisieren -->
 				<div class="container h-full mx-auto flex justify-center items-center mt-4">
 					<button
 						class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16"
@@ -177,31 +178,6 @@
 					</button>
 				</div>
 			{/if}
-
-			<!-- Buttons um den Lernstatus der Karte zu aktualisieren -->
-			<div class="container h-full mx-auto flex justify-center items-center mt-4">
-				<button
-					class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16"
-					on:click={() =>
-						updateCardStatus(cardData.cardId, 1, cardData?.front, cardData?.back, deckId)}
-				>
-					kann ich nicht
-				</button>
-				<button
-					class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded mr-16"
-					on:click={() =>
-						updateCardStatus(cardData.cardId, 2, cardData?.front, cardData?.back, deckId)}
-				>
-					kann ich bisschen
-				</button>
-				<button
-					class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded"
-					on:click={() =>
-						updateCardStatus(cardData.cardId, 3, cardData?.front, cardData?.back, deckId)}
-				>
-					kann ich gut
-				</button>
-			</div>
 		{:else}
 			<!-- Wenn keine Karte gefunden wurde, wird dies angezeigt -->
 			<div class="container h-full mx-auto flex justify-center items-center mt-4">
