@@ -110,6 +110,60 @@ app.get('/User', async (req, res) => {
 	}
 });
 
+app.post('/session', async (req, res) => {
+	const { email, password } = req.body;
+	try {
+		const user = await db.select('*').from('user').where('email', email).first(); //-> erst mal nach email suchen
+		if (!user) {
+			return res.status(400).json({ message: 'Benutzer nicht gefunden.' });
+		}
+
+		const comparePassword = await argon2.verify(user.password, password); //-> dann das Passwort vergleichen
+
+		if (comparePassword) {
+			//-> wenn das Passwort auch stimmt, dann Token erstellen
+			const tocken = jwt.sign({ userId: user.userId, email: user.email }, process.env.SECRET_KEY, {
+				algorithm: 'HS256'
+			});
+			res.cookie('jwt', tocken, {
+				httpOnly: true,
+				secure: true,
+				maxAge: 24 * 60 * 60 * 1000 // ein Tag
+			});
+			res.status(201).json({ message: 'Login erfolgreich.' });
+		} else {
+			res.status(400).json({ message: 'Falsches Passwort.' });
+		}
+	} catch (error) {
+		console.error('Fehler beim Einloggen:', error);
+		res.status(500).json({ message: 'Serverfehler beim Einloggen.' });
+	}
+});
+
+const authenticateJWT = (req, res, next) => {
+	const token = req.cookies['jwt'];
+
+	if (!token) {
+		return res.status(401).json({ message: 'Auth token is missing' });
+	}
+
+	jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+		if (err) {
+			return res.status(403).json({ message: 'Unauthorized. Invalid token.' });
+		}
+
+		req.user = user;
+		next();
+	});
+};
+
+app.use(authenticateJWT); // Verwende Middleware um JWT zu überprüfen
+
+app.delete('/session', (req, res) => {
+	res.clearCookie('jwt', '', { maxAge: 0 });
+	res.send('Erfolgreich ausgeloggt');
+});
+
 //##################################################################################################
 
 //##################################################################################################
@@ -142,60 +196,6 @@ app.get('/ExportCards/:deckId', async (req, res) => {
 		console.error('Fehler beim Exportieren der Karten:', error);
 		res.status(500).send('Serverfehler beim Exportieren der Karten.');
 	}
-});
-
-const authenticateJWT = (req, res, next) => {
-	const token = req.cookies['jwt'];
-
-	if (!token) {
-		return res.status(401).json({ message: 'Auth token is missing' });
-	}
-
-	jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
-		if (err) {
-			return res.status(403).json({ message: 'Unauthorized. Invalid token.' });
-		}
-
-		req.user = user;
-		next();
-	});
-};
-
-app.use(authenticateJWT); // Verwende Middleware um JWT zu überprüfen
-
-app.post('/session', async (req, res) => {
-	const { email, password } = req.body;
-	try {
-		const user = await db.select('*').from('user').where('email', email).first(); //-> erst mal nach email suchen
-		if (!user) {
-			return res.status(400).json({ message: 'Benutzer nicht gefunden.' });
-		}
-
-		const comparePassword = await argon2.verify(user.password, password); //-> dann das Passwort vergleichen
-
-		if (comparePassword) {
-			//-> wenn das Passwort auch stimmt, dann Token erstellen
-			const tocken = jwt.sign({ userId: user.userId, email: user.email }, process.env.SECRET_KEY, {
-				algorithm: 'HS256'
-			});
-			res.cookie('jwt', tocken, {
-				httpOnly: true,
-				secure: true,
-				maxAge: 24 * 60 * 60 * 1000 // ein Tag
-			});
-			res.status(201).json({ message: 'Login erfolgreich.' });
-		} else {
-			res.status(400).json({ message: 'Falsches Passwort.' });
-		}
-	} catch (error) {
-		console.error('Fehler beim Einloggen:', error);
-		res.status(500).json({ message: 'Serverfehler beim Einloggen.' });
-	}
-});
-
-app.delete('/session', (req, res) => {
-	res.clearCookie('jwt', '', { maxAge: 0 });
-	res.send('Erfolgreich ausgeloggt');
 });
 
 //##################################################################################################
@@ -448,8 +448,7 @@ app.post('/Tag', async (req, res) => {
 
 app.get('/Tag', async (req, res) => {
 	const userId = req.user.userId;
-	try
-	{
+	try {
 		const tags = await db.select().from('tag').where('tag.userId', userId);
 		res.json(tags);
 	} catch (error) {
