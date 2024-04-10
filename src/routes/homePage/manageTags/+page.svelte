@@ -1,8 +1,8 @@
 <script>
     import { onMount } from "svelte";
     import { goto } from '$app/navigation';
-    const endpoint = "http://localhost:3001/Tag";
-    const endpoint2 = "http://localhost:3001/Deck";
+    const endpoint = "https://cardhubserver.azurewebsites.net/Tag";
+    const endpoint2 = "https://cardhubserver.azurewebsites.net/Deck";
     let selected;
     let isAddClicked = false;
     let isDeleteClicked = false;
@@ -97,7 +97,7 @@
 		}
         else {
             tagList = [];
-                const response = await fetch('http://localhost:3001/Tag', {
+                const response = await fetch('https://cardhubserver.azurewebsites.net/Tag', {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
@@ -116,7 +116,7 @@
 
     async function deleteTag(deletedTagName){
         tagList = [];
-            const response = await fetch('http://localhost:3001/Tag', {
+            const response = await fetch('https://cardhubserver.azurewebsites.net/Tag', {
             method: 'DELETE',
             headers: {
             'Content-Type': 'application/json',
@@ -138,7 +138,7 @@
             loadTagIdsWhoAreChecked();
             return;
         }
-            const response = await fetch(`http://localhost:3001/Deck_Tag/${deckId}`, {
+            const response = await fetch(`https://cardhubserver.azurewebsites.net/Deck_Tag/${deckId}`, {
             method: 'GET',
             headers: {
             'Content-Type': 'application/json',
@@ -167,7 +167,7 @@
 
     async function changeStatusOfCheckBox(Tag, deckId){
         if(Tag.isChecked == false){
-            const response = await fetch('http://localhost:3001/Deck_Tag', {
+            const response = await fetch('https://cardhubserver.azurewebsites.net/Deck_Tag', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
@@ -181,7 +181,7 @@
             const data = await response.json(); 
         }
         else{
-            const response = await fetch('http://localhost:3001/Deck_Tag', {
+            const response = await fetch('https://cardhubserver.azurewebsites.net/Deck_Tag', {
             method: 'DELETE',
             headers: {
             'Content-Type': 'application/json',

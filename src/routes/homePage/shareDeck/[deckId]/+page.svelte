@@ -29,7 +29,7 @@
 
 	let cards = [];
 	async function exportCards() {
-		const API_URL = `http://localhost:3001/exportCards/${deckId}`;
+		const API_URL = `https://cardhubserver.azurewebsites.net/exportCards/${deckId}`;
 		try {
 			const response = await fetch(API_URL, {
 				method: 'GET',

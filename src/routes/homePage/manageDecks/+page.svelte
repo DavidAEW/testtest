@@ -13,7 +13,7 @@
 
 // Funktion um einen neuen Stapel hinzuzufügen
 	async function addDeck() {
-		const API_URL = 'http://localhost:3001/Deck';
+		const API_URL = 'https://cardhubserver.azurewebsites.net/Deck';
 		try {
 			const response = await fetch(API_URL, {
 				method: 'POST',
@@ -50,7 +50,7 @@
     if (!isConfirmed) {
         return;
     }
-		const API_URL = 'http://localhost:3001/Deck';
+		const API_URL = 'https://cardhubserver.azurewebsites.net/Deck';
 		try {
 			const response = await fetch(API_URL, {
 				method: 'DELETE',

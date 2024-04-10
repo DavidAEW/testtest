@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	let loggedIn = false;
 	async function getUserInfo() {
-		const url = 'http://localhost:3001/User';
+		const url = 'https://cardhubserver.azurewebsites.net/User';
 		try {
 			const response = await fetch(url, {
 				method: 'GET',
@@ -37,7 +37,7 @@
 			password
 		};
 
-		const url = 'http://localhost:3001';
+		const url = 'https://cardhubserver.azurewebsites.net';
 		const endpoint = '/session';
 		const endpointURL = url + endpoint;
 

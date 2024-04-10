@@ -51,7 +51,7 @@
 		newDeckId = row.deckId;
 
 		try {
-			const response = await fetch('http://localhost:3001/Card', {
+			const response = await fetch('https://cardhubserver.azurewebsites.net/Card', {
 				method: 'PUT',
 				headers: {
 					'Content-Type': 'application/json'
@@ -86,7 +86,7 @@
 		}
 
 		try {
-			const response = await fetch('http://localhost:3001/Card', {
+			const response = await fetch('https://cardhubserver.azurewebsites.net/Card', {
 				method: 'DELETE',
 				headers: {
 					'Content-Type': 'application/json'

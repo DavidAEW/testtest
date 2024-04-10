@@ -1,7 +1,7 @@
 export async function load({ params, fetch }) {
     const { tagId, cardStatus } = params;
     async function getCards() {
-		const API_URL = `http://localhost:3001/Card/${cardStatus}/tagId/${tagId}`;
+		const API_URL = `https://cardhubserver.azurewebsites.net/Card/${cardStatus}/tagId/${tagId}`;
 		try {
 			const response = await fetch(API_URL, {
 				method: 'GET',

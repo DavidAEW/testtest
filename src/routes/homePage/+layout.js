@@ -1,6 +1,6 @@
 export async function load({ fetch }) {
     async function getDecks() {
-        const API_URL = 'http://localhost:3001/Deck';
+        const API_URL = 'https://cardhubserver.azurewebsites.net/Deck';
         try {
             const response = await fetch(
                 API_URL, {
@@ -21,7 +21,7 @@ export async function load({ fetch }) {
         }
     }
     async function getTags() {
-        const API_URL = 'http://localhost:3001/Tag';
+        const API_URL = 'https://cardhubserver.azurewebsites.net/Tag';
         try {
             const response = await fetch(
                 API_URL,

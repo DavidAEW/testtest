@@ -18,7 +18,7 @@
     };
 
     
-    const API_URL = "http://localhost:3001/User";
+    const API_URL = "https://cardhubserver.azurewebsites.net/User";
 
 
     try {

@@ -49,7 +49,7 @@
 			return;
 		}
 
-		const API_URL = 'http://localhost:3001/Card';
+		const API_URL = 'https://cardhubserver.azurewebsites.net/Card';
 		const response = await fetch(API_URL, {
 			method: 'POST',
 			credentials: 'include', //mitbringen des Cookies

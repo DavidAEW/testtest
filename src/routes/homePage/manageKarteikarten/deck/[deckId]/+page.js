@@ -1,7 +1,7 @@
 export async function load( {params, fetch} ) {
     const { deckId } = params;
     async function getAll() {
-		const API_URL = `http://localhost:3001/Card_Deck/${deckId}`;
+		const API_URL = `https://cardhubserver.azurewebsites.net/Card_Deck/${deckId}`;
 		const response = await fetch(API_URL, {
 			method: 'GET',
 			credentials: 'include',

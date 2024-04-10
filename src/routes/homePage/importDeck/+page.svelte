@@ -29,7 +29,7 @@
 
 			try {
 				// Senden der Daten an den Server
-				const response = await fetch('http://localhost:3001/importCards', {
+				const response = await fetch('https://cardhubserver.azurewebsites.net/importCards', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'

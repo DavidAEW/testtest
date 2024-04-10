@@ -5,7 +5,7 @@
 	
 	// logout 
 	async function logout() {
-	  const url = "http://localhost:3001/session";
+	  const url = "https://cardhubserver.azurewebsites.net/session";
 	  try {
 		const response = await fetch(url, {
 		  method: 'DELETE',
