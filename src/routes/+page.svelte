@@ -1,7 +1,9 @@
 <script>
   import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
 
+
+
+import { onMount } from 'svelte';
   let loggedIn = false;
 	async function getUserInfo() {
 		const url = 'http://localhost:3001/User';
@@ -13,7 +15,6 @@
 					'Content-Type': 'application/json'
 				},
 			});
-
 			if (response.ok) {
 				const userData = await response.json();
 				loggedIn = true;

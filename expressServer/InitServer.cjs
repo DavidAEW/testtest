@@ -35,36 +35,6 @@ const db = knex({
 
 app.use(express.json());
 
-app.post('/session', async (req, res) => {
-	const { email, password } = req.body;
-	try {
-		const user = await db.select('*').from('user').where('email', email).first(); //-> erst mal nach email suchen
-		if (!user) {
-			return res.status(400).json({ message: 'Benutzer nicht gefunden.' });
-		}
-
-		const comparePassword = await argon2.verify(user.password, password); //-> dann das Passwort vergleichen
-
-		if (comparePassword) {
-			//-> wenn das Passwort auch stimmt, dann Token erstellen
-			const tocken = jwt.sign({ userId: user.userId, email: user.email }, process.env.SECRET_KEY, {
-				algorithm: 'HS256'
-			});
-			res.cookie('jwt', tocken, {
-				httpOnly: true,
-				secure: true,
-				maxAge: 24 * 60 * 60 * 1000 // ein Tag
-			});
-			res.status(201).json({ message: 'Login erfolgreich.' });
-		} else {
-			res.status(400).json({ message: 'Falsches Passwort.' });
-		}
-	} catch (error) {
-		console.error('Fehler beim Einloggen:', error);
-		res.status(500).json({ message: 'Serverfehler beim Einloggen.' });
-	}
-});
-
 //##################################################################################################
 //User
 //##################################################################################################
@@ -470,18 +440,22 @@ app.post('/Tag', async (req, res) => {
 	const { tagName } = req.body;
 	const tag = await db.insert({ tagName: tagName, userId: userId }).into('tag');
 	if (tag) {
-		// Wenn der Tag erfolgreich gelöscht wurde
 		res.status(200).json({ message: 'Tag erfolgreich gelöscht' });
 	} else {
-		// Wenn der Tag nicht gefunden wurde
 		res.status(404).json({ error: 'Tag nicht gefunden' });
 	}
 });
 
 app.get('/Tag', async (req, res) => {
 	const userId = req.user.userId;
-	const tags = await db.select().from('tag').where('tag.userId', userId);
-	res.json(tags);
+	try
+	{
+		const tags = await db.select().from('tag').where('tag.userId', userId);
+		res.json(tags);
+	} catch (error) {
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
 });
 
 app.delete('/Tag', async (req, res) => {

@@ -1,13 +1,21 @@
 <script>
+	// Importieren Sie die notwendigen Funktionen
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 
+	// Deklarieren Sie die Variablen
 	let data = [];
 	let deck;
 	let options = [];
 	let deckId = $page.params.deckId;
+	let front;
+	let back;
+	let cardStatus;
+	let newDeckId;
+	let cardId;
 
+	// Deklarieren Sie die Konstanten für die Legende der möglichen Statuswerte
 	const status = [
 		{ value: 0, label: 'neu' },
 		{ value: 1, label: 'etwas gelernt' },
@@ -15,6 +23,7 @@
 		{ value: 3, label: 'kann ich' }
 	];
 
+	//Funktion zum Abrufen der Decks anhand der User-ID
 	async function getOptions() {
 		const API_URL = 'http://localhost:3001/Deck'; 
 		try {
@@ -37,6 +46,7 @@
 			console.error('Fehler beim Laden der Daten:', error);
 		}
 	}
+	//Funktion zum Ausführen der Funktion, um die Decks anhand der User-ID zu laden und anzuzeigen
 	async function loadOptionsAndSetValue() {
 		await getOptions();
 		deckId = $page.params.deckId;
@@ -44,6 +54,7 @@
 		selectElement.value = deckId;
 	}
 
+	//Funktion zum Abrufen der Karteikarten anhand der Deck-ID
 	async function getAll(selectedOption) {
 		const API_URL = `http://localhost:3001/Card_Deck/${selectedOption}`;
 		const options = {
@@ -59,6 +70,7 @@
 		return data;
 	}
 
+	//Funktion zum Ausführen der Funktionen beim Seitenladen
 	onMount(async () => {
 		loadOptionsAndSetValue();
 		try {
@@ -66,25 +78,19 @@
 			deck = await getOptions();
 		} catch (error) {
 			console.error('Fehler beim Laden der Daten:', error);
-			// Fehlermeldung anzeigen oder Benutzer benachrichtigen
 		}
 	});
-	let front;
-	let back;
-	let cardStatus;
-	let newDeckId;
-	let cardId;
 
+
+	//Funktion zum Aktualisieren der Karteikarten nach der Änderung
 	async function updateCard(cardid, row) {
-		// Holen Sie die aktualisierten Werte aus den Eingabefeldern
+
 		cardId = cardid;
 		front = row.front;
 		back = row.back;
 		cardStatus = row.cardStatus;
 		newDeckId = row.deckId;
 
-
-		// Senden Sie eine Fetch-Anfrage an das Backend
 		try {
 			const response = await fetch('http://localhost:3001/Card', {
 				method: 'PUT',
@@ -102,25 +108,20 @@
 			});
 
 			if (response.ok) {
-				console.log('Datensatz erfolgreich aktualisiert!');
 				getAll(deckId).then((result) => {
 					data = result;
 				});
-				// Aktualisieren Sie die Daten in der Tabelle oder zeigen Sie eine Erfolgsmeldung an
 			} else {
 				console.error('Fehler beim Aktualisieren des Datensatzes:', response.statusText);
-				// Zeigen Sie eine Fehlermeldung an
 			}
 		} catch (error) {
 			console.error('Fehler bei der Fetch-Anfrage:', error);
-			// Zeigen Sie eine Fehlermeldung an
 
 		}
 	}
 
+	//Funktion zum Löschen der Karteikarten anhand der Card-ID
 	async function deleteCard(row) {
-		// Holen Sie die aktualisierten Werte aus den Eingabefeldern
-
 		const cardId = row.cardId;
 		const isConfirmed = confirm('Bist du sicher, dass du die Karte löschen möchtest?');
     
@@ -128,7 +129,6 @@
         return;
     }
 
-		// Senden Sie eine Fetch-Anfrage an das Backend
 		try {
 			const response = await fetch('http://localhost:3001/Card', {
 				method: 'DELETE',
@@ -142,23 +142,19 @@
 			});
 
 			if (response.ok) {
-				console.log('Datensatz erfolgreich gelöscht!');
 				getAll(deckId).then((result) => {
 					data = result;
 				});
 
-				// Aktualisieren Sie die Daten in der Tabelle oder zeigen Sie eine Erfolgsmeldung an
 			} else {
 				console.error('Fehler beim Aktualisieren des Datensatzes:', response.statusText);
-				// Zeigen Sie eine Fehlermeldung an
 			}
 		} catch (error) {
 			console.error('Fehler bei der Fetch-Anfrage:', error);
-			// Zeigen Sie eine Fehlermeldung an
 		}
 	}
 
-
+	//Funktion zum Navigieren zum neuen Deck
 	function handleChange(event) {
 		goto('/homePage/manageKarteikarten/deck/' + event.target.value);
 		deckId = event.target.value;
@@ -167,6 +163,7 @@
 		});
 	}
 
+	//Funktion zum Navigieren zurück zur Home-Seite
 	function backtopage() {
 		goto('/homePage');
 	}
@@ -176,7 +173,7 @@
 	<div class="container h-full mx-auto flex flex-row justify-center items-center mt-4">
 		<div class="space-y-5">
 			<h1 class="text-4xl text-center">Karteikarten verwalten</h1>
-
+			<!-- Dropdown zur Auswahl des Decks -->
 			<div class="container h-full mx-auto flex justify-center items-center mt-4">
 				<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 w-5/6">
 					<h2 class="text-xl font-bold mb-2 text-center text-primary-900">Deck wählen</h2>
@@ -191,7 +188,7 @@
 					</select>
 				</div>
 			</div>
-
+			<!-- Tabelle zur Anzeige der Karteikarten -->
 			<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 mx-auto w-5/6">
 				{#if data}
 					<table class="text-center">
@@ -230,6 +227,7 @@
 	</div>
 	<div class="bg-primary-60 dark:bg-secondary-250 rounded-lg shadow-md p-4 mx-auto w-5/6 mt-5">
 		<h2 class="text-2xl text-center">Legende</h2>
+		<!-- Tabelle zur Anzeige der Legende der möglichen Decks -->
 		<div class="flex flex-row justify-center gap-5 mt-4">
 			{#if deck}
 				<table class="text-center bg-white dark:bg-accent-50 text-accent-400 rounded">
@@ -249,6 +247,7 @@
 					</tbody>
 				</table>
 			{/if}
+			<!-- Tabelle zur Anzeige der Legende der möglichen Statuswerte -->
 			{#if status}
 				<table class="text-center bg-white dark:bg-accent-50 text-accent-400 rounded">
 					<thead>
@@ -270,6 +269,7 @@
 		</div>
 	</div>
 
+	<!-- Button zum Navigieren zurück zur Home-Seite -->
 	<div class="flex justify-center mx-auto mt-5 mb-5">
 	<button
 		class="bg-primary-60 dark:bg-accent-300 dark:hover:bg-primary-60 dark:hover:text-text-400 hover:bg-accent-300 hover:text-text-50 text-primary-400 dark:text-text-50 font-bold py-2 px-4 rounded"
