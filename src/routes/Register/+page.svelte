@@ -18,24 +18,23 @@
     };
 
     
+    const API_URL = "http://localhost:3001/User";
 
-    const url = "http://localhost:3001";
-    const endpoint = "/User";  
-    const endpointURL= url + endpoint;
 
     try {
-      const response = await fetch(endpointURL, {
+      const response = await fetch(
+        API_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(userData),
-        credentials: "include", // Cookies einschließen
+        credentials: "include", 
       });
 
       if (response.ok) {
         console.log('Registrierung erfolgreich.');
-        goto('/'); // Nutze goto für die Navigation
+        goto('/'); 
       } else {
         console.error('Registrierung fehlgeschlagen.');
         errorMessage.set('Try Again');
