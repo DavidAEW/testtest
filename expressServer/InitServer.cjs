@@ -470,18 +470,27 @@ app.post('/Tag', async (req, res) => {
 	const { tagName } = req.body;
 	const tag = await db.insert({ tagName: tagName, userId: userId }).into('tag');
 	if (tag) {
-		// Wenn der Tag erfolgreich gelöscht wurde
 		res.status(200).json({ message: 'Tag erfolgreich gelöscht' });
 	} else {
-		// Wenn der Tag nicht gefunden wurde
 		res.status(404).json({ error: 'Tag nicht gefunden' });
 	}
 });
 
 app.get('/Tag', async (req, res) => {
 	const userId = req.user.userId;
-	const tags = await db.select().from('tag').where('tag.userId', userId);
-	res.json(tags);
+	try
+	{
+		const tags = await db.select().from('tag').where('tag.userId', userId);
+		res.json(tags);
+		if (tags) {
+			res.status(200).json({ message: 'Tag erfolgreich bekommen' });
+		} else {
+			res.status(404).json({ error: 'Tag nicht gefunden' });
+		}
+	} catch (error) {
+		console.error('Fehler:', error);
+		res.status(500).json({ error: 'Interner Serverfehler' });
+	}
 });
 
 app.delete('/Tag', async (req, res) => {
