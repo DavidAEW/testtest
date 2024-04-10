@@ -1,33 +1,9 @@
 <script>
   import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
+
 
   let loggedIn = false;
-	async function getUserInfo() {
-		const url = 'http://localhost:3001/User';
-		try {
-			const response = await fetch(url, {
-				method: 'GET',
-        credentials: 'include',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-			});
 
-			if (response.ok) {
-				const userData = await response.json();
-				loggedIn = true;
-			} else {
-				console.error('Fehler beim Abrufen der Benutzerdaten.');
-			}
-		} catch (error) {
-			console.error('Fehler:', error);
-		}
-	}
-
-  onMount(() => {
-     getUserInfo();
-  });
 
   let email = '';
   let password = '';
